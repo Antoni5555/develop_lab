@@ -1,0 +1,2586 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SITE_NAME</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="media.css">
+</head>
+<!--
+  МАКЕТ. Все страницы в одном файле, переключаются якорями (#home, #courses …).
+  Комментарии вида  [templates/...]  — куда этот кусок уедет при разбиении на шаблоны
+  (структура как в web-layout-antonimikeladze: base/, common/, <страница>/components/).
+  JS в макете нет: тема и вкладки сделаны на CSS (в проекте заменим на небольшой JS).
+-->
+<body>
+  <input type="checkbox" id="theme" class="visually-hidden">
+
+  <!-- ==================================================================
+       [templates/base/header.html]
+       ================================================================== -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#home" class="logo">
+        <span class="logo__mark" aria-hidden="true"></span>
+        SITE_NAME
+      </a>
+
+      <nav class="header__nav" aria-label="Основная навигация">
+        <a href="#home" class="nav-link">Главная</a>
+        <a href="#courses" class="nav-link">Курсы</a>
+        <a href="#cheatsheets" class="nav-link">Шпаргалки</a>
+        <a href="#playground" class="nav-link">Тренажёр</a>
+        <a href="#about" class="nav-link">О проекте</a>
+      </nav>
+
+      <div class="header__actions">
+        <label for="theme" class="icon-btn" title="Сменить тему" aria-label="Сменить тему">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
+          </svg>
+        </label>
+        <a href="#login" class="btn btn--ghost">Войти</a>
+
+        <!-- [templates/base/components/_mobile_menu.html] -->
+        <details class="mobile-menu">
+          <summary class="icon-btn" aria-label="Меню">☰</summary>
+          <nav class="mobile-menu__panel">
+            <a href="#home" class="nav-link">Главная</a>
+            <a href="#courses" class="nav-link">Курсы</a>
+            <a href="#cheatsheets" class="nav-link">Шпаргалки</a>
+            <a href="#playground" class="nav-link">Тренажёр</a>
+            <a href="#about" class="nav-link">О проекте</a>
+          </nav>
+        </details>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ==================================================================
+         СТРАНИЦА: ГЛАВНАЯ  [templates/home/home.html]
+         ================================================================== -->
+    <section id="home" class="screen">
+      <div class="container stack-xl">
+
+        <!-- [templates/home/components/_hero.html] -->
+        <div class="hero hero--home">
+          <div class="hero__text">
+            <span class="eyebrow">Бесплатно · в браузере · без установки</span>
+            <h1 class="hero__title">Практика для&nbsp;разработчиков</h1>
+            <p class="hero__lead">Курсы с короткой теорией, задачи и тренажёры SQL, ORM, Python и Linux. Пишешь код — сразу видишь таблицы и что изменилось, а заметки сами собираются в шпаргалки.</p>
+            <div class="hero__cta">
+              <a href="#course" class="btn btn--accent btn--lg">Начать обучение <span aria-hidden="true">→</span></a>
+              <a href="#playground" class="btn btn--on-ink btn--lg">Открыть тренажёр</a>
+            </div>
+            <nav class="tracks" aria-label="Направления">
+              <a href="#courses" class="track track--active">Backend</a>
+              <span class="track track--soon">Frontend <small>скоро</small></span>
+              <span class="track track--soon">DevOps <small>скоро</small></span>
+            </nav>
+          </div>
+        </div>
+
+        <!-- [templates/home/components/_how_it_works.html] -->
+        <section>
+          <div class="section-head">
+            <h2 class="section-title">Как это работает</h2>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <span class="step__num">01</span>
+              <h3 class="step__title">Выбираешь курс</h3>
+              <p class="muted">Курсы идут по шагам программы, внутри — разделы и темы. Видно, что пройдено и что дальше.</p>
+            </div>
+            <div class="step">
+              <span class="step__num">02</span>
+              <h3 class="step__title">Читаешь теорию</h3>
+              <p class="muted">Короткий урок на одну идею: зачем это нужно, как работает, частые ошибки.</p>
+            </div>
+            <div class="step">
+              <span class="step__num">03</span>
+              <h3 class="step__title">Решаешь задачу</h3>
+              <p class="muted">Пишешь код в браузере и видишь результат: таблицы, изменённые строки, SQL от ORM.</p>
+            </div>
+            <div class="step step--accent">
+              <span class="step__num">04</span>
+              <h3 class="step__title">Пишешь заметки</h3>
+              <p>Заметка справа от урока сама попадает в шпаргалку курса — в ту тему, где ты её написал.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- [templates/home/components/_features.html] -->
+        <section>
+          <div class="section-head">
+            <h2 class="section-title">Что внутри</h2>
+          </div>
+          <div class="bento">
+            <article class="bento__item bento__item--wide">
+              <h3 class="bento__title">Видно, что сделал запрос</h3>
+              <p class="muted">Журнал выполнения показывает каждый запрос: новую таблицу в схеме, добавленные, изменённые и удалённые строки, пары строк в JOIN.</p>
+              <div class="db-table">
+                <div class="db-table__name">orders <span class="schema-table__flag">UPDATE · DELETE · INSERT</span></div>
+                <table class="data-table">
+                  <thead><tr><th>id</th><th>status</th></tr></thead>
+                  <tbody>
+                    <tr><td>12</td><td>paid</td></tr>
+                    <tr class="row--changed"><td>13</td><td>paid → shipped</td></tr>
+                    <tr class="row--removed"><td>14</td><td>new</td></tr>
+                    <tr class="row--added"><td>15</td><td>new</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="bento__item bento__item--ink">
+              <h3 class="bento__title">Одна задача — три синтаксиса</h3>
+              <pre class="snippet"><span class="cm">-- SQL</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> is_active;
+<span class="cm"># Django ORM</span>
+User.objects.<span class="fn">filter</span>(is_active=<span class="kw">True</span>)
+<span class="cm"># SQLAlchemy</span>
+<span class="fn">select</span>(User).<span class="fn">where</span>(User.is_active)</pre>
+            </article>
+
+            <article class="bento__item">
+              <span class="bento__icon" aria-hidden="true">⚡</span>
+              <h3 class="bento__title">Четыре тренажёра</h3>
+              <p class="muted">SQL, ORM, Python и Linux прямо в браузере. Ничего не нужно ставить, сессия сохраняется.</p>
+            </article>
+
+            <article class="bento__item">
+              <span class="bento__icon" aria-hidden="true">≡</span>
+              <h3 class="bento__title">Шпаргалки из твоих заметок</h3>
+              <p class="muted">Пишешь заметку во время урока — она сама попадает в шпаргалку курса по нужной теме.</p>
+            </article>
+
+            <article class="bento__item bento__item--accent">
+              <span class="bento__icon" aria-hidden="true">✓</span>
+              <h3 class="bento__title">Прогресс сохраняется</h3>
+              <p>Без регистрации — в браузере. С аккаунтом — на всех устройствах.</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- [templates/home/components/_popular_courses.html] — использует common/_course_card.html -->
+        <section>
+          <div class="section-head">
+            <h2 class="section-title">С чего начать</h2>
+            <a href="#courses" class="link-arrow">Все курсы <span aria-hidden="true">→</span></a>
+          </div>
+          <!-- Первые шаги программы направления Backend (по Course.order) -->
+          <div class="course-grid course-grid--3">
+            <a href="#course" class="course-card course-card--accent">
+              <div class="course-card__top">
+                <span class="course-card__step">Шаг 1</span>
+                <span class="badge badge--on-accent">Начни здесь</span>
+              </div>
+              <h3 class="course-card__title">Python</h3>
+              <p class="course-card__text">Коллекции, функции, ООП, итераторы, исключения.</p>
+            </a>
+            <a href="#course" class="course-card">
+              <div class="course-card__top">
+                <span class="course-card__step">Шаг 2</span>
+                <span class="round-btn" aria-hidden="true">↗</span>
+              </div>
+              <h3 class="course-card__title">Linux</h3>
+              <p class="course-card__text">Файлы и права, пайпы, grep, процессы, переменные окружения.</p>
+            </a>
+            <a href="#course" class="course-card">
+              <div class="course-card__top">
+                <span class="course-card__step">Шаг 3</span>
+                <span class="round-btn" aria-hidden="true">↗</span>
+              </div>
+              <h3 class="course-card__title">SQL</h3>
+              <p class="course-card__text">Создание таблиц, выборка, JOIN, агрегация, оконные функции.</p>
+            </a>
+          </div>
+        </section>
+
+        <!-- [templates/home/components/_stats.html] -->
+        <div class="stats">
+          <div class="stat"><span class="stat__value">5</span><span class="stat__label">курсов</span></div>
+          <div class="stat"><span class="stat__value">134</span><span class="stat__label">задачи</span></div>
+          <div class="stat"><span class="stat__value">48</span><span class="stat__label">уроков теории</span></div>
+          <div class="stat"><span class="stat__value">0 ₽</span><span class="stat__label">навсегда</span></div>
+        </div>
+
+        <!-- [templates/common/_cta.html] -->
+        <div class="cta">
+          <div>
+            <h2 class="cta__title">Начни с первого шага</h2>
+            <p class="cta__text">Регистрация не нужна. Аккаунт — когда захочешь сохранить прогресс и шпаргалки.</p>
+          </div>
+          <div class="cta__actions">
+            <a href="#course" class="btn btn--accent btn--lg">Начать с Python</a>
+            <a href="#register" class="btn btn--on-ink btn--lg">Создать аккаунт</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: КАТАЛОГ КУРСОВ  [templates/courses/course_list.html]
+         ================================================================== -->
+    <section id="courses" class="screen">
+      <div class="container">
+        <!-- [templates/common/_page_head.html] -->
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Курсы</h1>
+            <p class="muted">Каждый курс — темы с короткой теорией и задачами на тренажёре.</p>
+          </div>
+          <form class="search search--light" role="search">
+            <input class="search__input" type="search" placeholder="Найти курс или тему…">
+          </form>
+        </div>
+
+        <!-- [templates/courses/components/_track_filter.html] -->
+        <div class="filter-bar">
+          <nav class="tracks tracks--light" aria-label="Направления">
+            <a href="#courses" class="track track--active">Backend</a>
+            <span class="track track--soon">Frontend <small>скоро</small></span>
+            <span class="track track--soon">DevOps <small>скоро</small></span>
+          </nav>
+          <div class="filter-bar__right">
+            <div class="chips">
+              <button class="chip chip--active">Все</button>
+              <button class="chip">Базы данных</button>
+              <button class="chip">Python</button>
+              <button class="chip">Инструменты</button>
+            </div>
+            <!-- Сортировка. «По программе» = поле Course.order в БД (шаг 10, чтобы вставлять курсы между) -->
+            <label class="select">
+              <span class="visually-hidden">Сортировка</span>
+              <select>
+                <option>По программе обучения</option>
+                <option>Сначала начатые</option>
+                <option>По алфавиту</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <!-- Легенда статусов карточек -->
+        <div class="legend legend--cards">
+          <span><i class="legend__swatch legend__swatch--accent"></i>сейчас проходите</span>
+          <span><i class="legend__swatch legend__swatch--done"></i>пройден</span>
+          <span><i class="legend__swatch legend__swatch--plain"></i>не начат</span>
+          <span><i class="legend__swatch legend__swatch--soon"></i>скоро</span>
+        </div>
+
+        <!-- [templates/courses/components/_course_grid.html] → цикл по common/_course_card.html
+             Номер шага = позиция курса в программе направления. Цвет = статус пользователя. -->
+        <div class="course-grid">
+          <a href="#course" class="course-card course-card--done">
+            <div class="course-card__top">
+              <span class="course-card__step">Шаг 1</span>
+              <span class="badge badge--done">✓ Пройден</span>
+            </div>
+            <h3 class="course-card__title">Python</h3>
+            <p class="course-card__text">Коллекции, функции, ООП, итераторы, исключения.</p>
+            <div class="progress"><div class="progress__bar" style="--value: 100%"></div></div>
+            <span class="course-card__meta">40 из 40 задач</span>
+          </a>
+
+          <a href="#course" class="course-card">
+            <div class="course-card__top">
+              <span class="course-card__step">Шаг 2</span>
+              <span class="round-btn" aria-hidden="true">↗</span>
+            </div>
+            <h3 class="course-card__title">Linux</h3>
+            <p class="course-card__text">Файлы и права, пайпы, grep, процессы, переменные окружения.</p>
+            <div class="progress"><div class="progress__bar" style="--value: 0%"></div></div>
+            <span class="course-card__meta">18 задач · не начат</span>
+          </a>
+
+          <a href="#course" class="course-card course-card--accent">
+            <div class="course-card__top">
+              <span class="course-card__step">Шаг 3</span>
+              <span class="badge badge--on-accent">Продолжить</span>
+            </div>
+            <h3 class="course-card__title">SQL</h3>
+            <p class="course-card__text">Создание таблиц, выборка, JOIN, агрегация, оконные функции, индексы.</p>
+            <div class="progress"><div class="progress__bar" style="--value: 44%"></div></div>
+            <span class="course-card__meta">21 из 48 задач</span>
+          </a>
+
+          <a href="#course" class="course-card">
+            <div class="course-card__top">
+              <span class="course-card__step">Шаг 4</span>
+              <span class="round-btn" aria-hidden="true">↗</span>
+            </div>
+            <h3 class="course-card__title">Django ORM</h3>
+            <p class="course-card__text">QuerySet, F и Q, annotate, select_related против N+1.</p>
+            <div class="progress"><div class="progress__bar" style="--value: 0%"></div></div>
+            <span class="course-card__meta">24 задачи · не начат</span>
+          </a>
+
+          <a href="#course" class="course-card">
+            <div class="course-card__top">
+              <span class="course-card__step">Шаг 5</span>
+              <span class="round-btn" aria-hidden="true">↗</span>
+            </div>
+            <h3 class="course-card__title">SQLAlchemy</h3>
+            <p class="course-card__text">Core и ORM 2.0, session, relationship, загрузка связей.</p>
+            <div class="progress"><div class="progress__bar" style="--value: 0%"></div></div>
+            <span class="course-card__meta">20 задач · не начат</span>
+          </a>
+
+          <div class="course-card course-card--soon">
+            <div class="course-card__top">
+              <span class="course-card__step">Шаг 6</span>
+              <span class="badge">Скоро</span>
+            </div>
+            <h3 class="course-card__title">Docker и Nginx</h3>
+            <p class="course-card__text">Контейнеры, сети, volumes, location и proxy_pass.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: КУРС (обзор)  [templates/courses/course_detail.html]
+         ================================================================== -->
+    <section id="course" class="screen">
+      <div class="container">
+        <!-- [templates/common/_breadcrumbs.html] -->
+        <nav class="breadcrumbs" aria-label="Навигация">
+          <a href="#courses">Курсы</a><span>/</span><span aria-current="page">SQL</span>
+        </nav>
+
+        <!-- [templates/courses/components/_course_hero.html] -->
+        <div class="course-hero">
+          <div class="course-hero__text">
+            <div class="tags"><span class="tag">Backend · шаг 3</span><span class="tag">PostgreSQL 16</span><span class="tag">7 разделов · 48 задач</span></div>
+            <h1 class="course-hero__title">SQL</h1>
+            <p>От создания первой таблицы до оконных функций и индексов. Все задачи — на одной учебной базе интернет-магазина.</p>
+          </div>
+          <div class="course-hero__side">
+            <div class="course-hero__progress">
+              <span>Пройдено 21 из 48</span>
+              <div class="progress"><div class="progress__bar" style="--value: 44%"></div></div>
+            </div>
+            <a href="#task" class="btn btn--ink btn--lg">Продолжить <span aria-hidden="true">→</span></a>
+            <span class="course-hero__next">Следующая: «Покупатели без заказов»</span>
+          </div>
+        </div>
+
+        <!-- Заголовок вне сетки — чтобы программа и «О курсе» начинались на одной линии -->
+        <div class="section-head">
+          <h2 class="section-title section-title--sm">Программа курса</h2>
+          <span class="muted small">Раздел → темы → урок и задачи</span>
+        </div>
+
+        <div class="course-layout">
+          <div class="course-main">
+            <!-- [templates/courses/components/_module_list.html] → цикл по _module.html -->
+            <div class="module-list">
+              <details class="module module--done">
+                <summary class="module__head">
+                  <span class="module__num">01</span>
+                  <span class="module__info"><span class="module__title">Знакомство с базами данных</span><span class="module__desc">Таблицы, строки, ключи, типы данных · 2 темы · 5 задач</span></span>
+                  <span class="badge badge--done">✓ Пройден</span>
+                </summary>
+                <ol class="module__topics">
+                  <li class="topic-item topic-item--done"><a href="#lesson">Что такое БД и SQL</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status">✓</span></li>
+                  <li class="topic-item topic-item--done"><a href="#lesson">Типы данных</a><span class="muted">урок · 3 задачи</span><span class="topic-item__status">✓</span></li>
+                </ol>
+              </details>
+              <details class="module module--done">
+                <summary class="module__head">
+                  <span class="module__num">02</span>
+                  <span class="module__info"><span class="module__title">Создание и изменение таблиц</span><span class="module__desc">CREATE TABLE, ограничения, INSERT / UPDATE / DELETE · 3 темы · 9 задач</span></span>
+                  <span class="badge badge--done">✓ Пройден</span>
+                </summary>
+                <ol class="module__topics">
+                  <li class="topic-item topic-item--done"><a href="#lesson">CREATE TABLE и ограничения</a><span class="muted">урок · 3 задачи</span><span class="topic-item__status">✓</span></li>
+                  <li class="topic-item topic-item--done"><a href="#lesson">INSERT, UPDATE, DELETE</a><span class="muted">урок · 4 задачи</span><span class="topic-item__status">✓</span></li>
+                  <li class="topic-item topic-item--done"><a href="#lesson">ALTER и DROP</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status">✓</span></li>
+                </ol>
+              </details>
+              <details class="module module--done">
+                <summary class="module__head">
+                  <span class="module__num">03</span>
+                  <span class="module__info"><span class="module__title">Выборка данных</span><span class="module__desc">SELECT, WHERE, сортировка, NULL · 3 темы · 7 задач</span></span>
+                  <span class="badge badge--done">✓ Пройден</span>
+                </summary>
+                <ol class="module__topics">
+                  <li class="topic-item topic-item--done"><a href="#lesson">SELECT и WHERE</a><span class="muted">урок · 3 задачи</span><span class="topic-item__status">✓</span></li>
+                  <li class="topic-item topic-item--done"><a href="#lesson">Сортировка и LIMIT</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status">✓</span></li>
+                  <li class="topic-item topic-item--done"><a href="#lesson">Работа с NULL</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status">✓</span></li>
+                </ol>
+              </details>
+              <details class="module module--current" open>
+                <summary class="module__head">
+                  <span class="module__num">04</span>
+                  <span class="module__info"><span class="module__title">Связи и объединения</span><span class="module__desc">Внешние ключи, виды JOIN, самосоединение · 3 темы · 8 задач</span></span>
+                  <span class="badge badge--current">1 / 3 темы</span>
+                </summary>
+                <ol class="module__topics">
+                  <li class="topic-item topic-item--done"><a href="#lesson">Ключи и связи</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status">✓</span></li>
+                  <li class="topic-item topic-item--current"><a href="#lesson">Виды JOIN</a><span class="muted">урок · 4 задачи</span><span class="topic-item__status">1 / 4</span></li>
+                  <li class="topic-item"><a href="#lesson">Самосоединение</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status"></span></li>
+                </ol>
+              </details>
+              <details class="module module--todo">
+                <summary class="module__head">
+                  <span class="module__num">05</span>
+                  <span class="module__info"><span class="module__title">Агрегация</span><span class="module__desc">GROUP BY, HAVING, агрегатные функции · 2 темы · 7 задач</span></span>
+                  <span class="badge">0 / 2 тем</span>
+                </summary>
+                <ol class="module__topics">
+                  <li class="topic-item"><a href="#lesson">GROUP BY</a><span class="muted">урок · 4 задачи</span><span class="topic-item__status"></span></li>
+                  <li class="topic-item"><a href="#lesson">HAVING</a><span class="muted">урок · 3 задачи</span><span class="topic-item__status"></span></li>
+                </ol>
+              </details>
+              <details class="module module--todo">
+                <summary class="module__head">
+                  <span class="module__num">06</span>
+                  <span class="module__info"><span class="module__title">Продвинутые запросы</span><span class="module__desc">Подзапросы, CTE, оконные функции · 3 темы · 9 задач</span></span>
+                  <span class="badge">0 / 3 тем</span>
+                </summary>
+                <ol class="module__topics">
+                  <li class="topic-item"><a href="#lesson">Подзапросы</a><span class="muted">урок · 3 задачи</span><span class="topic-item__status"></span></li>
+                  <li class="topic-item"><a href="#lesson">CTE</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status"></span></li>
+                  <li class="topic-item"><a href="#lesson">Оконные функции</a><span class="muted">урок · 4 задачи</span><span class="topic-item__status"></span></li>
+                </ol>
+              </details>
+              <details class="module module--todo">
+                <summary class="module__head">
+                  <span class="module__num">07</span>
+                  <span class="module__info"><span class="module__title">Производительность</span><span class="module__desc">Индексы, EXPLAIN, транзакции · 2 темы · 4 задач</span></span>
+                  <span class="badge">0 / 2 тем</span>
+                </summary>
+                <ol class="module__topics">
+                  <li class="topic-item"><a href="#lesson">Индексы и EXPLAIN</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status"></span></li>
+                  <li class="topic-item"><a href="#lesson">Транзакции</a><span class="muted">урок · 2 задачи</span><span class="topic-item__status"></span></li>
+                </ol>
+              </details>
+            </div>
+          </div>
+
+          <!-- [templates/courses/components/_course_info.html] -->
+          <aside class="sidebar">
+            <div class="sidebar__title">О курсе</div>
+            <dl class="facts">
+              <div><dt>Уровень</dt><dd>С нуля</dd></div>
+              <div><dt>Время</dt><dd>~15 часов</dd></div>
+              <div><dt>Движок</dt><dd>PostgreSQL в браузере</dd></div>
+              <div><dt>Перед курсом</dt><dd><a href="#course">Python</a></dd></div>
+              <div><dt>После курса</dt><dd><a href="#course">Django ORM</a></dd></div>
+            </dl>
+            <div class="sidebar__title sidebar__title--sm">Учебная база</div>
+            <ul class="mini-schema">
+              <li>users</li><li>categories</li><li>products</li><li>orders</li><li>order_items</li><li>reviews</li>
+            </ul>
+            <a href="#playground" class="btn btn--ghost btn--block">Открыть базу в тренажёре</a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: УРОК (теория)  [templates/courses/lesson_detail.html]
+         ================================================================== -->
+    <section id="lesson" class="screen">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Навигация">
+          <a href="#courses">Курсы</a><span>/</span><a href="#course">SQL</a><span>/</span><span aria-current="page">Виды JOIN</span>
+        </nav>
+
+        <div class="course-layout">
+          <!-- [templates/courses/components/_lesson_article.html] — HTML из Markdown -->
+          <article class="article">
+            <div class="article__meta"><span class="tag">Урок</span><span class="muted">7 минут</span></div>
+            <h1 class="article__title">Виды JOIN</h1>
+            <p class="article__lead">Данные о пользователях и заказах лежат в разных таблицах. JOIN собирает их в одну строку результата — вопрос только в том, что делать со строками, у которых нет пары.</p>
+
+            <h2>Как это работает</h2>
+            <p>База берёт каждую строку левой таблицы и ищет ей пару в правой по условию <code>ON</code>. Тип JOIN определяет, что делать, если пары нет.</p>
+
+            <!-- [templates/common/_compare_table.html] -->
+            <div class="table-wrap table-wrap--bordered">
+              <table class="data-table">
+                <thead><tr><th>Тип</th><th>Строки без пары слева</th><th>Строки без пары справа</th></tr></thead>
+                <tbody>
+                  <tr><td>INNER JOIN</td><td>отбрасываются</td><td>отбрасываются</td></tr>
+                  <tr><td>LEFT JOIN</td><td>остаются, справа NULL</td><td>отбрасываются</td></tr>
+                  <tr><td>RIGHT JOIN</td><td>отбрасываются</td><td>остаются, слева NULL</td></tr>
+                  <tr><td>FULL JOIN</td><td>остаются</td><td>остаются</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h2>Пример</h2>
+            <!-- [templates/common/_code_block.html] -->
+            <div class="code-block">
+              <div class="code-block__head"><span>sql</span><button class="code-block__copy">Копировать</button></div>
+              <pre><span class="kw">SELECT</span> u.email, o.id <span class="kw">AS</span> order_id
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id;</pre>
+            </div>
+            <div class="table-wrap table-wrap--bordered">
+              <table class="data-table data-table--compact">
+                <thead><tr><th>email</th><th>order_id</th></tr></thead>
+                <tbody>
+                  <tr><td>anna@example.com</td><td>1</td></tr>
+                  <tr><td>anna@example.com</td><td>4</td></tr>
+                  <tr><td>dana@example.com</td><td class="null">NULL</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- [templates/common/_callout.html] -->
+            <div class="callout callout--warning">
+              <strong>Частая ошибка.</strong> Условие на правую таблицу в <code>WHERE</code> превращает LEFT JOIN в INNER: строки с NULL отфильтруются. Переносите такое условие в <code>ON</code>.
+            </div>
+
+            <h2>Итого</h2>
+            <ul>
+              <li>INNER — только пары; LEFT — все слева, даже без пары.</li>
+              <li>«Найти строки без пары» = LEFT JOIN + <code>IS NULL</code>.</li>
+              <li>Условия на правую таблицу при LEFT JOIN — в <code>ON</code>.</li>
+            </ul>
+
+
+            <!-- [templates/common/_prev_next.html] -->
+            <nav class="prev-next">
+              <a href="#lesson" class="prev-next__link"><span class="muted">← Назад</span>WHERE и операторы</a>
+              <a href="#task" class="prev-next__link prev-next__link--next"><span class="muted">Дальше →</span>Задачи по JOIN</a>
+            </nav>
+          </article>
+
+              <!-- [templates/common/_side_panel.html] — lesson: заметки + программа курса (_topics_sidebar.html внутри)
+                   Две плашки-аккордеон: открыта одна — вторая свёрнута (details name=...). -->
+              <aside class="side-panel">
+            <details class="side-card" name="lesson-side">
+              <summary class="side-card__head"><span class="side-card__title">Заметка</span><span class="side-card__meta">попадёт в «Шпаргалки → SQL → Виды JOIN»</span></summary>
+              <div class="side-card__body">
+                <!-- [templates/common/_note_editor.html] — заметка → попадает в Шпаргалки (курс → тема) -->
+                <div class="note-editor">
+                  <!-- Заголовок пишет пользователь. Тема определяется сама: тема урока/задачи или «Из тренажёра» -->
+                  <div class="note-editor__meta">
+                    <label class="note-editor__label" for="note-title-1">Тема заметки</label>
+                    <input class="note-editor__title" id="note-title-1" type="text" value="LEFT JOIN и строки без пары" placeholder="О чём заметка? Например: LEFT JOIN и NULL">
+                  </div>
+                  <div class="note-editor__toolbar" role="toolbar" aria-label="Форматирование">
+                    <button title="Заголовок">H</button>
+                    <button title="Жирный"><b>B</b></button>
+                    <button title="Курсив"><i>I</i></button>
+                    <button title="Подчёркнутый"><u>U</u></button>
+                    <button title="Зачёркнутый"><s>S</s></button>
+                    <span class="note-editor__sep"></span>
+                    <button title="Список">•≡</button>
+                    <button title="Нумерованный список">1≡</button>
+                    <button title="Код">&lt;/&gt;</button>
+                  </div>
+                  <div class="note-editor__area" contenteditable="true" spellcheck="true">
+                    <p><b>LEFT JOIN + IS NULL</b> — найти строки без пары.</p>
+                    <ul>
+                      <li>условие на правую таблицу — в <code>ON</code></li>
+                      <li><i>не</i> в <code>WHERE</code>, иначе получится <u>INNER</u></li>
+                    </ul>
+                  </div>
+                  <div class="note-editor__foot">
+                    <span class="muted small">→ SQL · Виды JOIN</span>
+                    <button class="btn btn--accent btn--sm">Сохранить</button>
+                  </div>
+                </div>
+                <a href="#cheatsheet" class="side-card__link">В шпаргалке по этой теме уже 2 →</a>
+              </div>
+            </details>
+            <details class="side-card" name="lesson-side" open>
+              <summary class="side-card__head"><span class="side-card__title">Программа курса</span><span class="side-card__meta">SQL · 21 / 48</span></summary>
+              <div class="side-card__body">
+                <div class="progress"><div class="progress__bar" style="--value: 44%"></div></div>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">1</span><span class="module-nav__title">Знакомство с базами данных</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>Что такое БД и SQL <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Что такое БД и SQL</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Типы данных <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Типы данных</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">2</span><span class="module-nav__title">Создание и изменение таблиц</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>CREATE TABLE и ограничения <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: CREATE TABLE и ограничения</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>INSERT, UPDATE, DELETE <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: INSERT, UPDATE, DELETE</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>ALTER и DROP <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: ALTER и DROP</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">3</span><span class="module-nav__title">Выборка данных</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>SELECT и WHERE <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: SELECT и WHERE</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Сортировка и LIMIT <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Сортировка и LIMIT</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Работа с NULL <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Работа с NULL</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--current" open>
+              <summary><span class="module-nav__num">4</span><span class="module-nav__title">Связи и объединения</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Ключи и связи <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Ключи и связи</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic" open>
+                <summary>Виды JOIN <span class="topic__count">1/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--current"><a href="#lesson">Теория: виды JOIN</a></li>
+                  <li class="lesson lesson--done"><a href="#task">INNER JOIN: товары с категориями</a></li>
+                  <li class="lesson"><a href="#task">Покупатели без заказов</a></li>
+                  <li class="lesson"><a href="#task">Товары без отзывов</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Самосоединение <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Самосоединение</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">5</span><span class="module-nav__title">Агрегация</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>GROUP BY <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: GROUP BY</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>HAVING <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: HAVING</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">6</span><span class="module-nav__title">Продвинутые запросы</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Подзапросы <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Подзапросы</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>CTE <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: CTE</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Оконные функции <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Оконные функции</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">7</span><span class="module-nav__title">Производительность</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Индексы и EXPLAIN <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Индексы и EXPLAIN</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Транзакции <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Транзакции</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+              </div>
+            </details>
+              </aside>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: ЗАДАЧА  [templates/trainers/exercise_detail.html]
+         ================================================================== -->
+    <section id="task" class="screen">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Навигация">
+          <a href="#courses">Курсы</a><span>/</span><a href="#course">SQL</a><span>/</span><span aria-current="page">Покупатели без заказов</span>
+        </nav>
+
+        <div class="course-layout">
+          <div class="course-main">
+            <!-- [templates/trainers/components/_task_card.html] -->
+            <article class="task">
+              <div class="task__head">
+                <div class="tags"><span class="tag">Задача 14</span><span class="tag tag--level-2">Средняя</span></div>
+                <div class="task__nav">
+                  <a href="#task" class="round-btn round-btn--sm" aria-label="Предыдущая">←</a>
+                  <a href="#task" class="round-btn round-btn--sm" aria-label="Следующая">→</a>
+                </div>
+              </div>
+              <h1 class="task__title">Покупатели без заказов</h1>
+              <p class="task__text">Выведите <code>id</code> и <code>email</code> пользователей, которые ни разу не оформили заказ. Отсортируйте по <code>id</code>.</p>
+              <details class="hint">
+                <summary>Подсказка 1 из 2</summary>
+                <p>Подойдёт <code>LEFT JOIN</code> и проверка на <code>NULL</code> со стороны заказов.</p>
+              </details>
+            </article>
+
+            <!-- [templates/trainers/components/_workspace.html]
+                 Вкладки синтаксиса: SQL / Django ORM / SQLAlchemy -->
+            <div class="workspace tabset">
+              <input type="radio" name="task-lang" id="task-lang-sql" class="tabset__radio" checked>
+              <input type="radio" name="task-lang" id="task-lang-dj" class="tabset__radio">
+              <input type="radio" name="task-lang" id="task-lang-sa" class="tabset__radio">
+              <div class="tabs" role="tablist">
+                <label for="task-lang-sql" class="tab">SQL</label>
+                <label for="task-lang-dj" class="tab">Django ORM</label>
+                <label for="task-lang-sa" class="tab">SQLAlchemy</label>
+                <span class="engine-badge"><span class="dot dot--ok"></span>Движок готов</span>
+              </div>
+
+              <div class="tabset__panels">
+                <div class="editor">
+                  <div class="editor__gutter" aria-hidden="true">1<br>2<br>3<br>4<br>5</div>
+                  <pre class="editor__code" contenteditable="true" spellcheck="false"><span class="kw">SELECT</span> u.id, u.email
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id
+<span class="kw">WHERE</span> o.id <span class="kw">IS NULL</span>
+<span class="kw">ORDER BY</span> u.id;</pre>
+                </div>
+                <div class="editor">
+                  <div class="editor__gutter" aria-hidden="true">1<br>2<br>3<br>4</div>
+                  <pre class="editor__code" contenteditable="true" spellcheck="false">User.objects
+    .<span class="fn">filter</span>(orders__isnull=<span class="kw">True</span>)
+    .<span class="fn">order_by</span>(<span class="str">'id'</span>)
+    .<span class="fn">values</span>(<span class="str">'id'</span>, <span class="str">'email'</span>)</pre>
+                </div>
+                <div class="editor">
+                  <div class="editor__gutter" aria-hidden="true">1<br>2<br>3<br>4<br>5</div>
+                  <pre class="editor__code" contenteditable="true" spellcheck="false">stmt = (
+    <span class="fn">select</span>(User.id, User.email)
+    .<span class="fn">outerjoin</span>(User.orders)
+    .<span class="fn">where</span>(Order.id.<span class="fn">is_</span>(<span class="kw">None</span>))
+    .<span class="fn">order_by</span>(User.id)
+)</pre>
+                </div>
+              </div>
+
+              <div class="toolbar">
+                <button class="btn btn--accent">Запустить <kbd>Ctrl ↵</kbd></button>
+                <button class="btn btn--ink">Проверить</button>
+                <button class="btn btn--ghost">Сбросить</button>
+                <button class="btn btn--ghost toolbar__right">Пошагово</button>
+              </div>
+            </div>
+
+            <!-- [templates/common/_alert.html] — варианты: success / error / loading -->
+            <div class="alert alert--success">
+              <span class="alert__icon">✓</span>
+              <div><strong>Верно!</strong> Результат совпал с эталоном. <a href="#task">Следующая задача →</a></div>
+            </div>
+            <div class="alert alert--error">
+              <span class="alert__icon">!</span>
+              <div><strong>Ошибка:</strong> <code>column "o.idd" does not exist</code> — строка 4</div>
+            </div>
+            <div class="alert alert--loading">
+              <span class="spinner" aria-hidden="true"></span>
+              <div>Подготовка среды: загружаем Python… <span class="muted">первый раз ~5 сек, дальше из кэша</span></div>
+            </div>
+
+            <!-- [templates/trainers/components/_result_panel.html]
+                 Вкладки результата: Результат / Ожидается / Схема / SQL-запрос -->
+            <div class="result tabset">
+              <input type="radio" name="task-res" id="task-res-out" class="tabset__radio" checked>
+              <input type="radio" name="task-res" id="task-res-exp" class="tabset__radio">
+              <input type="radio" name="task-res" id="task-res-schema" class="tabset__radio">
+              <input type="radio" name="task-res" id="task-res-sql" class="tabset__radio">
+              <div class="tabs" role="tablist">
+                <label for="task-res-out" class="tab">Результат</label>
+                <label for="task-res-exp" class="tab">Ожидается</label>
+                <label for="task-res-schema" class="tab">Схема</label>
+                <label for="task-res-sql" class="tab">SQL-запрос</label>
+                <span class="result__meta">3 строки · 4 мс</span>
+              </div>
+
+              <div class="tabset__panels">
+                <div class="db-stage">
+                  <div class="db-table">
+                    <div class="db-table__name">результат</div>
+                    <div class="table-wrap"><table class="data-table">
+                    <thead><tr><th>id <span class="type">int</span></th><th>email <span class="type">text</span></th></tr></thead>
+                    <tbody>
+                      <tr><td>4</td><td>dana@example.com</td></tr>
+                      <tr><td>7</td><td>gleb@example.com</td></tr>
+                      <tr><td>11</td><td>kirill@example.com</td></tr>
+                    </tbody>
+                  </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="db-stage">
+                  <div class="db-table">
+                    <div class="db-table__name">ожидается (эталон)</div>
+                    <div class="table-wrap"><table class="data-table">
+                    <thead><tr><th>id <span class="type">int</span></th><th>email <span class="type">text</span></th></tr></thead>
+                    <tbody>
+                      <tr><td>4</td><td>dana@example.com</td></tr>
+                      <tr><td>7</td><td>gleb@example.com</td></tr>
+                      <tr><td>11</td><td>kirill@example.com</td></tr>
+                    </tbody>
+                  </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- [templates/trainers/components/_schema.html] -->
+                <div class="schema">
+                  <div class="schema-table">
+                    <div class="schema-table__name">users</div>
+                    <ul>
+                      <li><span class="pk">PK</span> id <span class="type">int</span></li>
+                      <li>email <span class="type">text</span></li>
+                      <li>city <span class="type">text?</span></li>
+                    </ul>
+                  </div>
+                  <div class="schema-link" aria-hidden="true">1 — N</div>
+                  <div class="schema-table schema-table--active">
+                    <div class="schema-table__name">orders</div>
+                    <ul>
+                      <li><span class="pk">PK</span> id <span class="type">int</span></li>
+                      <li><span class="fk">FK</span> user_id <span class="type">int</span></li>
+                      <li>status <span class="type">text</span></li>
+                      <li>created_at <span class="type">timestamp</span></li>
+                    </ul>
+                  </div>
+                </div>
+
+                <pre class="sql-output"><span class="cm">-- SQL, который сгенерировал Django ORM</span>
+<span class="kw">SELECT</span> "users"."id", "users"."email"
+<span class="kw">FROM</span> "users"
+<span class="kw">LEFT OUTER JOIN</span> "orders" <span class="kw">ON</span> ("users"."id" = "orders"."user_id")
+<span class="kw">WHERE</span> "orders"."id" <span class="kw">IS NULL</span>
+<span class="kw">ORDER BY</span> "users"."id" <span class="kw">ASC</span></pre>
+              </div>
+            </div>
+          </div>
+
+              <!-- [templates/common/_side_panel.html] — task: заметки + программа курса (_topics_sidebar.html внутри)
+                   Две плашки-аккордеон: открыта одна — вторая свёрнута (details name=...). -->
+              <aside class="side-panel">
+            <details class="side-card" name="task-side">
+              <summary class="side-card__head"><span class="side-card__title">Заметка</span><span class="side-card__meta">попадёт в «Шпаргалки → SQL → Виды JOIN»</span></summary>
+              <div class="side-card__body">
+                <!-- [templates/common/_note_editor.html] — заметка → попадает в Шпаргалки (курс → тема) -->
+                <div class="note-editor">
+                  <!-- Заголовок пишет пользователь. Тема определяется сама: тема урока/задачи или «Из тренажёра» -->
+                  <div class="note-editor__meta">
+                    <label class="note-editor__label" for="note-title-2">Тема заметки</label>
+                    <input class="note-editor__title" id="note-title-2" type="text" value="LEFT JOIN и строки без пары" placeholder="О чём заметка? Например: LEFT JOIN и NULL">
+                  </div>
+                  <div class="note-editor__toolbar" role="toolbar" aria-label="Форматирование">
+                    <button title="Заголовок">H</button>
+                    <button title="Жирный"><b>B</b></button>
+                    <button title="Курсив"><i>I</i></button>
+                    <button title="Подчёркнутый"><u>U</u></button>
+                    <button title="Зачёркнутый"><s>S</s></button>
+                    <span class="note-editor__sep"></span>
+                    <button title="Список">•≡</button>
+                    <button title="Нумерованный список">1≡</button>
+                    <button title="Код">&lt;/&gt;</button>
+                  </div>
+                  <div class="note-editor__area" contenteditable="true" spellcheck="true">
+                    <p><b>LEFT JOIN + IS NULL</b> — найти строки без пары.</p>
+                    <ul>
+                      <li>условие на правую таблицу — в <code>ON</code></li>
+                      <li><i>не</i> в <code>WHERE</code>, иначе получится <u>INNER</u></li>
+                    </ul>
+                  </div>
+                  <div class="note-editor__foot">
+                    <span class="muted small">→ SQL · Виды JOIN</span>
+                    <button class="btn btn--accent btn--sm">Сохранить</button>
+                  </div>
+                </div>
+                <a href="#cheatsheet" class="side-card__link">В шпаргалке по этой теме уже 2 →</a>
+              </div>
+            </details>
+            <details class="side-card" name="task-side" open>
+              <summary class="side-card__head"><span class="side-card__title">Программа курса</span><span class="side-card__meta">SQL · 21 / 48</span></summary>
+              <div class="side-card__body">
+                <div class="progress"><div class="progress__bar" style="--value: 44%"></div></div>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">1</span><span class="module-nav__title">Знакомство с базами данных</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>Что такое БД и SQL <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Что такое БД и SQL</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Типы данных <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Типы данных</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">2</span><span class="module-nav__title">Создание и изменение таблиц</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>CREATE TABLE и ограничения <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: CREATE TABLE и ограничения</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>INSERT, UPDATE, DELETE <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: INSERT, UPDATE, DELETE</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>ALTER и DROP <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: ALTER и DROP</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">3</span><span class="module-nav__title">Выборка данных</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>SELECT и WHERE <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: SELECT и WHERE</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Сортировка и LIMIT <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Сортировка и LIMIT</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Работа с NULL <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Работа с NULL</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--current" open>
+              <summary><span class="module-nav__num">4</span><span class="module-nav__title">Связи и объединения</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Ключи и связи <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Ключи и связи</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic" open>
+                <summary>Виды JOIN <span class="topic__count">1/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: виды JOIN</a></li>
+                  <li class="lesson lesson--done"><a href="#task">INNER JOIN: товары с категориями</a></li>
+                  <li class="lesson lesson--current"><a href="#task">Покупатели без заказов</a></li>
+                  <li class="lesson"><a href="#task">Товары без отзывов</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Самосоединение <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Самосоединение</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">5</span><span class="module-nav__title">Агрегация</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>GROUP BY <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: GROUP BY</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>HAVING <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: HAVING</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">6</span><span class="module-nav__title">Продвинутые запросы</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Подзапросы <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Подзапросы</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>CTE <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: CTE</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Оконные функции <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Оконные функции</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">7</span><span class="module-nav__title">Производительность</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Индексы и EXPLAIN <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Индексы и EXPLAIN</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Транзакции <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Транзакции</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+              </div>
+            </details>
+              </aside>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: ШПАРГАЛКИ (список)  [templates/cheatsheets/cheatsheet_list.html]
+         ================================================================== -->
+    <section id="cheatsheets" class="screen">
+      <div class="container">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Шпаргалки</h1>
+            <p class="muted">Ваши заметки, собранные по курсам и темам.</p>
+          </div>
+          <form class="search search--light" role="search">
+            <input class="search__input" type="search" placeholder="Найти в своих заметках…">
+          </form>
+        </div>
+
+        <!-- [templates/cheatsheets/components/_how_it_works.html] -->
+        <ol class="how-steps">
+          <li><b>Пишете заметку</b> в правой панели урока, задачи или тренажёра: заголовок и текст.</li>
+          <li><b>Сохраняете</b> — она попадает в шпаргалку этого курса, в ту тему, где вы её написали.</li>
+          <li><b>Повторяете</b> — открываете курс здесь и видите все свои выписки по темам.</li>
+        </ol>
+
+        <!-- [templates/cheatsheets/components/_sheet_grid.html] → common/_sheet_card.html
+             Одна карточка на курс, порядок — как в программе направления. -->
+        <div class="sheet-grid">
+          <a href="#cheatsheet" class="sheet-card">
+            <div class="sheet-card__top"><span class="course-card__step">Шаг 1</span><span class="badge">7 заметок</span></div>
+            <h3 class="sheet-card__title">Python</h3>
+            <div class="sheet-card__topics"><span>Генераторы</span><span>dict и set</span><span>Декораторы</span><span>+1</span></div>
+            <span class="sheet-card__meta">4 темы · обновлено 2 недели назад</span>
+          </a>
+          <div class="sheet-card sheet-card--empty">
+            <div class="sheet-card__top"><span class="course-card__step">Шаг 2</span><span class="badge">0</span></div>
+            <h3 class="sheet-card__title">Linux</h3>
+            <p class="muted small">Пока пусто. Заметки появятся, когда вы напишете их в курсе или тренажёре Linux.</p>
+          </div>
+          <a href="#cheatsheet" class="sheet-card sheet-card--accent">
+            <div class="sheet-card__top"><span class="course-card__step">Шаг 3</span><span class="badge badge--on-accent">6 заметок</span></div>
+            <h3 class="sheet-card__title">SQL</h3>
+            <div class="sheet-card__topics"><span>Работа с NULL</span><span>Виды JOIN</span><span>GROUP BY</span><span>+2</span></div>
+            <span class="sheet-card__meta">5 тем · обновлено вчера</span>
+          </a>
+          <a href="#cheatsheet" class="sheet-card">
+            <div class="sheet-card__top"><span class="course-card__step">Шаг 4</span><span class="badge">1 заметка</span></div>
+            <h3 class="sheet-card__title">Django ORM</h3>
+            <div class="sheet-card__topics"><span>N+1 и select_related</span></div>
+            <span class="sheet-card__meta">1 тема · обновлено вчера</span>
+          </a>
+          <div class="sheet-card sheet-card--empty">
+            <div class="sheet-card__top"><span class="course-card__step">Шаг 5</span><span class="badge">0</span></div>
+            <h3 class="sheet-card__title">SQLAlchemy</h3>
+            <p class="muted small">Пока пусто.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: ШПАРГАЛКА  [templates/cheatsheets/cheatsheet_detail.html]
+         ================================================================== -->
+    <section id="cheatsheet" class="screen">
+      <div class="container">
+        <nav class="breadcrumbs" aria-label="Навигация">
+          <a href="#cheatsheets">Шпаргалки</a><span>/</span><span aria-current="page">SQL</span>
+        </nav>
+
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Шпаргалка: SQL</h1>
+            <p class="muted">6 заметок в 5 темах · обновлено вчера</p>
+          </div>
+          <a href="#course" class="btn btn--ghost">Курс SQL →</a>
+        </div>
+
+        <!-- [templates/cheatsheets/components/_sheet_topics.html]
+             Карточка = тема курса (заголовок — ссылка на теорию).
+             Внутри — заметки пользователя: виден заголовок, по клику разворачивается. -->
+        <div class="sheet-sections">
+
+          <section class="sheet-section">
+            <span class="sheet-section__label">Раздел 3 · Выборка данных</span>
+            <h2 class="sheet-section__title"><a href="#lesson" title="Открыть теорию">Работа с NULL <span aria-hidden="true">↗</span></a><span class="badge">1</span></h2>
+            <!-- [templates/cheatsheets/components/_sheet_note.html] -->
+            <details class="sheet-note">
+              <summary class="sheet-note__head">
+                <span class="sheet-note__title">NULL не сравнивают через =</span>
+                <span class="sheet-note__date">5 дней назад</span>
+              </summary>
+              <div class="sheet-note__body">
+                <p><code>city = NULL</code> всегда даёт <b>не true</b>, строки пропадут молча.</p>
+                <p>Правильно: <code>IS NULL</code> / <code>IS NOT NULL</code>.</p>
+              </div>
+              <footer class="sheet-note__foot"><a href="#task">из задачи «Город не указан»</a><span class="sheet-note__actions"><button title="Редактировать">✎</button><button title="Удалить">✕</button></span></footer>
+            </details>
+          </section>
+
+          <section class="sheet-section">
+            <span class="sheet-section__label">Раздел 4 · Связи и объединения</span>
+            <h2 class="sheet-section__title"><a href="#lesson" title="Открыть теорию">Виды JOIN <span aria-hidden="true">↗</span></a><span class="badge">2</span></h2>
+            <details class="sheet-note">
+              <summary class="sheet-note__head">
+                <span class="sheet-note__title">LEFT JOIN и строки без пары</span>
+                <span class="sheet-note__date">2 дня назад</span>
+              </summary>
+              <div class="sheet-note__body">
+                <p><b>LEFT JOIN + IS NULL</b> — найти строки без пары.</p>
+                <ul>
+                  <li>условие на правую таблицу — в <code>ON</code></li>
+                  <li><i>не</i> в <code>WHERE</code>, иначе получится <u>INNER</u></li>
+                </ul>
+              </div>
+              <footer class="sheet-note__foot"><a href="#lesson">из урока «Виды JOIN»</a><span class="sheet-note__actions"><button title="Редактировать">✎</button><button title="Удалить">✕</button></span></footer>
+            </details>
+            <details class="sheet-note">
+              <summary class="sheet-note__head">
+                <span class="sheet-note__title">Мои грабли с NOT IN</span>
+                <span class="sheet-note__date">2 дня назад</span>
+              </summary>
+              <div class="sheet-note__body">
+                <p>Если в подзапросе есть NULL, <code>NOT IN</code> вернёт <b>пусто</b>. Лучше <code>NOT EXISTS</code> или LEFT JOIN.</p>
+              </div>
+              <footer class="sheet-note__foot"><a href="#task">из задачи «Покупатели без заказов»</a><span class="sheet-note__actions"><button title="Редактировать">✎</button><button title="Удалить">✕</button></span></footer>
+            </details>
+          </section>
+
+          <section class="sheet-section">
+            <span class="sheet-section__label">Раздел 5 · Агрегация</span>
+            <h2 class="sheet-section__title"><a href="#lesson" title="Открыть теорию">GROUP BY <span aria-hidden="true">↗</span></a><span class="badge">1</span></h2>
+            <details class="sheet-note">
+              <summary class="sheet-note__head">
+                <span class="sheet-note__title">WHERE или HAVING</span>
+                <span class="sheet-note__date">вчера</span>
+              </summary>
+              <div class="sheet-note__body">
+                <ol>
+                  <li><code>WHERE</code> — фильтрует <b>строки</b> до группировки</li>
+                  <li><code>HAVING</code> — фильтрует <b>группы</b> после</li>
+                </ol>
+              </div>
+              <footer class="sheet-note__foot"><a href="#lesson">из урока «GROUP BY»</a><span class="sheet-note__actions"><button title="Редактировать">✎</button><button title="Удалить">✕</button></span></footer>
+            </details>
+          </section>
+
+          <!-- Пример большой заметки: развёрнута, чтобы было видно форматирование -->
+          <section class="sheet-section">
+            <span class="sheet-section__label">Раздел 7 · Производительность</span>
+            <h2 class="sheet-section__title"><a href="#lesson" title="Открыть теорию">Индексы и EXPLAIN <span aria-hidden="true">↗</span></a><span class="badge">1</span></h2>
+            <details class="sheet-note" open>
+              <summary class="sheet-note__head">
+                <span class="sheet-note__title">Почему мой индекс не работает — разбор</span>
+                <span class="sheet-note__date">вчера</span>
+              </summary>
+              <div class="sheet-note__body">
+                <h4>Как проверить</h4>
+                <p>Смотрю план запроса через <code>EXPLAIN ANALYZE</code>. Если вижу <b>Seq Scan</b> по большой таблице — индекс не используется. <b>Index Scan</b> или <b>Bitmap Index Scan</b> — всё ок.</p>
+                <pre><span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> user_id = <span class="num">42</span>;</pre>
+
+                <h4>Когда индекс НЕ используется</h4>
+                <ol>
+                  <li><b>Функция над колонкой</b>: <code>WHERE lower(email) = '…'</code> — обычный индекс по <code>email</code> не поможет. Нужен индекс по выражению: <code>CREATE INDEX ON users (lower(email))</code>.</li>
+                  <li><b>LIKE с % в начале</b>: <code>LIKE '%ноут'</code> — B-tree бессилен, <code>LIKE 'ноут%'</code> — работает.</li>
+                  <li><b>Таблица маленькая</b> — планировщику быстрее прочитать всё подряд. Это <u>нормально</u>, не баг.</li>
+                  <li><b>Выбирается большая часть строк</b> (например, <code>status = 'paid'</code> у 90% заказов) — тоже Seq Scan.</li>
+                  <li><b>Разные типы</b>: сравниваю <code>int</code> с <code>text</code> — индекс игнорируется.</li>
+                </ol>
+
+                <h4>Составной индекс</h4>
+                <p>Индекс <code>(user_id, created_at)</code> работает для:</p>
+                <ul>
+                  <li><code>WHERE user_id = 1</code> ✓</li>
+                  <li><code>WHERE user_id = 1 AND created_at &gt; …</code> ✓</li>
+                  <li><code>WHERE created_at &gt; …</code> ✗ — <i>левая колонка не указана</i></li>
+                </ul>
+
+                <h4>Запомнить</h4>
+                <p><s>Индекс на каждую колонку</s> — плохая идея: каждый индекс замедляет <code>INSERT</code> и <code>UPDATE</code> и занимает место. Индексирую то, по чему <b>реально ищу</b> и что видно в медленных запросах.</p>
+              </div>
+              <footer class="sheet-note__foot"><a href="#lesson">из урока «Индексы и EXPLAIN»</a><span class="sheet-note__actions"><button title="Редактировать">✎</button><button title="Удалить">✕</button></span></footer>
+            </details>
+          </section>
+
+          <!-- Заметки, написанные в тренажёре SQL, — своя группа -->
+          <section class="sheet-section">
+            <span class="sheet-section__label">Тренажёр SQL</span>
+            <h2 class="sheet-section__title"><a href="#playground" title="Открыть тренажёр">Из тренажёра <span aria-hidden="true">↗</span></a><span class="badge">1</span></h2>
+            <details class="sheet-note">
+              <summary class="sheet-note__head">
+                <span class="sheet-note__title">RETURNING экономит запрос</span>
+                <span class="sheet-note__date">3 дня назад</span>
+              </summary>
+              <div class="sheet-note__body">
+                <p><code>INSERT … RETURNING id</code> — сразу получаю id новой строки, без второго SELECT.</p>
+              </div>
+              <footer class="sheet-note__foot"><a href="#playground">из тренажёра SQL</a><span class="sheet-note__actions"><button title="Редактировать">✎</button><button title="Удалить">✕</button></span></footer>
+            </details>
+          </section>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: ТРЕНАЖЁР (песочница)  [templates/trainers/playground.html]
+         Свободный режим без задач: выбрал движок — пишешь что хочешь.
+         ================================================================== -->
+    <section id="playground" class="screen">
+      <div class="container">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Тренажёр</h1>
+            <p class="muted">Свободная практика без задач. Всё выполняется в твоём браузере.</p>
+          </div>
+          <!-- Сессия: код в localStorage, база PGlite — в IndexedDB браузера -->
+          <div class="session">
+            <span class="dot dot--ok"></span>
+            <span class="small">Сессия сохранена в браузере</span>
+            <button class="btn btn--ghost">Начать заново</button>
+          </div>
+        </div>
+
+        <!-- Вкладки движков: SQL / ORM / Python / Linux -->
+        <div class="tabset">
+          <input type="radio" name="pg-engine" id="pg-sql" class="tabset__radio" checked>
+          <input type="radio" name="pg-engine" id="pg-orm" class="tabset__radio">
+          <input type="radio" name="pg-engine" id="pg-py" class="tabset__radio">
+          <input type="radio" name="pg-engine" id="pg-linux" class="tabset__radio">
+          <div class="tabs tabs--pills" role="tablist">
+            <label for="pg-sql" class="tab">SQL</label>
+            <label for="pg-orm" class="tab">ORM</label>
+            <label for="pg-py" class="tab">Python</label>
+            <label for="pg-linux" class="tab">Linux</label>
+          </div>
+
+          <div class="tabset__panels">
+            <!-- ================= ПАНЕЛЬ: SQL  [templates/trainers/components/_playground_sql.html] -->
+            <div class="playground">
+              <div class="course-main">
+                <div class="workspace">
+                  <div class="tabs">
+                    <span class="tab tab--static">script.sql</span>
+                    <span class="engine-badge"><span class="dot dot--ok"></span>PostgreSQL 16 · база «магазин»</span>
+                  </div>
+                  <div class="editor">
+                    <div class="editor__gutter" aria-hidden="true">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div>
+                    <pre class="editor__code" contenteditable="true" spellcheck="false"><span class="kw">CREATE TABLE</span> tags (
+    id   <span class="kw">serial PRIMARY KEY</span>,
+    name <span class="kw">text UNIQUE NOT NULL</span>
+);
+<span class="kw">INSERT INTO</span> tags (name) <span class="kw">VALUES</span> (<span class="str">'sale'</span>), (<span class="str">'new'</span>);
+<span class="kw">SELECT</span> p.name, c.name <span class="kw">AS</span> category
+<span class="kw">FROM</span> products p
+<span class="kw">JOIN</span> categories c <span class="kw">ON</span> c.id = p.category_id;</pre>
+                  </div>
+                  <div class="toolbar">
+                    <button class="btn btn--accent">Запустить всё <kbd>Ctrl ↵</kbd></button>
+                    <button class="btn btn--ghost">Выполнить выделенное</button>
+                    <button class="btn btn--ghost toolbar__right">Пошагово</button>
+                  </div>
+                </div>
+
+                <!-- [templates/trainers/components/_schema_strip.html] — схема базы под редактором -->
+                <details class="schema-strip">
+                  <summary><span class="schema-strip__title">Схема базы</span><span class="muted small">7 таблиц · нажмите, чтобы раскрыть</span></summary>
+                  <div class="explorer">
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">users</span><span class="explorer__meta">12 строк</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="pk"></span>email <span class="type">text</span></li><li><span class="pk"></span>name <span class="type">text</span></li><li><span class="pk"></span>city <span class="type">text?</span></li></ul>
+                      </details>
+                      <details class="explorer__item" open>
+                        <summary><span class="explorer__name">categories</span><span class="badge badge--current">в запросе</span><span class="explorer__meta">7 строк</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="pk"></span>name <span class="type">text</span></li><li><span class="fk">FK</span>parent_id <span class="type">int?</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">products</span><span class="badge badge--current">в запросе</span><span class="explorer__meta">22 строки</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="fk">FK</span>category_id <span class="type">int</span></li><li><span class="pk"></span>name <span class="type">text</span></li><li><span class="pk"></span>price <span class="type">numeric</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">orders</span><span class="explorer__meta">34 строки</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="fk">FK</span>user_id <span class="type">int</span></li><li><span class="pk"></span>status <span class="type">text</span></li><li><span class="pk"></span>created_at <span class="type">timestamp</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">order_items</span><span class="explorer__meta">81 строка</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="fk">FK</span>order_id <span class="type">int</span></li><li><span class="fk">FK</span>product_id <span class="type">int</span></li><li><span class="pk"></span>quantity <span class="type">int</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">reviews</span><span class="explorer__meta">40 строк</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="fk">FK</span>user_id <span class="type">int</span></li><li><span class="fk">FK</span>product_id <span class="type">int</span></li><li><span class="pk"></span>rating <span class="type">int</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">tags</span><span class="badge badge--done">новая</span><span class="explorer__meta">2 строки</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">serial</span></li><li><span class="pk"></span>name <span class="type">text</span></li></ul>
+                      </details>
+                    <p class="muted small">Нажмите на таблицу — увидите колонки. «в запросе» — участвовала в последнем запуске.</p>
+                  </div>
+                </details>
+
+                <!-- Легенда относится к цветам строк в журнале ниже -->
+                <div class="legend legend--log">
+                  <span>Цвет строк в результатах:</span>
+                  <span><i class="legend__swatch legend__swatch--added"></i>добавлено</span>
+                  <span><i class="legend__swatch legend__swatch--changed"></i>изменено</span>
+                  <span><i class="legend__swatch legend__swatch--removed"></i>удалено</span>
+                </div>
+
+                <!-- [templates/trainers/components/_run_log.html]
+                     Журнал выполнения: одна карточка на каждый запрос скрипта. -->
+                <ol class="run-log">
+                  <!-- DDL → показываем новую таблицу в схеме -->
+                  <li class="run-step">
+                    <div class="run-step__head">
+                      <span class="run-step__num">1</span>
+                      <code>CREATE TABLE tags</code>
+                      <span class="badge badge--done">таблица создана</span>
+                      <span class="run-step__time">2 мс</span>
+                    </div>
+                    <div class="run-step__body">
+                      <div class="schema schema--inline">
+                        <div class="schema-table schema-table--new">
+                          <div class="schema-table__name">tags <span class="schema-table__flag">новая</span></div>
+                          <ul>
+                            <li><span class="pk">PK</span> id <span class="type">serial</span></li>
+                            <li>name <span class="type">text, unique</span></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+
+                  <!-- DML → таблица с подсветкой изменённых строк -->
+                  <li class="run-step">
+                    <div class="run-step__head">
+                      <span class="run-step__num">2</span>
+                      <code>INSERT INTO tags</code>
+                      <span class="badge badge--done">+2 строки</span>
+                      <span class="run-step__time">1 мс</span>
+                    </div>
+                    <div class="run-step__body">
+                      <div class="db-table">
+                        <div class="db-table__name">tags <span class="schema-table__flag">+2 строки</span></div>
+                        <table class="data-table">
+                          <thead><tr><th>id</th><th>name</th></tr></thead>
+                          <tbody>
+                            <tr class="row--added"><td>1</td><td>sale</td></tr>
+                            <tr class="row--added"><td>2</td><td>new</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </li>
+
+                  <!-- SELECT с JOIN → визуализация объединения + результат -->
+                  <li class="run-step">
+                    <div class="run-step__head">
+                      <span class="run-step__num">3</span>
+                      <code>SELECT … JOIN categories</code>
+                      <span class="badge">4 строки</span>
+                      <span class="run-step__time">3 мс</span>
+                    </div>
+                    <div class="run-step__body">
+                      <!-- [templates/trainers/components/_join_viz.html] -->
+                      <div class="join-viz">
+                        <div class="db-table">
+                          <div class="db-table__name">products <span class="db-table__alias">p</span></div>
+                          <table class="data-table">
+                            <thead><tr><th>name</th><th>category_id</th></tr></thead>
+                            <tbody>
+                              <tr class="m1"><td>Ноутбук Air</td><td>1</td></tr>
+                              <tr class="m3"><td>Чехол</td><td>3</td></tr>
+                              <tr class="m2"><td>Смартфон X</td><td>2</td></tr>
+                              <tr class="m1"><td>Ноутбук Pro</td><td>1</td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="join-viz__op">
+                          <span class="join-viz__kind">INNER JOIN</span>
+                          <code>c.id = p.category_id</code>
+                        </div>
+                        <div class="db-table">
+                          <div class="db-table__name">categories <span class="db-table__alias">c</span></div>
+                          <table class="data-table">
+                            <thead><tr><th>id</th><th>name</th></tr></thead>
+                            <tbody>
+                              <tr class="m1"><td>1</td><td>Ноутбуки</td></tr>
+                              <tr class="m2"><td>2</td><td>Смартфоны</td></tr>
+                              <tr class="m3"><td>3</td><td>Аксессуары</td></tr>
+                              <tr class="row--unmatched"><td>4</td><td>Планшеты</td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="db-table db-table--result">
+                        <div class="db-table__name">результат</div>
+                        <table class="data-table">
+                          <thead><tr><th>name</th><th>category</th></tr></thead>
+                          <tbody>
+                            <tr class="m1"><td>Ноутбук Air</td><td>Ноутбуки</td></tr>
+                            <tr class="m3"><td>Чехол</td><td>Аксессуары</td></tr>
+                            <tr class="m2"><td>Смартфон X</td><td>Смартфоны</td></tr>
+                            <tr class="m1"><td>Ноутбук Pro</td><td>Ноутбуки</td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <p class="muted small">Одинаковый цвет — строки совпали по ключу. Серая строка не нашла пары и в INNER JOIN не попала.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- [templates/common/_side_panel.html] — тренажёр SQL
+                   Две плашки-аккордеон: открыта одна — вторая свёрнута (details name=...). -->
+              <aside class="side-panel">
+            <details class="side-card" name="pg-sql-side" open>
+              <summary class="side-card__head"><span class="side-card__title">Заметка</span><span class="side-card__meta">попадёт в «Шпаргалки → SQL → Из тренажёра»</span></summary>
+              <div class="side-card__body">
+                <!-- [templates/common/_note_editor.html] — заметка → попадает в Шпаргалки (курс → тема) -->
+                <div class="note-editor">
+                  <!-- Заголовок пишет пользователь. Тема определяется сама: тема урока/задачи или «Из тренажёра» -->
+                  <div class="note-editor__meta">
+                    <label class="note-editor__label" for="note-title-3">Тема заметки</label>
+                    <input class="note-editor__title" id="note-title-3" type="text" value="LEFT JOIN и строки без пары" placeholder="О чём заметка? Например: LEFT JOIN и NULL">
+                  </div>
+                  <div class="note-editor__toolbar" role="toolbar" aria-label="Форматирование">
+                    <button title="Заголовок">H</button>
+                    <button title="Жирный"><b>B</b></button>
+                    <button title="Курсив"><i>I</i></button>
+                    <button title="Подчёркнутый"><u>U</u></button>
+                    <button title="Зачёркнутый"><s>S</s></button>
+                    <span class="note-editor__sep"></span>
+                    <button title="Список">•≡</button>
+                    <button title="Нумерованный список">1≡</button>
+                    <button title="Код">&lt;/&gt;</button>
+                  </div>
+                  <div class="note-editor__area" contenteditable="true" spellcheck="true">
+                    <p><b>LEFT JOIN + IS NULL</b> — найти строки без пары.</p>
+                    <ul>
+                      <li>условие на правую таблицу — в <code>ON</code></li>
+                      <li><i>не</i> в <code>WHERE</code>, иначе получится <u>INNER</u></li>
+                    </ul>
+                  </div>
+                  <div class="note-editor__foot">
+                    <span class="muted small">→ SQL · Из тренажёра</span>
+                    <button class="btn btn--accent btn--sm">Сохранить</button>
+                  </div>
+                </div>
+                <a href="#cheatsheet" class="side-card__link">В шпаргалке по этой теме уже 2 →</a>
+              </div>
+            </details>
+            <details class="side-card" name="pg-sql-side">
+              <summary class="side-card__head"><span class="side-card__title">Программа курса</span><span class="side-card__meta">SQL · 21 / 48</span></summary>
+              <div class="side-card__body">
+                <div class="progress"><div class="progress__bar" style="--value: 44%"></div></div>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">1</span><span class="module-nav__title">Знакомство с базами данных</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>Что такое БД и SQL <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Что такое БД и SQL</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Типы данных <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Типы данных</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">2</span><span class="module-nav__title">Создание и изменение таблиц</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>CREATE TABLE и ограничения <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: CREATE TABLE и ограничения</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>INSERT, UPDATE, DELETE <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: INSERT, UPDATE, DELETE</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>ALTER и DROP <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: ALTER и DROP</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">3</span><span class="module-nav__title">Выборка данных</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>SELECT и WHERE <span class="topic__count">3/3</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: SELECT и WHERE</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Сортировка и LIMIT <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Сортировка и LIMIT</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Работа с NULL <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Работа с NULL</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--current" open>
+              <summary><span class="module-nav__num">4</span><span class="module-nav__title">Связи и объединения</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Ключи и связи <span class="topic__count">2/2</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Ключи и связи</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic" open>
+                <summary>Виды JOIN <span class="topic__count">1/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: виды JOIN</a></li>
+                  <li class="lesson lesson--done"><a href="#task">INNER JOIN: товары с категориями</a></li>
+                  <li class="lesson lesson--current"><a href="#task">Покупатели без заказов</a></li>
+                  <li class="lesson"><a href="#task">Товары без отзывов</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Самосоединение <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Самосоединение</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">5</span><span class="module-nav__title">Агрегация</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>GROUP BY <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: GROUP BY</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>HAVING <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: HAVING</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">6</span><span class="module-nav__title">Продвинутые запросы</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Подзапросы <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Подзапросы</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>CTE <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: CTE</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Оконные функции <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Оконные функции</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">7</span><span class="module-nav__title">Производительность</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>Индексы и EXPLAIN <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Индексы и EXPLAIN</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Транзакции <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Транзакции</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+                <a href="#cheatsheet" class="side-card__link">Шпаргалка: SQL-запросы →</a>
+              </div>
+            </details>
+              </aside>
+            </div>
+
+            <!-- ================= ПАНЕЛЬ: ORM  [templates/trainers/components/_playground_orm.html] -->
+            <div class="playground">
+              <div class="course-main">
+                <div class="workspace">
+                  <div class="tabs">
+                    <span class="tab tab--static">queries.py</span>
+                    <!-- Переключатель ORM: та же база «магазин», разный синтаксис -->
+                    <span class="seg">
+                      <span class="seg__item seg__item--active">Django ORM</span>
+                      <span class="seg__item">SQLAlchemy</span>
+                    </span>
+                    <span class="engine-badge"><span class="dot dot--ok"></span>база «магазин»</span>
+                  </div>
+                  <div class="editor">
+                    <div class="editor__gutter" aria-hidden="true">1<br>2<br>3<br>4<br>5</div>
+                    <pre class="editor__code" contenteditable="true" spellcheck="false"><span class="kw">from</span> shop.models <span class="kw">import</span> Order
+
+paid = Order.objects.<span class="fn">filter</span>(status=<span class="str">"paid"</span>).<span class="fn">select_related</span>(<span class="str">"user"</span>)
+<span class="kw">for</span> order <span class="kw">in</span> paid[:<span class="num">3</span>]:
+    <span class="fn">print</span>(order.id, order.user.email)</pre>
+                  </div>
+                  <div class="toolbar">
+                    <button class="btn btn--accent">Запустить <kbd>Ctrl ↵</kbd></button>
+                    <button class="btn btn--ghost">Очистить вывод</button>
+                  </div>
+                </div>
+
+                <div class="console">
+                  <div class="console__line console__line--muted">&gt;&gt;&gt; main.py</div>
+                  <div class="console__line">22 anna@example.com</div>
+                  <div class="console__line">23 boris@example.com</div>
+                  <div class="console__line">27 dana@example.com</div>
+                </div>
+
+                <details class="schema-strip">
+                  <summary><span class="schema-strip__title">Модели</span><span class="muted small">5 моделей · нажмите, чтобы раскрыть</span></summary>
+                  <div class="explorer">
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">User</span><span class="explorer__meta">users</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="pk"></span>email <span class="type">str</span></li><li><span class="pk"></span>orders <span class="type">→ Order</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">Category</span><span class="explorer__meta">categories</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="pk"></span>name <span class="type">str</span></li><li><span class="fk">FK</span>parent <span class="type">→ Category</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">Product</span><span class="explorer__meta">products</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="fk">FK</span>category <span class="type">→ Category</span></li><li><span class="pk"></span>price <span class="type">Decimal</span></li></ul>
+                      </details>
+                      <details class="explorer__item" open>
+                        <summary><span class="explorer__name">Order</span><span class="badge badge--current">в запросе</span><span class="explorer__meta">orders</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="fk">FK</span>user <span class="type">→ User</span></li><li><span class="pk"></span>status <span class="type">str</span></li></ul>
+                      </details>
+                      <details class="explorer__item">
+                        <summary><span class="explorer__name">Review</span><span class="explorer__meta">reviews</span></summary>
+                        <ul class="explorer__cols"><li><span class="pk">PK</span>id <span class="type">int</span></li><li><span class="fk">FK</span>product <span class="type">→ Product</span></li><li><span class="pk"></span>rating <span class="type">int</span></li></ul>
+                      </details>
+                    <p class="muted small">Поля-связи (→) можно использовать в select_related и фильтрах через __.</p>
+                  </div>
+                </details>
+
+                <!-- [templates/trainers/components/_orm_queries.html] — какие SQL-запросы ушли в базу -->
+                <ol class="run-log">
+                  <li class="run-step">
+                    <div class="run-step__head">
+                      <span class="run-step__num">1</span>
+                      <code>SELECT … FROM orders INNER JOIN users</code>
+                      <span class="badge badge--done">1 запрос · N+1 нет</span>
+                      <span class="run-step__time">2 мс</span>
+                    </div>
+                    <div class="run-step__body">
+                      <pre class="sql-output"><span class="kw">SELECT</span> "orders"."id", "users"."email"
+<span class="kw">FROM</span> "orders" <span class="kw">INNER JOIN</span> "users" <span class="kw">ON</span> ("orders"."user_id" = "users"."id")
+<span class="kw">WHERE</span> "orders"."status" = <span class="str">'paid'</span> <span class="kw">LIMIT</span> <span class="num">3</span></pre>
+                      <div class="db-table">
+                        <div class="db-table__name">результат</div>
+                      <table class="data-table">
+                        <thead><tr><th>orders.id</th><th>users.email</th></tr></thead>
+                        <tbody>
+                          <tr><td>22</td><td>anna@example.com</td></tr>
+                          <tr><td>23</td><td>boris@example.com</td></tr>
+                          <tr><td>27</td><td>dana@example.com</td></tr>
+                        </tbody>
+                      </table>
+                      </div>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+              <!-- [templates/common/_side_panel.html] — тренажёр ORM
+                   Две плашки-аккордеон: открыта одна — вторая свёрнута (details name=...). -->
+              <aside class="side-panel">
+            <details class="side-card" name="pg-orm-side" open>
+              <summary class="side-card__head"><span class="side-card__title">Заметка</span><span class="side-card__meta">попадёт в «Шпаргалки → Django ORM → Из тренажёра»</span></summary>
+              <div class="side-card__body">
+                <!-- [templates/common/_note_editor.html] — заметка → попадает в Шпаргалки (курс → тема) -->
+                <div class="note-editor">
+                  <!-- Заголовок пишет пользователь. Тема определяется сама: тема урока/задачи или «Из тренажёра» -->
+                  <div class="note-editor__meta">
+                    <label class="note-editor__label" for="note-title-4">Тема заметки</label>
+                    <input class="note-editor__title" id="note-title-4" type="text" value="select_related против N+1" placeholder="О чём заметка? Например: LEFT JOIN и NULL">
+                  </div>
+                  <div class="note-editor__toolbar" role="toolbar" aria-label="Форматирование">
+                    <button title="Заголовок">H</button>
+                    <button title="Жирный"><b>B</b></button>
+                    <button title="Курсив"><i>I</i></button>
+                    <button title="Подчёркнутый"><u>U</u></button>
+                    <button title="Зачёркнутый"><s>S</s></button>
+                    <span class="note-editor__sep"></span>
+                    <button title="Список">•≡</button>
+                    <button title="Нумерованный список">1≡</button>
+                    <button title="Код">&lt;/&gt;</button>
+                  </div>
+                  <div class="note-editor__area" contenteditable="true" spellcheck="true">
+                    <p><b>select_related</b> — JOIN в одном запросе, для ForeignKey.</p>
+                  </div>
+                  <div class="note-editor__foot">
+                    <span class="muted small">→ Django ORM · Из тренажёра</span>
+                    <button class="btn btn--accent btn--sm">Сохранить</button>
+                  </div>
+                </div>
+                <a href="#cheatsheet" class="side-card__link">В шпаргалке по этой теме уже 1 →</a>
+              </div>
+            </details>
+            <details class="side-card" name="pg-orm-side">
+              <summary class="side-card__head"><span class="side-card__title">Программа курса</span><span class="side-card__meta">Django ORM · 0 / 24</span></summary>
+              <div class="side-card__body">
+                <div class="progress"><div class="progress__bar" style="--value: 0%"></div></div>
+            <details class="module-nav module-nav--current" open>
+              <summary><span class="module-nav__num">1</span><span class="module-nav__title">Первые запросы</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>QuerySet и ленивость <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: QuerySet и ленивость</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>filter, exclude, get <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: filter, exclude, get</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">2</span><span class="module-nav__title">Связи</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>ForeignKey и обратные связи <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: ForeignKey и обратные связи</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Фильтры через __ <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Фильтры через __</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">3</span><span class="module-nav__title">Оптимизация</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>N+1 и select_related <span class="topic__count">0/4</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: N+1 и select_related</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>prefetch_related <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: prefetch_related</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">4</span><span class="module-nav__title">Агрегация</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>annotate и aggregate <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: annotate и aggregate</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>F и Q <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: F и Q</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+                <a href="#cheatsheet" class="side-card__link">Шпаргалка: Django ORM →</a>
+              </div>
+            </details>
+              </aside>
+            </div>
+
+            <!-- ================= ПАНЕЛЬ: PYTHON  [templates/trainers/components/_playground_python.html]
+                 Чистый Python без базы данных -->
+            <div class="playground">
+              <div class="course-main">
+                <div class="workspace">
+                  <div class="tabs">
+                    <span class="tab tab--static">main.py</span>
+                    <span class="engine-badge"><span class="spinner spinner--sm"></span>Загружаем Python… первый раз ~5 сек</span>
+                  </div>
+                  <div class="editor">
+                    <div class="editor__gutter" aria-hidden="true">1<br>2<br>3<br>4<br>5<br>6</div>
+                    <pre class="editor__code" contenteditable="true" spellcheck="false"><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">top_methods</span>(log: <span class="fn">list</span>[<span class="fn">str</span>], n: <span class="fn">int</span> = <span class="num">2</span>):
+    <span class="kw">return</span> Counter(line.<span class="fn">split</span>()[<span class="num">0</span>] <span class="kw">for</span> line <span class="kw">in</span> log).<span class="fn">most_common</span>(n)
+
+<span class="fn">print</span>(<span class="fn">top_methods</span>([<span class="str">"GET /"</span>, <span class="str">"POST /api"</span>, <span class="str">"GET /about"</span>]))</pre>
+                  </div>
+                  <div class="toolbar">
+                    <button class="btn btn--accent" disabled>Запустить <kbd>Ctrl ↵</kbd></button>
+                    <button class="btn btn--ghost">Очистить вывод</button>
+                  </div>
+                </div>
+                <div class="console">
+                  <div class="console__line console__line--muted">&gt;&gt;&gt; main.py</div>
+                  <div class="console__line">[('GET', 2), ('POST', 1)]</div>
+                </div>
+              </div>
+              <!-- [templates/common/_side_panel.html] — тренажёр Python
+                   Две плашки-аккордеон: открыта одна — вторая свёрнута (details name=...). -->
+              <aside class="side-panel">
+            <details class="side-card" name="pg-py-side" open>
+              <summary class="side-card__head"><span class="side-card__title">Заметка</span><span class="side-card__meta">попадёт в «Шпаргалки → Python → Из тренажёра»</span></summary>
+              <div class="side-card__body">
+                <!-- [templates/common/_note_editor.html] — заметка → попадает в Шпаргалки (курс → тема) -->
+                <div class="note-editor">
+                  <!-- Заголовок пишет пользователь. Тема определяется сама: тема урока/задачи или «Из тренажёра» -->
+                  <div class="note-editor__meta">
+                    <label class="note-editor__label" for="note-title-5">Тема заметки</label>
+                    <input class="note-editor__title" id="note-title-5" type="text" value="Генератор — одноразовый" placeholder="О чём заметка? Например: LEFT JOIN и NULL">
+                  </div>
+                  <div class="note-editor__toolbar" role="toolbar" aria-label="Форматирование">
+                    <button title="Заголовок">H</button>
+                    <button title="Жирный"><b>B</b></button>
+                    <button title="Курсив"><i>I</i></button>
+                    <button title="Подчёркнутый"><u>U</u></button>
+                    <button title="Зачёркнутый"><s>S</s></button>
+                    <span class="note-editor__sep"></span>
+                    <button title="Список">•≡</button>
+                    <button title="Нумерованный список">1≡</button>
+                    <button title="Код">&lt;/&gt;</button>
+                  </div>
+                  <div class="note-editor__area" contenteditable="true" spellcheck="true">
+                    <p>Генератор проходится <b>один раз</b>.</p>
+                  </div>
+                  <div class="note-editor__foot">
+                    <span class="muted small">→ Python · Из тренажёра</span>
+                    <button class="btn btn--accent btn--sm">Сохранить</button>
+                  </div>
+                </div>
+                <a href="#cheatsheet" class="side-card__link">В шпаргалке по этой теме уже 1 →</a>
+              </div>
+            </details>
+            <details class="side-card" name="pg-py-side">
+              <summary class="side-card__head"><span class="side-card__title">Программа курса</span><span class="side-card__meta">Python · 40 / 40</span></summary>
+              <div class="side-card__body">
+                <div class="progress"><div class="progress__bar" style="--value: 100%"></div></div>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">1</span><span class="module-nav__title">Основы</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>Типы данных <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Типы данных</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Условия и циклы <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Условия и циклы</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">2</span><span class="module-nav__title">Коллекции</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>list и tuple <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: list и tuple</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>dict и set <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: dict и set</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Comprehensions <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Comprehensions</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">3</span><span class="module-nav__title">Функции</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>Аргументы <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Аргументы</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Генераторы <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Генераторы</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Декораторы <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Декораторы</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--done">
+              <summary><span class="module-nav__num">4</span><span class="module-nav__title">ООП</span><span class="topic__count">✓</span></summary>
+              <details class="topic">
+                <summary>Классы <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Классы</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Наследование <span class="topic__count">4/4</span></summary>
+                <ul>
+                  <li class="lesson lesson--done"><a href="#lesson">Теория: Наследование</a></li>
+                  <li class="lesson lesson--done"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+                <a href="#cheatsheet" class="side-card__link">Шпаргалка: Python: коллекции →</a>
+              </div>
+            </details>
+              </aside>
+            </div>
+
+            <!-- ================= ПАНЕЛЬ: LINUX  [templates/trainers/components/_playground_linux.html] -->
+            <div class="playground">
+              <div class="course-main">
+                <div class="terminal">
+                  <div class="terminal__bar"><span></span><span></span><span></span><em>student@lab: ~/project</em></div>
+                  <div class="terminal__body">
+                    <div><span class="terminal__prompt">student@lab:~/project$</span> mkdir -p app/api</div>
+                    <div><span class="terminal__prompt">student@lab:~/project$</span> touch app/api/views.py app/api/urls.py</div>
+                    <div><span class="terminal__prompt">student@lab:~/project$</span> rm debug.log</div>
+                    <div><span class="terminal__prompt">student@lab:~/project$</span> chmod +x manage.py</div>
+                    <div><span class="terminal__prompt">student@lab:~/project$</span> ls -l manage.py</div>
+                    <div class="terminal__out">-rwxr-xr-x  1 student  512  manage.py</div>
+                    <div><span class="terminal__prompt">student@lab:~/project$</span> <span class="terminal__cursor"></span></div>
+                  </div>
+                </div>
+                <!-- [templates/trainers/components/_file_tree.html] — обновляется после каждой команды -->
+                <div class="fs-card">
+                  <div class="db-table__name">Файловая система <span class="db-table__alias">~/project</span></div>
+                  <div class="fs-card__body">
+                    <ul class="file-tree">
+                  <li>📁 project/
+                    <ul>
+                      <li>📁 app/
+                        <ul>
+                          <li class="file--added">📁 api/
+                            <ul>
+                              <li class="file--added">📄 views.py</li>
+                              <li class="file--added">📄 urls.py</li>
+                            </ul>
+                          </li>
+                          <li>📄 settings.py</li>
+                        </ul>
+                      </li>
+                      <li class="file--changed">📄 manage.py <span class="muted">rwx</span></li>
+                      <li class="file--removed">📄 debug.log</li>
+                    </ul>
+                  </li>
+                </ul>
+                <div class="legend">
+                  <span><i class="legend__swatch legend__swatch--added"></i>создано</span>
+                  <span><i class="legend__swatch legend__swatch--changed"></i>изменено</span>
+                  <span><i class="legend__swatch legend__swatch--removed"></i>удалено</span>
+                </div>
+                    <p class="muted small">Симулятор: команды выполняются на виртуальной файловой системе.</p>
+                  </div>
+                </div>
+              </div>
+              <!-- [templates/common/_side_panel.html] — тренажёр Linux
+                   Две плашки-аккордеон: открыта одна — вторая свёрнута (details name=...). -->
+              <aside class="side-panel">
+            <details class="side-card" name="pg-linux-side" open>
+              <summary class="side-card__head"><span class="side-card__title">Заметка</span><span class="side-card__meta">попадёт в «Шпаргалки → Linux → Из тренажёра»</span></summary>
+              <div class="side-card__body">
+                <!-- [templates/common/_note_editor.html] — заметка → попадает в Шпаргалки (курс → тема) -->
+                <div class="note-editor">
+                  <!-- Заголовок пишет пользователь. Тема определяется сама: тема урока/задачи или «Из тренажёра» -->
+                  <div class="note-editor__meta">
+                    <label class="note-editor__label" for="note-title-6">Тема заметки</label>
+                    <input class="note-editor__title" id="note-title-6" type="text" value="Права на запуск" placeholder="О чём заметка? Например: LEFT JOIN и NULL">
+                  </div>
+                  <div class="note-editor__toolbar" role="toolbar" aria-label="Форматирование">
+                    <button title="Заголовок">H</button>
+                    <button title="Жирный"><b>B</b></button>
+                    <button title="Курсив"><i>I</i></button>
+                    <button title="Подчёркнутый"><u>U</u></button>
+                    <button title="Зачёркнутый"><s>S</s></button>
+                    <span class="note-editor__sep"></span>
+                    <button title="Список">•≡</button>
+                    <button title="Нумерованный список">1≡</button>
+                    <button title="Код">&lt;/&gt;</button>
+                  </div>
+                  <div class="note-editor__area" contenteditable="true" spellcheck="true">
+                    <p><code>chmod +x</code> — сделать файл исполняемым.</p>
+                  </div>
+                  <div class="note-editor__foot">
+                    <span class="muted small">→ Linux · Из тренажёра</span>
+                    <button class="btn btn--accent btn--sm">Сохранить</button>
+                  </div>
+                </div>
+                <span class="muted small">В этой теме пока нет заметок.</span>
+              </div>
+            </details>
+            <details class="side-card" name="pg-linux-side">
+              <summary class="side-card__head"><span class="side-card__title">Программа курса</span><span class="side-card__meta">Linux · 0 / 18</span></summary>
+              <div class="side-card__body">
+                <div class="progress"><div class="progress__bar" style="--value: 0%"></div></div>
+            <details class="module-nav module-nav--current" open>
+              <summary><span class="module-nav__num">1</span><span class="module-nav__title">Файлы и папки</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>ls, cd, pwd <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: ls, cd, pwd</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>mkdir, touch, rm <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: mkdir, touch, rm</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">2</span><span class="module-nav__title">Права</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>chmod <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: chmod</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>chown и группы <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: chown и группы</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">3</span><span class="module-nav__title">Поиск и текст</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>grep и find <span class="topic__count">0/3</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: grep и find</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Пайпы <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Пайпы</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+            <details class="module-nav module-nav--todo">
+              <summary><span class="module-nav__num">4</span><span class="module-nav__title">Процессы</span><span class="topic__count"></span></summary>
+              <details class="topic">
+                <summary>ps и kill <span class="topic__count">0/2</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: ps и kill</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+              <details class="topic">
+                <summary>Переменные окружения <span class="topic__count">0/1</span></summary>
+                <ul>
+                  <li class="lesson"><a href="#lesson">Теория: Переменные окружения</a></li>
+                  <li class="lesson"><a href="#task">Практика</a></li>
+                </ul>
+              </details>
+            </details>
+                <a href="#cheatsheet" class="side-card__link">Шпаргалка: Linux-команды →</a>
+              </div>
+            </details>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: О ПРОЕКТЕ  [templates/about/about.html]
+         ================================================================== -->
+    <section id="about" class="screen">
+      <div class="container stack-xl">
+        <!-- [templates/about/components/_about_hero.html] -->
+        <div class="about-hero">
+          <span class="eyebrow">О проекте</span>
+          <h1 class="page-title page-title--xl">Теория, практика и свои шпаргалки — в одном месте</h1>
+          <p class="about-hero__lead">Проект вырос из личной боли: материалы для повторения разбросаны по десяткам сайтов, а потрогать SQL или ORM руками негде без установки. Здесь курс, тренажёр и заметки живут рядом. Сейчас открыто направление Backend на Python, дальше — Frontend и DevOps.</p>
+        </div>
+
+        <!-- [templates/about/components/_platform.html] — что есть на платформе, со ссылками на разделы -->
+        <section>
+          <div class="section-head"><h2 class="section-title">Что здесь есть</h2></div>
+          <div class="steps">
+            <a href="#courses" class="step step--link">
+              <span class="step__num">Курсы</span>
+              <h3 class="step__title">Программа по шагам</h3>
+              <p class="muted">Курсы идут в порядке обучения, внутри — разделы и темы с короткой теорией и задачами.</p>
+              <span class="step__more">Открыть курсы →</span>
+            </a>
+            <a href="#playground" class="step step--link">
+              <span class="step__num">Тренажёр</span>
+              <h3 class="step__title">SQL, ORM, Python, Linux</h3>
+              <p class="muted">Песочница без задач. Журнал выполнения показывает таблицы, изменённые строки и SQL от ORM.</p>
+              <span class="step__more">Открыть тренажёр →</span>
+            </a>
+            <a href="#cheatsheets" class="step step--link">
+              <span class="step__num">Шпаргалки</span>
+              <h3 class="step__title">Из ваших заметок</h3>
+              <p class="muted">Заметка, написанная на уроке, сама попадает в шпаргалку курса — в нужную тему.</p>
+              <span class="step__more">Открыть шпаргалки →</span>
+            </a>
+            <a href="#profile" class="step step--link">
+              <span class="step__num">Профиль</span>
+              <h3 class="step__title">Прогресс</h3>
+              <p class="muted">Пройденные курсы, активность по дням и последние заметки.</p>
+              <span class="step__more">Открыть профиль →</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- [templates/about/components/_principles.html] -->
+        <section>
+          <div class="section-head"><h2 class="section-title">Принципы</h2></div>
+          <div class="steps">
+            <div class="step">
+              <span class="step__num">01</span>
+              <h3 class="step__title">Бесплатно</h3>
+              <p class="muted">Без платных уровней и рекламы. Открытый код.</p>
+            </div>
+            <div class="step">
+              <span class="step__num">02</span>
+              <h3 class="step__title">Практика первична</h3>
+              <p class="muted">Теории ровно столько, чтобы решить задачу.</p>
+            </div>
+            <div class="step">
+              <span class="step__num">03</span>
+              <h3 class="step__title">Код не уходит на сервер</h3>
+              <p class="muted">PostgreSQL и Python работают прямо в вашем браузере.</p>
+            </div>
+            <div class="step step--accent">
+              <span class="step__num">04</span>
+              <h3 class="step__title">Быстро</h3>
+              <p>Тяжёлые движки грузятся только на странице тренажёра.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- [templates/about/components/_roadmap.html] -->
+        <section>
+          <div class="section-head"><h2 class="section-title">Дорожная карта</h2></div>
+          <ol class="roadmap">
+            <li class="roadmap__item roadmap__item--done"><strong>Курсы и теория</strong><span class="muted">Направление → курс → раздел → тема, уроки из Markdown</span></li>
+            <li class="roadmap__item roadmap__item--current"><strong>SQL-тренажёр</strong><span class="muted">PostgreSQL в браузере, журнал выполнения, подсветка изменённых строк</span></li>
+            <li class="roadmap__item"><strong>Аккаунты, прогресс и шпаргалки</strong><span class="muted">Вход через GitHub, заметки с форматированием на всех устройствах</span></li>
+            <li class="roadmap__item"><strong>Python и SQLAlchemy</strong><span class="muted">Python в браузере, SQL, который генерирует ORM</span></li>
+            <li class="roadmap__item"><strong>Django ORM и Linux</strong><span class="muted">Подсветка N+1, симулятор терминала с деревом файлов</span></li>
+            <li class="roadmap__item"><strong>Docker, Nginx и визуализация JOIN</strong><span class="muted">Симуляторы и пошаговый разбор запроса</span></li>
+            <li class="roadmap__item"><strong>Новые направления</strong><span class="muted">Frontend, DevOps</span></li>
+          </ol>
+        </section>
+
+        <!-- [templates/about/components/_author.html] -->
+        <div class="author">
+          <div class="avatar avatar--lg">AM</div>
+          <div>
+            <h2 class="section-title section-title--sm">Автор</h2>
+            <p class="muted">Backend-разработчик на Python. Делаю платформу, на которой хотел бы учиться сам.</p>
+            <div class="author__links">
+              <a href="#about" class="pill">GitHub</a>
+              <a href="#about" class="pill">Telegram</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- [templates/about/components/_faq.html] -->
+        <section>
+          <div class="section-head"><h2 class="section-title">Вопросы</h2></div>
+          <div class="faq">
+            <details class="faq__item" open>
+              <summary>Нужно ли что-то устанавливать?</summary>
+              <p>Нет. PostgreSQL и Python запускаются прямо в браузере. Первый запуск движка занимает несколько секунд, дальше — из кэша.</p>
+            </details>
+            <details class="faq__item">
+              <summary>Мой код отправляется на сервер?</summary>
+              <p>Нет. Запросы и программы выполняются у вас в браузере. На сервер уходят только прогресс и заметки, если вы вошли в аккаунт.</p>
+            </details>
+            <details class="faq__item">
+              <summary>Что такое шпаргалки?</summary>
+              <p>Ваши заметки, собранные по курсам и темам. Пишете заметку справа от урока, задачи или в тренажёре — она сама попадает в шпаргалку курса.</p>
+            </details>
+            <details class="faq__item">
+              <summary>Кто видит мои заметки?</summary>
+              <p>Только вы.</p>
+            </details>
+            <details class="faq__item">
+              <summary>Зачем регистрироваться?</summary>
+              <p>Чтобы прогресс и шпаргалки были на всех устройствах. Без аккаунта они хранятся в этом браузере.</p>
+            </details>
+            <details class="faq__item">
+              <summary>Как предложить задачу или исправление?</summary>
+              <p>Контент лежит в открытом репозитории — присылайте Pull Request или пишите в Telegram.</p>
+            </details>
+          </div>
+        </section>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: ВХОД  [templates/accounts/login.html]
+         ================================================================== -->
+    <section id="login" class="screen">
+      <div class="container auth">
+        <!-- [templates/accounts/components/_auth_card.html] -->
+        <form class="auth__card">
+          <h1 class="auth__title">Вход</h1>
+          <p class="muted">Прогресс сохранится на всех устройствах.</p>
+          <a href="#profile" class="btn btn--ink btn--block">Войти через GitHub</a>
+          <div class="divider"><span>или</span></div>
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input class="field__input" type="email" placeholder="you@example.com">
+          </label>
+          <label class="field">
+            <span class="field__label">Пароль</span>
+            <input class="field__input field__input--error" type="password">
+            <span class="field__error">Неверный email или пароль</span>
+          </label>
+          <a href="#profile" class="btn btn--accent btn--block">Войти</a>
+          <p class="muted auth__foot">Нет аккаунта? <a href="#register">Зарегистрироваться</a></p>
+        </form>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: РЕГИСТРАЦИЯ  [templates/accounts/signup.html]
+         ================================================================== -->
+    <section id="register" class="screen">
+      <div class="container auth">
+        <form class="auth__card">
+          <h1 class="auth__title">Регистрация</h1>
+          <p class="muted">Прогресс из этого браузера перенесётся в аккаунт.</p>
+          <a href="#profile" class="btn btn--ink btn--block">Продолжить с GitHub</a>
+          <div class="divider"><span>или</span></div>
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input class="field__input" type="email" placeholder="you@example.com">
+          </label>
+          <label class="field">
+            <span class="field__label">Пароль</span>
+            <input class="field__input" type="password">
+            <span class="field__hint">Минимум 8 символов</span>
+          </label>
+          <a href="#profile" class="btn btn--accent btn--block">Создать аккаунт</a>
+          <p class="muted auth__foot">Уже есть аккаунт? <a href="#login">Войти</a></p>
+        </form>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: ПРОФИЛЬ  [templates/accounts/profile.html]
+         ================================================================== -->
+    <section id="profile" class="screen">
+      <div class="container stack-lg">
+        <!-- [templates/accounts/components/_profile_head.html] -->
+        <div class="profile-head">
+          <div class="avatar avatar--lg">ИП</div>
+          <div>
+            <h1 class="page-title">Иван Петров</h1>
+            <p class="muted">С нами с сентября 2026 · вход через GitHub</p>
+          </div>
+          <a href="#profile" class="btn btn--ghost profile-head__action">Настройки</a>
+        </div>
+
+        <!-- [templates/accounts/components/_profile_stats.html] -->
+        <div class="stats">
+          <div class="stat"><span class="stat__value">61</span><span class="stat__label">задача решена</span></div>
+          <div class="stat"><span class="stat__value">6</span><span class="stat__label">дней подряд</span></div>
+          <div class="stat"><span class="stat__value">1</span><span class="stat__label">курс пройден</span></div>
+          <div class="stat"><span class="stat__value">3</span><span class="stat__label">заметки</span></div>
+        </div>
+
+        <div class="profile-grid">
+          <!-- Вкладки профиля: курсы / последние заметки -->
+          <section class="panel tabset">
+            <input type="radio" name="profile-tab" id="pr-courses" class="tabset__radio" checked>
+            <input type="radio" name="profile-tab" id="pr-notes" class="tabset__radio">
+            <div class="tabs tabs--flush" role="tablist">
+              <label for="pr-courses" class="tab">Мои курсы</label>
+              <label for="pr-notes" class="tab">Последние заметки</label>
+            </div>
+
+            <div class="tabset__panels">
+              <!-- [templates/accounts/components/_course_progress.html] -->
+              <ul class="progress-list">
+                <li>
+                  <div class="progress-list__head"><a href="#course">Python</a><span class="badge badge--done">✓ Пройден</span></div>
+                  <div class="progress"><div class="progress__bar" style="--value: 100%"></div></div>
+                </li>
+                <li>
+                  <div class="progress-list__head"><a href="#course">SQL</a><span class="muted">21 / 48</span></div>
+                  <div class="progress"><div class="progress__bar" style="--value: 44%"></div></div>
+                </li>
+              </ul>
+
+              <!-- [templates/accounts/components/_recent_notes.html] — последние заметки; все — во вкладке «Шпаргалки» -->
+              <ul class="notes">
+                <li class="note-card">
+                  <a href="#lesson" class="note-card__src">SQL → Виды JOIN</a>
+                  <p>LEFT JOIN + IS NULL = найти строки без пары. Условие на правую таблицу — в ON, не в WHERE.</p>
+                  <span class="muted small">2 дня назад</span>
+                </li>
+                <li class="note-card">
+                  <a href="#task" class="note-card__src">SQL → Задача «Покупатели без заказов»</a>
+                  <p>Сначала решил через NOT IN — сломалось на NULL. Запомнить!</p>
+                  <span class="muted small">2 дня назад</span>
+                </li>
+                <li class="note-card">
+                  <a href="#lesson" class="note-card__src">Python → Генераторы</a>
+                  <p>Генератор можно пройти только один раз.</p>
+                  <span class="muted small">2 недели назад</span>
+                </li>
+                <li><a href="#cheatsheets" class="side-card__link">Все шпаргалки →</a></li>
+              </ul>
+            </div>
+          </section>
+
+          <!-- [templates/accounts/components/_activity.html] -->
+          <section class="panel">
+            <h2 class="section-title section-title--sm">Активность</h2>
+            <div class="heatmap" aria-label="Активность за последние недели">
+              <i data-l="0"></i><i data-l="1"></i><i data-l="0"></i><i data-l="2"></i><i data-l="3"></i><i data-l="0"></i><i data-l="1"></i>
+              <i data-l="0"></i><i data-l="0"></i><i data-l="2"></i><i data-l="1"></i><i data-l="0"></i><i data-l="3"></i><i data-l="2"></i>
+              <i data-l="1"></i><i data-l="0"></i><i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="2"></i><i data-l="0"></i>
+              <i data-l="3"></i><i data-l="2"></i><i data-l="1"></i><i data-l="0"></i><i data-l="1"></i><i data-l="3"></i><i data-l="3"></i>
+              <i data-l="2"></i><i data-l="3"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="3"></i><i data-l="2"></i>
+            </div>
+            <p class="muted small">Последние 5 недель</p>
+          </section>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================================================================
+         СТРАНИЦА: 404  [templates/errors/404.html]
+         ================================================================== -->
+    <section id="not-found" class="screen">
+      <div class="container error-page">
+        <pre class="error-page__code"><span class="kw">SELECT</span> * <span class="kw">FROM</span> pages <span class="kw">WHERE</span> url = <span class="str">'…'</span>;
+<span class="cm">-- (0 rows)</span></pre>
+        <h1 class="page-title">Страница не найдена</h1>
+        <p class="muted">Возможно, её переименовали или она ещё не написана.</p>
+        <a href="#home" class="btn btn--accent">На главную</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================================================================
+       [templates/base/footer.html]
+       ================================================================== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__col">
+        <a href="#home" class="logo logo--sm"><span class="logo__mark" aria-hidden="true"></span>SITE_NAME</a>
+        <span class="muted">Бесплатная практика для разработчиков</span>
+      </div>
+      <nav class="footer__col">
+        <span class="footer__label">Разделы</span>
+        <a href="#courses">Курсы</a>
+        <a href="#cheatsheets">Шпаргалки</a>
+        <a href="#playground">Тренажёр</a>
+        <a href="#about">О проекте</a>
+      </nav>
+      <nav class="footer__col">
+        <span class="footer__label">Аккаунт</span>
+        <a href="#login">Вход</a>
+        <a href="#register">Регистрация</a>
+        <a href="#profile">Профиль</a>
+      </nav>
+      <nav class="footer__col">
+        <span class="footer__label">Макет: служебные экраны</span>
+        <a href="#course">Курс</a>
+        <a href="#lesson">Урок</a>
+        <a href="#task">Задача</a>
+        <a href="#cheatsheet">Шпаргалка</a>
+        <a href="#not-found">404</a>
+      </nav>
+    </div>
+    <div class="container footer__bottom">
+      <span class="muted">© 2026 SITE_NAME · открытый код</span>
+      <div class="footer__links">
+        <a href="#about" class="pill">GitHub</a>
+        <a href="#about" class="pill">Telegram</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
