@@ -124,34 +124,126 @@ def course_detail(slug):
     }
 
 
+@dataclass
+class CourseItem:
+    """Шаг курса для «Назад / Дальше»: урок темы или задача."""
+
+    title: str
+    url: str
+    topic: Topic
+    exercise: Exercise | None = None
+
+
+def course_items(sections):
+    """Все шаги курса по порядку: урок темы → её задачи → урок следующей темы…"""
+    items = []
+    for section in sections:
+        for topic in section.topics.all():
+            lesson = getattr(topic, 'lesson', None)
+            if lesson is not None and lesson.is_published:
+                items.append(CourseItem(lesson.title, topic.get_absolute_url(), topic))
+            for exercise in topic.exercises.all():
+                items.append(CourseItem(
+                    exercise.title, exercise.get_absolute_url(), topic, exercise,
+                ))
+    return items
+
+
+def neighbours(items, index):
+    """Предыдущий и следующий шаг курса."""
+    prev_item = items[index - 1] if index > 0 else None
+    next_item = items[index + 1] if index + 1 < len(items) else None
+    return prev_item, next_item
+
+
+def find_topic(sections, section_slug, topic_slug):
+    """(раздел, тема) по slug из адреса или 404."""
+    for section in sections:
+        if section.slug != section_slug:
+            continue
+        for topic in section.topics.all():
+            if topic.slug == topic_slug:
+                return section, topic
+    raise Http404('Тема не найдена')
+
+
+def published_course(slug):
+    return get_object_or_404(
+        Course.objects.published().select_related('track'), slug=slug,
+    )
+
+
 def lesson_page(course_slug, section_slug, topic_slug):
-    """Урок темы, программа курса для правой панели, соседние уроки."""
-    course = get_object_or_404(
-        Course.objects.published().select_related('track'), slug=course_slug,
-    )
+    """Урок темы, программа курса для правой панели, соседние шаги."""
+    course = published_course(course_slug)
     sections = course_outline(course)
-    topics = [
-        (section, topic) for section in sections for topic in section.topics.all()
-    ]
-    index = next(
-        (i for i, (section, topic) in enumerate(topics)
-         if section.slug == section_slug and topic.slug == topic_slug),
-        None,
-    )
-    if index is None:
-        raise Http404('Тема не найдена')
-    section, topic = topics[index]
+    section, topic = find_topic(sections, section_slug, topic_slug)
     lesson = getattr(topic, 'lesson', None)
     if lesson is None or not lesson.is_published:
         raise Http404('У темы нет урока')
+
+    items = course_items(sections)
+    index = next(
+        i for i, item in enumerate(items) if item.topic == topic and not item.exercise
+    )
+    prev_item, next_item = neighbours(items, index)
     return {
         'course': course,
         'section': section,
         'topic': topic,
         'lesson': lesson,
         'sections': sections,
-        'prev_topic': topics[index - 1][1] if index > 0 else None,
-        'next_topic': topics[index + 1][1] if index + 1 < len(topics) else None,
+        'prev_item': prev_item,
+        'next_item': next_item,
+    }
+
+
+def exercise_page(course_slug, section_slug, topic_slug, exercise_slug):
+    """Задача, её номер в курсе, программа курса и соседние шаги."""
+    course = published_course(course_slug)
+    sections = course_outline(course)
+    section, topic = find_topic(sections, section_slug, topic_slug)
+
+    items = course_items(sections)
+    index = next(
+        (i for i, item in enumerate(items)
+         if item.topic == topic and item.exercise
+         and item.exercise.slug == exercise_slug),
+
+        None,
+    )
+    if index is None:
+        raise Http404('Задача не найдена')
+
+    # В программе курса у задач только название и slug — здесь нужны все поля
+    exercise = Exercise.objects.get(pk=items[index].exercise.pk)
+    exercise.topic = topic
+    exercises = [item.exercise.pk for item in items if item.exercise]
+    prev_item, next_item = neighbours(items, index)
+    return {
+        'course': course,
+        'section': section,
+        'topic': topic,
+        'exercise': exercise,
+        'number': exercises.index(exercise.pk) + 1,
+        'sections': sections,
+        'prev_item': prev_item,
+        'next_item': next_item,
+    }
+
+
+def playground(engine):
+    """Песочница движка: курс этого движка (первый по программе) и его программа."""
+    course = (
+        Course.objects.published()
+        .filter(engine=engine, track__is_published=True)
+        .select_related('track')
+        .order_by('track__order', 'order')
+        .first()
+    )
+    return {
+        'course': course,
+        'sections': course_outline(course) if course else [],
     }
 
 

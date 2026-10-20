@@ -1,0 +1,16 @@
+{# Редактор решения задачи exercise. Заготовка — starter_code; черновик хранится в браузере. #}
+<div class="workspace">
+  <div class="tabs">
+    <span class="tab tab--static">main.py</span>
+    {% include 'trainers/components/_engine_status.html' %}
+  </div>
+  <div class="editor">
+    <div class="editor__gutter" aria-hidden="true"></div>
+    <textarea class="editor__code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Код решения">{{ exercise.spec.starter_code }}</textarea>
+  </div>
+  <div class="toolbar">
+    <button type="button" class="btn btn--accent" data-action="run" disabled>Запустить <kbd>Ctrl ↵</kbd></button>
+    <button type="button" class="btn btn--ink" data-action="check" disabled>Проверить</button>
+    <button type="button" class="btn btn--ghost" data-action="reset">Сбросить</button>
+  </div>
+</div>

@@ -13,6 +13,8 @@ PAGES = [
     ('courses:list', 'courses/course_list.html', 'courses'),
     ('cheatsheets:list', 'cheatsheets/cheatsheet_list.html', 'cheatsheets'),
     ('trainers:playground', 'trainers/playground.html', 'playground'),
+
+
     ('accounts:login', 'accounts/login.html', None),
     ('accounts:signup', 'accounts/signup.html', None),
     ('accounts:profile', 'accounts/profile.html', None),

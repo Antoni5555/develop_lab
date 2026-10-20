@@ -183,3 +183,11 @@ class Exercise(ContentItem):
                 fields=['topic', 'slug'], name='exercise_unique_slug',
             ),
         ]
+
+    def get_absolute_url(self):
+        topic = self.topic
+        section = topic.section
+        return reverse(
+            'trainers:exercise',
+            args=[section.course.slug, section.slug, topic.slug, self.slug],
+        )

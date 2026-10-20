@@ -1,0 +1,21 @@
+{# Задача predict: код только для чтения + поле ответа «что выведет программа». #}
+<div class="workspace">
+  <div class="tabs">
+    <span class="tab tab--static">main.py</span>
+    {% include 'trainers/components/_engine_status.html' %}
+  </div>
+  <div class="editor">
+    <div class="editor__gutter" aria-hidden="true">{{ code_line_numbers }}</div>
+    <pre class="editor__code">{{ code_html|safe }}</pre>
+  </div>
+  <div class="tabs">
+    <span class="tab tab--static">Ваш ответ: что выведет программа</span>
+  </div>
+  <div class="editor editor--answer">
+    <div class="editor__gutter" aria-hidden="true"></div>
+    <textarea class="editor__code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Ответ: вывод программы" placeholder="Напишите вывод построчно, как в терминале"></textarea>
+  </div>
+  <div class="toolbar">
+    <button type="button" class="btn btn--ink" data-action="check" disabled>Проверить <kbd>Ctrl ↵</kbd></button>
+  </div>
+</div>

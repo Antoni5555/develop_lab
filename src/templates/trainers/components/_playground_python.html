@@ -1,0 +1,38 @@
+{% load static %}
+{# Песочница Python: чистый Python без базы данных #}
+<div class="playground">
+  <div class="course-main"
+       data-playground="python"
+       data-worker="{% static 'js/engines/python/worker.js' %}"
+       data-runner="{% static 'js/engines/python/runner.py' %}"
+       data-pyodide="{{ PYODIDE_URL }}">
+    <div class="workspace">
+      <div class="tabs">
+        <span class="tab tab--static">main.py</span>
+        {% include 'trainers/components/_engine_status.html' %}
+      </div>
+      <div class="editor">
+        <div class="editor__gutter" aria-hidden="true"></div>
+        {# Код по умолчанию — подсчёт товаров в корзине; JS заменит его сохранённым черновиком #}
+        <textarea class="editor__code" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Код программы">from collections import Counter
+
+cart = ["мышь", "клавиатура", "мышь", "коврик", "мышь"]
+counts = Counter(cart)
+
+for name, quantity in counts.most_common():
+    print(f"{name}: {quantity} шт.")
+</textarea>
+      </div>
+      <div class="toolbar">
+        <button type="button" class="btn btn--accent" data-action="run" disabled>Запустить <kbd>Ctrl ↵</kbd></button>
+        <button type="button" class="btn btn--ghost" data-action="clear">Очистить вывод</button>
+      </div>
+    </div>
+    <div class="console" data-console aria-live="polite">
+      <div class="console__line console__line--muted">Нажмите «Запустить» или Ctrl + Enter — вывод появится здесь.</div>
+    </div>
+  </div>
+  {% if course %}
+    {% include 'common/_side_panel.html' %}
+  {% endif %}
+</div>

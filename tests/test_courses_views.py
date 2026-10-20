@@ -44,7 +44,10 @@ def test_lesson_page(client, loaded_content):
     assert response.status_code == 200
     assert '<h1 class="article__title">Привет, Python</h1>' in html
     assert 'class="lesson lesson--current"' in html       # текущая тема в программе
-    assert 'Дальше →</span>Вторая тема' in html
+    # после урока — первая задача темы, ссылки на задачи есть в программе курса
+    assert 'Дальше →</span>Приветствие' in html
+    assert 'href="/courses/python/basics/hello/greeting/"' in html
+
     assert 'js/code-copy.js' in html
 
 

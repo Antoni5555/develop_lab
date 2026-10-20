@@ -1,0 +1,27 @@
+<article class="task">
+  <div class="task__head">
+    <div class="tags">
+      <span class="tag">Задача {{ number }}</span>
+      <span class="tag tag--level-{{ exercise.difficulty }}">{% if exercise.difficulty == 1 %}Лёгкая{% elif exercise.difficulty == 2 %}Средняя{% else %}Сложная{% endif %}</span>
+      {% if exercise.type == 'predict' %}<span class="tag">Что выведет код</span>{% endif %}
+    </div>
+    <div class="task__nav">
+      {% if prev_item %}<a href="{{ prev_item.url }}" class="round-btn round-btn--sm" aria-label="Назад: {{ prev_item.title }}" title="{{ prev_item.title }}">←</a>{% endif %}
+      {% if next_item %}<a href="{{ next_item.url }}" class="round-btn round-btn--sm" aria-label="Дальше: {{ next_item.title }}" title="{{ next_item.title }}">→</a>{% endif %}
+    </div>
+  </div>
+  <h1 class="task__title">{{ exercise.title }}</h1>
+  <div class="task__text">{{ exercise.statement_html|safe }}</div>
+  {% if exercise.spec.inputs %}
+  <div class="code-block">
+    <div class="code-block__head"><span>Входные данные — задаются до вашего кода</span></div>
+    <pre>{{ inputs_html|safe }}</pre>
+  </div>
+  {% endif %}
+  {% for hint in exercise.spec.hints %}
+  <details class="hint">
+    <summary>Подсказка {{ forloop.counter }} из {{ exercise.spec.hints|length }}</summary>
+    <p>{{ hint|safe }}</p>
+  </details>
+  {% endfor %}
+</article>

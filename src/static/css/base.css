@@ -227,7 +227,11 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 .stack-lg { display: grid; gap: var(--space-6); }
 .stack-xl { display: grid; gap: var(--space-8); }
 
+/* Атрибут hidden скрывает всегда — даже если у класса задан display (.alert { display: flex }) */
+[hidden] { display: none !important; }
+
 .visually-hidden {
+
   position: absolute;
   width: 1px;
   height: 1px;

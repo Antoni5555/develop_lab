@@ -1,0 +1,11 @@
+{# Разбор: открывается после верного решения #}
+<details class="hint task-explanation" data-explanation hidden>
+  <summary>Разбор решения</summary>
+  <div class="task__text">{{ exercise.explanation_html|safe }}</div>
+  {% if solution_html %}
+  <div class="code-block">
+    <div class="code-block__head"><span>Эталонное решение</span></div>
+    <pre>{{ solution_html|safe }}</pre>
+  </div>
+  {% endif %}
+</details>

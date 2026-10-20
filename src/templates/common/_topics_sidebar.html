@@ -1,17 +1,21 @@
-{% comment %} Программа курса: раздел → темы. Один компонент для урока, задачи и тренажёра.
-   Пока страниц задач нет, тема — одна ссылка на урок. На этапе 2 тема снова станет
-   выпадающим списком «урок + задачи», где кликабельно всё (как в макете).
-   Параметры: sections (из selectors.course_outline), current_topic.
+{% comment %} Программа курса: раздел → тема → урок и задачи. Один компонент для урока, задачи и тренажёра.
+   Параметры: sections (из selectors.course_outline), current_topic, current_exercise (если открыта задача).
 {% endcomment %}
 {% for section in sections %}
 <details class="module-nav{% if current_topic.section_id == section.pk %} module-nav--current{% endif %}"{% if current_topic.section_id == section.pk %} open{% endif %}>
   <summary><span class="module-nav__num">{{ forloop.counter }}</span><span class="module-nav__title">{{ section.title }}</span><span class="topic__count"></span></summary>
-  <div class="topic">
+  {% for topic in section.topics.all %}
+  <details class="topic"{% if topic.pk == current_topic.pk %} open{% endif %}>
+    <summary>{{ topic.title }} <span class="topic__count">{{ topic.exercises.all|length }}</span></summary>
     <ul>
-      {% for topic in section.topics.all %}{% if topic.lesson %}
-      <li class="lesson{% if topic.pk == current_topic.pk %} lesson--current{% endif %}"><a href="{{ topic.get_absolute_url }}"{% if topic.pk == current_topic.pk %} aria-current="page"{% endif %}>{{ topic.title }}</a></li>
-      {% endif %}{% endfor %}
+      {% if topic.lesson %}
+      <li class="lesson{% if topic.pk == current_topic.pk and not current_exercise %} lesson--current{% endif %}"><a href="{{ topic.get_absolute_url }}">Теория: {{ topic.lesson.title }}</a></li>
+      {% endif %}
+      {% for exercise in topic.exercises.all %}
+      <li class="lesson{% if exercise.pk == current_exercise.pk %} lesson--current{% endif %}"><a href="{{ exercise.get_absolute_url }}">{{ exercise.title }}</a></li>
+      {% endfor %}
     </ul>
-  </div>
+  </details>
+  {% endfor %}
 </details>
 {% endfor %}

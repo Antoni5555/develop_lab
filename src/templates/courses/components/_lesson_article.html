@@ -3,5 +3,5 @@
   <div class="article__meta"><span class="tag">Урок</span><span class="muted">{{ lesson.reading_time }} мин</span><span class="muted">{{ section.title }}</span></div>
   <h1 class="article__title">{{ lesson.title }}</h1>
   {{ lesson.body_html|safe }}
-  {% include 'common/_prev_next.html' with prev=prev_topic next=next_topic %}
+  {% include 'common/_prev_next.html' with prev=prev_item next=next_item %}
 </article>

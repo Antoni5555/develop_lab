@@ -3,10 +3,31 @@
 
 {% block title %}Тренажёр — {{ SITE_NAME }}{% endblock %}
 {% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/trainers.css' %}">{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'js/pages/playground.js' %}"></script>{% endblock %}
 
 {% block content %}
-<div class="container stack-lg">
-  {% include 'common/_page_head.html' with title='Тренажёр' lead='Свободная практика без задач. Всё выполняется в твоём браузере.' %}
-  {% include 'common/_coming_soon.html' with stage=2 %}
+<div class="container">
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Тренажёр</h1>
+      <p class="muted">Свободная практика без задач. Всё выполняется в твоём браузере.</p>
+    </div>
+    {# Сессия: код хранится в localStorage браузера #}
+    <div class="session">
+      <span class="dot dot--ok" aria-hidden="true"></span>
+      <span class="small">Код сохраняется в браузере</span>
+      <button type="button" class="btn btn--ghost" data-action="restart">Начать заново</button>
+    </div>
+  </div>
+
+  {# Вкладки движков: пока работает Python, остальные появятся на следующих этапах #}
+  <div class="tabs tabs--pills" role="tablist">
+    <span class="tab tab--active" role="tab" aria-selected="true">Python</span>
+    <span class="tab" aria-disabled="true">SQL <small class="muted">скоро</small></span>
+    <span class="tab" aria-disabled="true">Django <small class="muted">скоро</small></span>
+    <span class="tab" aria-disabled="true">Linux <small class="muted">скоро</small></span>
+  </div>
+
+  {% include 'trainers/components/_playground_python.html' %}
 </div>
 {% endblock %}

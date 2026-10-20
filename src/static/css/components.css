@@ -896,9 +896,6 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 .module-nav--done > summary .topic__count { color: var(--success); }
 .module-nav[open] > summary { margin-bottom: var(--space-2); }
 .module-nav .topic { margin-left: 30px; padding-top: var(--space-2); border-top: 0; }
-/* Пока тема — одна ссылка (без своего выпадающего списка), лишние отступы убираем */
-.module-nav > .topic { padding-top: 0; }
-.module-nav > .topic > ul { margin-top: 0; }
 .module-nav .topic summary { font-weight: var(--fw-regular); }
 
 /* --- Тренажёр: сессия, журнал выполнения, визуализация JOIN --- */
@@ -1060,5 +1057,10 @@ main { padding: var(--space-6) 0 var(--space-8); }
   background: var(--ink);
 }
 
+/* Активная вкладка-«таблетка» (в макете её включала radio-кнопка) */
+.tabs--pills .tab--active { color: var(--on-ink); background: var(--ink); }
+.tab[aria-disabled="true"] { cursor: default; opacity: 0.6; }
+
 /* В макете кнопка темы была <label>; у <button> убираем фон браузера */
+
 button.icon-btn { color: inherit; background: transparent; }

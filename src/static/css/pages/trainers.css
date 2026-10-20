@@ -313,3 +313,43 @@
 }
 
 .fs-card__body { display: grid; gap: var(--space-3); padding: var(--space-4); }
+
+
+/* --- Python-тренажёр: то, чего не было в макете ---
+   В макете редактор — <pre contenteditable>; в проекте — <textarea> (js/editor.js). */
+.editor__gutter { white-space: pre; }
+
+textarea.editor__code {
+  display: block;
+  min-height: 200px;
+  margin: 0;
+  font: inherit;
+  font-family: var(--font-code);
+  line-height: inherit;
+  color: var(--text);
+  white-space: pre;
+  overflow-wrap: normal;
+  tab-size: 4;
+  background: transparent;
+  border: 0;
+  resize: vertical;
+}
+
+/* Задача «что выведет»: поле ответа ниже кода — со своим заголовком */
+.editor + .tabs { border-top: 1px solid var(--border); }
+.editor--answer { min-height: 96px; }
+.editor--answer textarea.editor__code { min-height: 96px; }
+
+/* Условие и разбор задачи — HTML из Markdown */
+.task__text { display: grid; gap: var(--space-2); }
+.task__text ul,
+.task__text ol { display: grid; gap: var(--space-1); margin: 0; padding-left: var(--space-5); }
+.task-explanation { padding: var(--space-4) var(--space-5); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.task-explanation[open] > summary { margin-bottom: var(--space-3); }
+.task-explanation .task__text { font-size: var(--fs-sm); }
+
+.tag--level-3 { color: var(--error); }
+
+/* Вывод программы: переносы строк как в терминале, ошибка — красным */
+.console__line { white-space: pre-wrap; overflow-wrap: anywhere; }
+.console__line--error { color: var(--error); }
