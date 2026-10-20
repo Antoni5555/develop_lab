@@ -19,7 +19,12 @@ const nextLink = document.querySelector('.task__nav a[aria-label^="Дальше"
 const engineButtons = [runButton, checkButton].filter(Boolean);
 const badge = root.querySelector('[data-engine-status]');
 const engine = new PythonEngine(
-  { worker: root.dataset.worker, runner: root.dataset.runner, pyodide: root.dataset.pyodide },
+  {
+    worker: root.dataset.worker,
+    runner: root.dataset.runner,
+    pyodide: root.dataset.pyodide,
+    hashSeed: '0',   // одинаковый результат у всех учеников (порядок set, хеши строк)
+  },
   (state) => showEngineStatus(badge, engineButtons, state),
 );
 

@@ -632,6 +632,10 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 .lesson--task a::before { display: none; }
 .lesson__label { flex-shrink: 0; font-size: var(--fs-xs); font-weight: var(--fw-bold); opacity: 0.7; }
 
+/* Программа курса в тренажёре: темы сразу под разделом, без своего выпадающего списка */
+.module-nav .topic--flat { padding-top: 0; }
+.topic--flat ul { margin-top: 0; }
+
 
 .toc { display: grid; gap: 2px; }
 .toc a { padding: 6px 10px; font-size: var(--fs-sm); text-decoration: none; color: var(--muted); border-radius: var(--radius-sm); }

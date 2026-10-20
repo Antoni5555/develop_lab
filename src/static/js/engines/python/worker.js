@@ -8,6 +8,7 @@
 const params = new URL(self.location.href).searchParams;
 const PYODIDE_URL = params.get('pyodide');   // папка Pyodide на CDN
 const RUNNER_URL = params.get('runner');     // общий runner.py (тот же, что у check_tasks.py)
+const HASH_SEED = params.get('hashseed');    // на страницах задач — '0', в песочнице — нет
 
 const RUNNER_MODULE = 'runner';
 
@@ -16,7 +17,10 @@ let runner = null;
 
 async function boot() {
   const { loadPyodide } = await import(`${PYODIDE_URL}pyodide.mjs`);
-  const pyodide = await loadPyodide({ indexURL: PYODIDE_URL });
+  // PYTHONHASHSEED фиксирует порядок set/dict из строк: ответ задачи «что выведет»
+  // не зависит от случайности запуска. В песочнице не задаём — там случайность честная.
+  const env = HASH_SEED === null ? {} : { PYTHONHASHSEED: HASH_SEED };
+  const pyodide = await loadPyodide({ indexURL: PYODIDE_URL, env });
 
   const source = await (await fetch(RUNNER_URL)).text();
   pyodide.FS.writeFile(`/home/pyodide/${RUNNER_MODULE}.py`, source);

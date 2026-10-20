@@ -11,7 +11,7 @@ export const TIMEOUT_MESSAGE = 'Программа не завершилась �
 
 export class PythonEngine {
   /**
-   * @param {object} urls — { worker, runner, pyodide } (из data-атрибутов страницы)
+   * @param {object} urls — { worker, runner, pyodide, hashSeed? } (из data-атрибутов страницы)
    * @param {function} onStatus — 'loading' | 'ready' | 'busy' | 'failed'
    */
   constructor(urls, onStatus = () => {}) {
@@ -30,6 +30,7 @@ export class PythonEngine {
     const url = new URL(this.urls.worker, location.href);
     url.searchParams.set('pyodide', this.urls.pyodide);
     url.searchParams.set('runner', new URL(this.urls.runner, location.href).href);
+    if (this.urls.hashSeed !== undefined) url.searchParams.set('hashseed', this.urls.hashSeed);
     this.worker = new Worker(url, { type: 'module' });
 
     this.readyPromise = new Promise((resolve, reject) => {

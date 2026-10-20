@@ -60,6 +60,9 @@ def test_playground_opens_first_section(client, loaded_content):
     html = client.get(reverse('trainers:playground')).content.decode()
 
     assert '<details class="module-nav" open>' in html
+    # в тренажёре — только разделы и темы, без задач
+    assert 'topic--flat' in html and 'lesson--task' not in html
+    assert 'href="/courses/python/basics/hello/"' in html
 
 
 def test_predict_page(client, loaded_content):
