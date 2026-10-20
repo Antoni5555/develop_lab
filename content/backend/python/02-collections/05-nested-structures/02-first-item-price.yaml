@@ -1,0 +1,29 @@
+title: Цена первой позиции
+type: exercise
+difficulty: 1
+pitfall: На каждом шаге цепочки свой тип — у списка сначала нужен индекс.
+statement: |
+  Для письма «Вы забыли товар в корзине» нужна цена первой позиции заказа.
+  Код падает с `TypeError`. Исправьте: в `first_price` — цена первой позиции `order`.
+inputs: |
+  order = {"id": 1042, "items": [{"name": "Мышь", "price": 1499}, {"name": "Коврик", "price": 490}]}
+starter_code: |
+  # order — входные данные задачи
+  first_price = order["items"]["price"]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run()["first_price"] == 1499
+      fail: "`TypeError: list indices must be integers...` — какого типа `order[\"items\"]`?"
+    - code: |
+        assert run(order={"items": [{"name": "Кабель", "price": 390}]})["first_price"] == 390
+      fail: Для другого заказа — цена его первой позиции.
+solution: |
+  first_price = order["items"][0]["price"]
+hints:
+  - "Выведите `type(order[\"items\"])`."
+  - Из списка сначала берут элемент по индексу, потом — значение по ключу.
+explanation: |
+  `order["items"]` — список позиций, а у списка нет ключей, только индексы. Сначала берём позицию
+  `[0]` — это словарь, — и уже из неё значение по ключу `["price"]`.

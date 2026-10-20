@@ -1,0 +1,28 @@
+title: Словарь цен оказался множеством
+type: exercise
+difficulty: 2
+pitfall: "Без двоеточия фигурные скобки дают множество, а не словарь."
+statement: |
+  API отдаёт цены словарём `prices` вида `{id: цена}`. Код строит какую-то другую коллекцию,
+  и `prices[42]` падает. Исправьте comprehension.
+inputs: |
+  products = [{"id": 42, "price": 1499}, {"id": 7, "price": 5990}]
+starter_code: |
+  # products — входные данные задачи
+  prices = {(p["id"], p["price"]) for p in products}
+check:
+  type: tests
+  tests:
+    - code: |
+        assert isinstance(run()["prices"], dict)
+      fail: "`prices` — не словарь. Выведите `type(prices)`: что даёт фигурная скобка без двоеточия?"
+    - code: |
+        assert run()["prices"] == {42: 1499, 7: 5990}
+      fail: "Ключ — `id`, значение — цена."
+solution: |
+  prices = {p["id"]: p["price"] for p in products}
+hints:
+  - "Множество пар и словарь пишутся похоже, но словарю нужно двоеточие."
+explanation: |
+  `{(a, b) for ...}` — множество кортежей: фигурные скобки без двоеточия всегда дают множество.
+  Словарь получается, только если выражение записано как `ключ: значение`.

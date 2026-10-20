@@ -1,0 +1,32 @@
+title: Заказ без доставки
+type: exercise
+difficulty: 2
+pitfall: Цепочка падает на первом отсутствующем уровне.
+statement: |
+  Заказы с самовывозом приходят без блока `"delivery"`. Страница заказа на них падает.
+  В `city` должен оказаться город доставки, а если блока доставки или города нет — `"самовывоз"`.
+inputs: |
+  order = {"id": 1043, "delivery": {"city": "Казань", "address": "ул. Баумана, 1"}}
+starter_code: |
+  # order — входные данные задачи
+  city = order["delivery"]["city"]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run(order={"id": 1043, "delivery": {"city": "Казань"}})["city"] == "Казань"
+      fail: Если доставка есть — город доставки.
+    - code: |
+        assert run(order={"id": 1044})["city"] == "самовывоз"
+      fail: "Блока `delivery` нет — `KeyError`. Как прочитать необязательный уровень без ошибки?"
+    - code: |
+        assert run(order={"id": 1045, "delivery": {"address": "ул. Ленина, 5"}})["city"] == "самовывоз"
+      fail: Блок доставки есть, но города в нём нет — тоже «самовывоз».
+solution: |
+  city = order.get("delivery", {}).get("city", "самовывоз")
+hints:
+  - "`get` принимает значение по умолчанию. Какое значение по умолчанию позволит продолжить цепочку?"
+  - "`order.get(\"delivery\", {})`"
+explanation: |
+  `order["delivery"]` требует, чтобы блок был. `order.get("delivery", {})` вернёт пустой словарь,
+  если блока нет, и следующий `.get("city", "самовывоз")` спокойно отработает на нём.

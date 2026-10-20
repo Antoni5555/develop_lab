@@ -1,0 +1,32 @@
+title: Товар не найден
+type: exercise
+difficulty: 2
+pitfall: Ключи "42" и 42 — разные ключи словаря.
+statement: |
+  Каталог хранит товары по числовому `id`. `id` товара приходит из адреса страницы
+  (`/products/42/`) строкой `product_id`. Страница всегда показывает «товар не найден».
+  Исправьте: в `product` должен оказаться товар из каталога (или `None`, если такого `id` нет).
+inputs: |
+  catalog = {42: {"name": "Беспроводная мышь"}, 7: {"name": "Механическая клавиатура"}}
+  product_id = "42"
+starter_code: |
+  # catalog и product_id — входные данные задачи
+  product = catalog.get(product_id)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run(product_id="42")["product"] == {"name": "Беспроводная мышь"}
+      fail: "Товар 42 в каталоге есть, а `get` вернул `None`. Какого типа ключи в `catalog` и какого — `product_id`?"
+    - code: |
+        assert run(product_id="7")["product"] == {"name": "Механическая клавиатура"}
+      fail: Товар 7 тоже должен находиться.
+    - code: assert run(product_id="13")["product"] is None
+      fail: Товара 13 нет — `product` должен быть `None`.
+solution: |
+  product = catalog.get(int(product_id))
+hints:
+  - "Выведите `type(product_id)` и ключи каталога."
+explanation: |
+  Ключи сравниваются с учётом типа: `"42" == 42` — `False`, значит, это разные ключи, и `get` честно
+  возвращает `None`. Всё, что приходит из URL, — строки; перед поиском их приводят к типу ключей.

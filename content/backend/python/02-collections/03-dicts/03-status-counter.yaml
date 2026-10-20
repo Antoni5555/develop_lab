@@ -1,0 +1,36 @@
+title: Счётчик статусов
+type: exercise
+difficulty: 2
+pitfall: Увеличение значения по новому ключу падает — ключа ещё нет.
+statement: |
+  Посчитайте, сколько заказов в каждом статусе: `counts` — словарь `{статус: количество}`.
+  Код падает на первом же заказе.
+inputs: |
+  statuses = ["paid", "new", "paid"]
+starter_code: |
+  # statuses — входные данные задачи
+  counts = {}
+  for status in statuses:
+      counts[status] += 1
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run(statuses=["paid", "new", "paid"])["counts"] == {"paid": 2, "new": 1}
+      fail: "`counts[status] += 1` для статуса, которого ещё нет в словаре, — `KeyError`. Каким должно быть стартовое значение?"
+    - code: assert run(statuses=[])["counts"] == {}
+      fail: Нет заказов — пустой словарь.
+    - code: |
+        assert run(statuses=["shipped"] * 4)["counts"] == {"shipped": 4}
+      fail: 'Четыре заказа в одном статусе — {"shipped": 4}.'
+solution: |
+  counts = {}
+  for status in statuses:
+      counts[status] = counts.get(status, 0) + 1
+hints:
+  - "`counts[status] += 1` — это `counts[status] = counts[status] + 1`: справа чтение несуществующего ключа."
+  - "`counts.get(status, 0)`"
+explanation: |
+  `+=` сначала читает текущее значение, а для нового статуса его нет. `counts.get(status, 0) + 1`
+  берёт `0` для статуса, который встретился впервые. Позже появятся готовые инструменты —
+  `collections.Counter` и `defaultdict`.

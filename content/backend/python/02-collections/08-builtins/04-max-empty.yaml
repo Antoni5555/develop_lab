@@ -1,0 +1,28 @@
+title: Самый дорогой товар в пустой корзине
+type: exercise
+difficulty: 2
+pitfall: max() пустой коллекции падает — нужен default.
+statement: |
+  В шапке корзины показывается цена самого дорогого товара `top_price`. Для пустой корзины
+  страница падает. Если корзина пуста, `top_price` должен быть `0`.
+inputs: |
+  prices = [1499, 5990, 990]
+starter_code: |
+  # prices — входные данные задачи
+  top_price = max(prices)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run(prices=[])["top_price"] == 0
+      fail: "`max([])` — `ValueError`. Какой параметр `max` задаёт ответ для пустой коллекции?"
+    - code: |
+        assert run()["top_price"] == 5990
+      fail: Для непустой корзины — максимальная цена.
+solution: |
+  top_price = max(prices, default=0)
+hints:
+  - "`max(..., default=...)`"
+explanation: |
+  `max` и `min` не знают, что вернуть для пустой коллекции, и выбрасывают `ValueError`.
+  Параметр `default` задаёт ответ на этот случай. Вариант `max(prices) if prices else 0` тоже рабочий.

@@ -1,0 +1,38 @@
+title: Возврат испортил заказ
+type: exercise
+difficulty: 2
+pitfall: Поверхностная копия не копирует вложенные словари — они остаются общими.
+statement: |
+  Для оформления возврата создаётся копия позиций заказа `refund`, и в ней количество
+  первой позиции уменьшается до `return_qty`. После этого в исходном заказе `items`
+  тоже меняется количество — бухгалтерия видит неверные данные. Исправьте копирование.
+inputs: |
+  items = [{"name": "Мышь", "qty": 2}, {"name": "Коврик", "qty": 1}]
+  return_qty = 1
+starter_code: |
+  # items и return_qty — входные данные задачи
+  refund = items.copy()
+  refund[0]["qty"] = return_qty
+check:
+  type: tests
+  tests:
+    - code: |
+        r = run()
+        assert r["items"] == [{"name": "Мышь", "qty": 2}, {"name": "Коврик", "qty": 1}]
+      fail: "Исходный заказ изменился. `copy()` скопировал список — а словари внутри?"
+    - code: |
+        r = run()
+        assert r["refund"][0]["qty"] == 1 and r["refund"][1] == {"name": "Коврик", "qty": 1}
+      fail: В копии для возврата количество первой позиции — `return_qty`, остальное как в заказе.
+solution: |
+  import copy
+
+  refund = copy.deepcopy(items)
+  refund[0]["qty"] = return_qty
+hints:
+  - "Выведите `refund[0] is items[0]`."
+  - Нужна копия на всех уровнях — модуль `copy`.
+explanation: |
+  `items.copy()` создаёт новый список, но кладёт в него те же самые словари-позиции.
+  `refund[0]["qty"] = ...` меняет общий словарь — изменение видно и в заказе.
+  `copy.deepcopy(items)` копирует и список, и все словари внутри.

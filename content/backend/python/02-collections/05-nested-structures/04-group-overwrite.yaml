@@ -1,0 +1,37 @@
+title: Пропавшие заказы в группировке
+type: exercise
+difficulty: 2
+pitfall: Присваивание по ключу затирает собранное ранее — в словарь списков нужно добавлять.
+statement: |
+  Нужно сгруппировать номера заказов по статусам: `by_status` — словарь `{статус: [номера]}`,
+  номера в порядке следования в `orders`. Сейчас в каждой группе остаётся только последний заказ.
+inputs: |
+  orders = [(1042, "paid"), (1043, "new"), (1044, "paid")]
+starter_code: |
+  # orders — входные данные задачи: список (номер, статус)
+  by_status = {}
+  for order_id, status in orders:
+      by_status[status] = [order_id]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run()["by_status"] == {"paid": [1042, 1044], "new": [1043]}
+      fail: "В группе «paid» должно быть два заказа. Что происходит со списком при повторной записи по тому же ключу?"
+    - code: |
+        assert run(orders=[])["by_status"] == {}
+      fail: Нет заказов — пустой словарь.
+    - code: |
+        assert run(orders=[(1, "new"), (2, "new"), (3, "new")])["by_status"] == {"new": [1, 2, 3]}
+      fail: Три заказа в одном статусе — один список из трёх номеров.
+solution: |
+  by_status = {}
+  for order_id, status in orders:
+      by_status.setdefault(status, []).append(order_id)
+hints:
+  - "`by_status[status] = [...]` каждый раз создаёт новый список."
+  - "Список для статуса нужно создать один раз, а дальше — добавлять в него."
+explanation: |
+  Запись по ключу заменяет значение целиком: при втором заказе «paid» старый список `[1042]`
+  заменяется на `[1044]`. Нужно завести список, если статус встретился впервые, и дальше делать `append` —
+  через `if status not in by_status` или одной строкой `setdefault(status, []).append(...)`.

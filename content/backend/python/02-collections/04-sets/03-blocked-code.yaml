@@ -1,0 +1,32 @@
+title: Заблокированный промокод
+type: exercise
+difficulty: 2
+pitfall: set("строка") — множество символов, а не множество из одной строки.
+statement: |
+  Промокод `blocked_code` заблокирован. Код собирает множество заблокированных промокодов
+  `blocked` и проверяет введённый `promo`. Сейчас блокируются даже промокоды из одной буквы,
+  а сам заблокированный промокод проходит. Исправьте построение `blocked`.
+inputs: |
+  blocked_code = "SALE10"
+  promo = "SALE10"
+starter_code: |
+  # blocked_code и promo — входные данные задачи
+  blocked = set(blocked_code)
+  is_blocked = promo in blocked
+check:
+  type: tests
+  tests:
+    - code: assert run(blocked_code="SALE10", promo="SALE10")["is_blocked"] is True
+      fail: "Заблокированный промокод должен блокироваться. Выведите `blocked` — что в нём лежит?"
+    - code: assert run(blocked_code="SALE10", promo="S")["is_blocked"] is False
+      fail: "Промокод «S» не заблокирован."
+    - code: assert run(blocked_code="SALE10", promo="WINTER5")["is_blocked"] is False
+      fail: Другой промокод не заблокирован.
+solution: |
+  blocked = {blocked_code}
+  is_blocked = promo in blocked
+hints:
+  - "`set()` перебирает то, что ему передали. Что получится при переборе строки?"
+explanation: |
+  `set("SALE10")` перебирает строку по символам и даёт `{"S", "A", "L", "E", "1", "0"}`.
+  Множество из одной строки создаётся литералом `{blocked_code}` или `set([blocked_code])`.

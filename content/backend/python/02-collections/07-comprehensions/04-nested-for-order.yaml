@@ -1,0 +1,30 @@
+title: Порядок вариантов в выгрузке
+type: exercise
+difficulty: 2
+pitfall: В comprehension с двумя for первый цикл — внешний.
+statement: |
+  Маркетплейс принимает варианты товара строками `"<размер>-<цвет>"`, **сгруппированными по размеру**:
+  сначала все цвета размера S, потом все цвета размера M и т. д. Сейчас варианты идут вперемешку
+  по цветам. Исправьте порядок в `variants`, не меняя формат строк.
+inputs: |
+  sizes = ["S", "M"]
+  colors = ["black", "white"]
+starter_code: |
+  # sizes и colors — входные данные задачи
+  variants = [f"{size}-{color}" for color in colors for size in sizes]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run()["variants"] == ["S-black", "S-white", "M-black", "M-white"]
+      fail: "Варианты должны идти группами по размеру. Какой из двух `for` — внешний цикл?"
+    - code: |
+        assert run(sizes=["L"], colors=["red", "blue", "green"])["variants"] == ["L-red", "L-blue", "L-green"]
+      fail: Один размер, три цвета — три варианта в порядке цветов.
+solution: |
+  variants = [f"{size}-{color}" for size in sizes for color in colors]
+hints:
+  - "Перепишите comprehension двумя вложенными циклами `for` — в том же порядке, в каком они записаны."
+explanation: |
+  Циклы в comprehension читаются слева направо как вложенные: первый `for` — внешний.
+  Чтобы внутри одного размера перебирались все цвета, внешним должен быть цикл по размерам.

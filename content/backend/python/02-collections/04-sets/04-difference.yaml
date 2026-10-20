@@ -1,0 +1,28 @@
+title: Кому предложить клавиатуру
+type: exercise
+difficulty: 2
+pitfall: Разность множеств не симметрична — a - b и b - a дают разное.
+statement: |
+  Маркетинг хочет предложить клавиатуру тем, кто **купил мышь, но ещё не купил клавиатуру**.
+  `mouse` и `keyboard` — множества `id` покупателей. Сейчас рассылка уходит не тем людям.
+  Исправьте вычисление `targets`.
+inputs: |
+  mouse = {1, 2, 3, 5}
+  keyboard = {2, 3, 8}
+starter_code: |
+  # mouse и keyboard — входные данные задачи
+  targets = keyboard - mouse
+check:
+  type: tests
+  tests:
+    - code: assert run(mouse={1, 2, 3, 5}, keyboard={2, 3, 8})["targets"] == {1, 5}
+      fail: "Покупатели 1 и 5 купили мышь без клавиатуры. Покупатель 8 мышь не покупал. Прочитайте `a - b` как «есть в a, но нет в b»."
+    - code: assert run(mouse={4}, keyboard=set())["targets"] == {4}
+      fail: Если клавиатуру никто не купил, предлагаем всем покупателям мыши.
+solution: |
+  targets = mouse - keyboard
+hints:
+  - "`a - b` — элементы `a`, которых нет в `b`."
+explanation: |
+  Разность оставляет элементы левого множества, которых нет в правом. «Купил мышь, но не клавиатуру» —
+  это `mouse - keyboard`. `keyboard - mouse` — наоборот, купили клавиатуру без мыши.

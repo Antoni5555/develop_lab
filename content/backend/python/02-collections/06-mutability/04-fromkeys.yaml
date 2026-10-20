@@ -1,0 +1,40 @@
+title: Все заказы во всех статусах
+type: exercise
+difficulty: 3
+pitfall: dict.fromkeys со списком по умолчанию делает один список общим для всех ключей.
+statement: |
+  Для отчёта заводится словарь `by_status` с пустым списком для каждого статуса из `statuses`,
+  а потом в нужный список добавляются номера заказов. В отчёте каждый заказ почему-то
+  оказывается во всех статусах сразу. Исправьте создание `by_status`.
+inputs: |
+  statuses = ["new", "paid", "cancelled"]
+  orders = [(1042, "paid"), (1043, "new")]
+starter_code: |
+  # statuses и orders — входные данные задачи
+  by_status = dict.fromkeys(statuses, [])
+  for order_id, status in orders:
+      by_status[status].append(order_id)
+check:
+  type: tests
+  tests:
+    - code: |
+        r = run()
+        assert r["by_status"] == {"new": [1043], "paid": [1042], "cancelled": []}
+      fail: "Каждый заказ попал во все статусы. Выведите `by_status[\"new\"] is by_status[\"paid\"]`."
+    - code: |
+        r = run(statuses=["new"], orders=[])
+        assert r["by_status"] == {"new": []}
+      fail: Статус без заказов — пустой список.
+solution: |
+  by_status = {}
+  for status in statuses:
+      by_status[status] = []
+  for order_id, status in orders:
+      by_status[status].append(order_id)
+hints:
+  - "`dict.fromkeys(keys, value)` ставит **один и тот же** объект `value` значением для всех ключей."
+  - Создайте отдельный пустой список для каждого статуса.
+explanation: |
+  `dict.fromkeys(statuses, [])` вычисляет `[]` один раз и делает этот список значением всех ключей.
+  `append` через любой ключ меняет общий список. Нужно создавать новый список для каждого ключа —
+  в цикле (позже — одной строкой через dict comprehension).

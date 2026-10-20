@@ -1,0 +1,36 @@
+title: Размер L прошёл как XL
+type: exercise
+difficulty: 1
+pitfall: Скобки без запятой не создают кортеж — in начинает искать подстроку.
+statement: |
+  Акция действует только на размер `"XL"`. Проверка `is_allowed` должна давать `True`,
+  только если `size` точно совпадает с одним из разрешённых размеров в `allowed`.
+  Сейчас скидку получают и размеры `"L"` и `"X"`. Исправьте определение `allowed` —
+  проверку `size in allowed` не меняйте.
+inputs: |
+  size = "L"
+starter_code: |
+  # size — входные данные задачи
+  allowed = ("XL")
+  is_allowed = size in allowed
+check:
+  type: tests
+  tests:
+    - code: assert run(size="L")["is_allowed"] is False
+      fail: "Размер L не должен проходить. Выведите `type(allowed)` — это действительно кортеж?"
+    - code: assert run(size="X")["is_allowed"] is False
+      fail: Размер X не должен проходить.
+    - code: assert run(size="XL")["is_allowed"] is True
+      fail: Размер XL должен проходить.
+    - code: assert "size in allowed" in source
+      fail: Проверку `size in allowed` оставьте — ошибка в том, как задан `allowed`.
+solution: |
+  allowed = ("XL",)
+  is_allowed = size in allowed
+hints:
+  - "`(\"XL\")` — это строка в скобках."
+  - Кортеж из одного элемента создаётся с запятой.
+explanation: |
+  Кортеж создают запятые, а не скобки: `("XL")` — та же строка `"XL"`. Для строки `in`
+  проверяет подстроку, поэтому `"L" in "XL"` — `True`. С запятой `("XL",)` получается кортеж,
+  и `in` сравнивает элементы целиком.

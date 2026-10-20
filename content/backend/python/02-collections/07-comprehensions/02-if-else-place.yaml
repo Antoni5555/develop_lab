@@ -1,0 +1,30 @@
+title: Метки наличия
+type: exercise
+difficulty: 1
+pitfall: Фильтр if стоит в конце, а выбор значения if/else — в начале comprehension.
+statement: |
+  Для каждого товара из `products` нужна метка: `"в наличии"`, если `stock > 0`, иначе `"нет в наличии"`.
+  Метки — в списке `labels` в том же порядке, что товары. Код не запускается: `SyntaxError`.
+inputs: |
+  products = [{"name": "Мышь", "stock": 12}, {"name": "Клавиатура", "stock": 0}]
+starter_code: |
+  # products — входные данные задачи
+  labels = ["в наличии" for p in products if p["stock"] > 0 else "нет в наличии"]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run()["labels"] == ["в наличии", "нет в наличии"]
+      fail: "Метка нужна для каждого товара. Где в comprehension ставится условное выражение с `else`?"
+    - code: |
+        assert run(products=[{"name": "Коврик", "stock": 0}] * 2)["labels"] == ["нет в наличии", "нет в наличии"]
+      fail: Для товаров без остатка — «нет в наличии», для каждого.
+solution: |
+  labels = ["в наличии" if p["stock"] > 0 else "нет в наличии" for p in products]
+hints:
+  - "`if` в конце — фильтр, у него не бывает `else`."
+  - "Условное выражение `a if условие else b` — это «что кладём», оно стоит в начале."
+explanation: |
+  В конце comprehension допускается только фильтр — `if` без `else`, он решает, попадёт ли элемент.
+  Здесь нужна метка для каждого товара, поэтому условие — часть выражения «что кладём»:
+  `"в наличии" if p["stock"] > 0 else "нет в наличии"` в начале.

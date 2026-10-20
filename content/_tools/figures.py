@@ -160,7 +160,111 @@ def lost_key():
     f.save(out(INT3 / "03-hashable-and-immutability" / "img" / "lost-key.svg"))
 
 
+PY2 = ROOT / "python" / "02-collections"
+
+
+# ---------- Python 2.04: операции над множествами ----------
+def sets_venn():
+    f = Figure(760, 390, "Операции над множествами на примере покупателей мыши и клавиатуры")
+    f.raw('<circle cx="300" cy="150" r="115" class="fig-m1 fig-venn"/>')
+    f.raw('<circle cx="460" cy="150" r="115" class="fig-m2 fig-venn"/>')
+    f.text(300, 24, "mouse = {1, 2, 3, 5}", "c", "middle")
+    f.text(460, 290, "keyboard = {2, 3, 8}", "c", "middle")
+    f.text(250, 156, "1, 5", "c", "middle"); f.text(250, 176, "только мышь", "s", "middle")
+    f.text(380, 156, "2, 3", "c", "middle"); f.text(380, 176, "оба товара", "s", "middle")
+    f.text(515, 156, "8", "c", "middle"); f.text(515, 176, "только клавиатура", "s", "middle")
+    rows = [("mouse & keyboard", "{2, 3}", "пересечение: купили оба"),
+            ("mouse | keyboard", "{1, 2, 3, 5, 8}", "объединение: купили хоть что-то"),
+            ("mouse - keyboard", "{1, 5}", "разность: мышь, но не клавиатуру"),
+            ("mouse ^ keyboard", "{1, 5, 8}", "ровно один из двух товаров")]
+    for i, (expr, res, note) in enumerate(rows):
+        y = 320 + i * 20
+        f.text(40, y, expr, "cs"); f.text(220, y, "→ " + res, "cs"); f.text(400, y, note, "s")
+    f.save(out(PY2 / "04-sets" / "img" / "sets-venn.svg"))
+
+
+# ---------- Python 2.05: вложенный заказ ----------
+def nested_order():
+    f = Figure(860, 380, "Структура заказа: словарь со вложенным словарём и списком словарей")
+    f.text(20, 24, 'order["items"][0]["price"]  →  1499', "c")
+    f.box(20, 40, 820, 320, "", "box")
+    f.text(36, 64, "order — dict", "h")
+    f.text(40, 98, '"id": 1042', "c"); f.text(40, 126, '"status": "paid"', "c")
+    f.text(40, 172, '"customer":', "c"); f.arrow("M150 167H216")
+    f.box(220, 146, 300, 46, "", "box2"); f.text(236, 174, '{"name": "Анна", "city": None}', "cs")
+    f.text(526, 160, "dict", "h")
+    f.text(40, 236, '"items":', "c"); f.arrow("M122 231H216")
+    f.box(220, 208, 610, 140, "", "box2"); f.text(236, 228, "list", "h")
+    for k, (name, price, qty) in enumerate([("Мышь", "1499", "2"), ("Коврик", "490", "1")]):
+        x = 236 + k * 296
+        f.text(x, 252, f"[{k}] — dict", "s")
+        f.box(x, 258, 280, 80, "", "box")
+        if k == 0:
+            f.raw(f'<rect x="{x + 8}" y="{258 + 30}" width="130" height="22" rx="6" class="fig-acc"/>')
+        f.text(x + 14, 280, f'"name": "{name}"', "cs")
+        f.text(x + 14, 304, f'"price": {price}', "onacc" if k == 0 else "cs")
+        f.text(x + 14, 328, f'"qty": {qty}', "cs")
+    f.save(out(PY2 / "05-nested-structures" / "img" / "nested-order.svg"))
+
+
+# ---------- Python 2.06: присваивание, copy, deepcopy ----------
+def copy_modes():
+    f = Figure(900, 290, "Присваивание, поверхностная и глубокая копия списка со вложенным словарём")
+    panels = [("b = a", "одно и то же: изменения|видны через оба имени"),
+              ("b = a.copy()", "внешний список новый,|а вложенный словарь общий"),
+              ("b = copy.deepcopy(a)", "полностью независимая|копия")]
+    for p, (title, note) in enumerate(panels):
+        x0 = 10 + p * 300
+        f.text(x0 + 10, 24, title, "c")
+        f.box(x0 + 10, 60, 46, 32, "a", "box", "c", rx=16)
+        f.box(x0 + 10, 150, 46, 32, "b", "box", "c", rx=16)
+        if p == 0:
+            f.box(x0 + 100, 100, 70, 40, "[ • ]", "box2", "c")
+            f.arrow(f"M{x0 + 56} 76L{x0 + 98} 112"); f.arrow(f"M{x0 + 56} 166L{x0 + 98} 128")
+            f.box(x0 + 200, 100, 80, 40, "qty: 2", "box", "cs")
+            f.arrow(f"M{x0 + 170} 120H{x0 + 196}")
+        elif p == 1:
+            f.box(x0 + 100, 56, 70, 40, "[ • ]", "box2", "c"); f.box(x0 + 100, 146, 70, 40, "[ • ]", "box2", "c")
+            f.arrow(f"M{x0 + 56} 76H{x0 + 96}"); f.arrow(f"M{x0 + 56} 166H{x0 + 96}")
+            f.box(x0 + 200, 100, 80, 40, "qty: 2", "err", "cs")
+            f.arrow(f"M{x0 + 170} 76L{x0 + 198} 108"); f.arrow(f"M{x0 + 170} 166L{x0 + 198} 132")
+        else:
+            for y in (56, 146):
+                f.box(x0 + 100, y, 70, 40, "[ • ]", "box2", "c")
+                f.box(x0 + 200, y, 80, 40, "qty: 2", "ok", "cs")
+                f.arrow(f"M{x0 + 170} {y + 20}H{x0 + 196}")
+            f.arrow(f"M{x0 + 56} 76H{x0 + 96}"); f.arrow(f"M{x0 + 56} 166H{x0 + 96}")
+        for k, line in enumerate(note.split("|")):
+            f.text(x0 + 10, 230 + k * 18, line, "s")
+    f.save(out(PY2 / "06-mutability" / "img" / "copy-modes.svg"))
+
+
+# ---------- Python 2.07: устройство comprehension ----------
+def comprehension_anatomy():
+    f = Figure(760, 300, "Части list comprehension и соответствующие строки обычного цикла")
+    cw = 8.4  # ширина символа JetBrains Mono 14px
+
+    def seg(x0, y, col, n, cls, num=None):
+        f.raw(f'<rect x="{x0 + col * cw - 2}" y="{y - 17}" width="{n * cw + 4}" height="24" rx="5" class="fig-{cls}"/>')
+        if num:
+            f.raw(f'<circle cx="{x0 + col * cw + n * cw / 2}" cy="{y - 30}" r="10" class="fig-{cls} fig-venn"/>')
+            f.text(x0 + col * cw + n * cw / 2, y - 26, num, "cs", "middle")
+
+    x0, y = 30, 64
+    seg(x0, y, 1, 12, "acc", "1"); seg(x0, y, 14, 20, "m1", "2"); seg(x0, y, 35, 20, "m3", "3")
+    f.text(x0, y, 'names = [item["name"] for item in products if item["stock"] > 0]'.replace("names = ", ""), "c")
+    f.text(x0, 112, "то же самое циклом:", "s")
+    lines = ["names = []", "for item in products:", '    if item["stock"] > 0:', '        names.append(item["name"])']
+    ys = [146, 174, 202, 230]
+    seg(x0, ys[1], 0, 20, "m1"); seg(x0, ys[2], 4, 20, "m3"); seg(x0, ys[3], 21, 12, "acc")
+    for line, yy in zip(lines, ys):
+        f.text(x0, yy, line, "c")
+    f.text(x0, 272, "1 — что кладём в результат   2 — откуда берём элементы   3 — какие оставляем (необязательно)", "s")
+    f.save(out(PY2 / "07-comprehensions" / "img" / "comprehension-anatomy.svg"))
+
+
 if __name__ == "__main__":
-    for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop, dict_lookup, lost_key):
+    for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
+                  sets_venn, nested_order, copy_modes, comprehension_anatomy, dict_lookup, lost_key):
         build()
     print("ok")

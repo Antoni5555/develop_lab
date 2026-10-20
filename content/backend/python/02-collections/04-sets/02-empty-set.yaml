@@ -1,0 +1,31 @@
+title: Уникальные категории
+type: exercise
+difficulty: 1
+pitfall: "{} — пустой словарь, а не множество."
+statement: |
+  Для письма покупателю нужно знать, в каких категориях он покупал: соберите в `categories`
+  множество уникальных `id` категорий из списка покупок `purchases_categories`.
+  Код падает на первой же покупке.
+inputs: |
+  purchases_categories = [3, 5, 3, 8]
+starter_code: |
+  # purchases_categories — входные данные задачи
+  categories = {}
+  for category_id in purchases_categories:
+      categories.add(category_id)
+check:
+  type: tests
+  tests:
+    - code: assert run(purchases_categories=[3, 5, 3, 8])["categories"] == {3, 5, 8}
+      fail: "`AttributeError: 'dict' object has no attribute 'add'`. Какой тип у `{}`?"
+    - code: assert run(purchases_categories=[])["categories"] == set()
+      fail: "Нет покупок — пустое множество `set()`, а не словарь."
+solution: |
+  categories = set()
+  for category_id in purchases_categories:
+      categories.add(category_id)
+hints:
+  - "Выведите `type({})`."
+explanation: |
+  Пустые фигурные скобки — пустой словарь, у него нет метода `add`. Пустое множество создаётся
+  только через `set()`. Короче было бы сразу `categories = set(purchases_categories)`.

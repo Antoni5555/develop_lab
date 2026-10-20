@@ -1,0 +1,30 @@
+title: Пропавший список цен
+type: exercise
+difficulty: 1
+pitfall: list.sort() сортирует на месте и возвращает None; новый список возвращает sorted().
+statement: |
+  Для блока «Сначала дешёвые» нужен отсортированный по возрастанию список цен `cheap_first`.
+  Исходный список `prices` — это порядок добавления в корзину, его менять нельзя.
+  Сейчас `cheap_first` пустой (`None`), а порядок корзины сломан.
+inputs: |
+  prices = [1499, 5990, 990, 490]
+starter_code: |
+  # prices — входные данные задачи
+  cheap_first = prices.sort()
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run()["cheap_first"] == [490, 990, 1499, 5990]
+      fail: "В `cheap_first` — `None`. Что возвращает метод `.sort()`?"
+    - code: |
+        assert run()["prices"] == [1499, 5990, 990, 490]
+      fail: "Исходный порядок корзины изменился — `.sort()` меняет сам список."
+solution: |
+  cheap_first = sorted(prices)
+hints:
+  - "Выведите результат `prices.sort()` и сам `prices`."
+  - "Встроенная функция `sorted` возвращает новый список."
+explanation: |
+  `.sort()` сортирует список на месте и возвращает `None` — так и испортилось сразу две вещи.
+  `sorted(prices)` создаёт новый отсортированный список, а `prices` остаётся в порядке корзины.

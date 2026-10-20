@@ -1,0 +1,30 @@
+title: Чек с нулевой строки
+type: exercise
+difficulty: 1
+pitfall: enumerate нумерует с нуля — для людей нужен start=1.
+statement: |
+  Чек выводит позиции с номерами, и первая позиция в нём — «0. Мышь». Покупателям нужна
+  нумерация с единицы: `1. Мышь`, `2. Коврик`… Исправьте вывод.
+inputs: |
+  names = ["Мышь", "Коврик", "Кабель"]
+starter_code: |
+  # names — входные данные задачи
+  for number, name in enumerate(names):
+      print(f"{number}. {name}")
+check:
+  type: tests
+  tests:
+    - code: |
+        assert run()["output"] == "1. Мышь\n2. Коврик\n3. Кабель\n"
+      fail: "Нумерация начинается с 0. У `enumerate` есть параметр, задающий первый номер."
+    - code: |
+        assert run(names=["Монитор"])["output"] == "1. Монитор\n"
+      fail: Одна позиция — номер 1.
+solution: |
+  for number, name in enumerate(names, start=1):
+      print(f"{number}. {name}")
+hints:
+  - "`enumerate(names, start=...)`"
+explanation: |
+  `enumerate` по умолчанию считает с нуля — как индексы. Для номеров, которые видит человек,
+  задают `start=1`. Вариант `number + 1` в f-строке тоже работает, но `start=1` честнее говорит о намерении.
