@@ -128,3 +128,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Уроки и задачи (папка content/ в корне репозитория). Загружаются командой
 # manage.py load_content; в Docker папка подключена в /content
 CONTENT_DIR = Path(os.getenv('CONTENT_DIR', BASE_DIR.parent / 'content'))
+
+# Pyodide (Python в браузере) — с CDN jsDelivr: ~13 МБ, хранить в репозитории невыгодно.
+# Версия 0.27 — внутри Python 3.12, как в формате контента (тексты ошибок совпадают).
+PYODIDE_URL = os.getenv(
+    'PYODIDE_URL', 'https://cdn.jsdelivr.net/pyodide/v0.27.8/full/',
+)
