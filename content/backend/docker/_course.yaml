@@ -1,0 +1,4 @@
+title: Docker
+description: Контейнеры, Dockerfile и Compose — упаковываем Django, Postgres и Nginx магазина.
+engine: null  # без тренажёра — задачи quiz/fix
+order: 70

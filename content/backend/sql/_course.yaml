@@ -1,0 +1,4 @@
+title: SQL
+description: PostgreSQL от первого SELECT до JOIN, оконных функций, индексов и транзакций — на базе магазина.
+engine: sql
+order: 40

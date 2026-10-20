@@ -1,0 +1,4 @@
+title: Веб и HTTP
+description: Как устроены клиент и сервер, HTTP, cookies, REST и безопасность — на запросах к API магазина.
+engine: python
+order: 35

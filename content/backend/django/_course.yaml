@@ -1,0 +1,4 @@
+title: Django
+description: Сайт магазина на Django — URL, шаблоны, модели и ORM, формы, пользователи, безопасность и тесты.
+engine: django
+order: 50
