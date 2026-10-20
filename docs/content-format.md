@@ -290,12 +290,18 @@ explanation: |
   ...
 ```
 
-**Правила Linux:** `path` + `exists: true|false`; `path` + `contains: <regex>` (содержимое файла, флаг `m`); `path` + `mode: '644'`; `output_matches: <regex>` (вывод последней команды — для задач «найди и выведи»).
+**Файлы и папки в `setup`:**
+- `files: {путь: текст}` — обычный файл с содержимым;
+- `files: {путь: {size: 6M}}` — «тяжёлый» файл: вместо содержимого только размер (`K`, `M`, `G`) — для `find -size`, фото и бэкапов;
+- у файла можно задать владельца и права: `{content: "...", owner: www-data, mode: '640'}` или `{size: 6M, owner: root}`. Владелец по умолчанию — `shop`;
+- `dirs` — список путей пустых папок или словарь `{путь: {owner: www-data}}`.
+
+**Правила Linux:** `path` + `exists: true|false`; `path` + `contains: <regex>` (содержимое файла, флаг `m`); `path` + `mode: '644'`; `path` + `owner: <пользователь>`; `path` + `link_to: <путь>` (символическая ссылка — для `ln -s`); `output_matches: <regex>` (вывод последней команды — для задач «найди и выведи»).
 
 **Git** — то же, плюс история в `setup`: `commits: [{message, branch, files}]`, `branch`, `head`. Правила: `branch: <имя>` + `exists`; `head: <ветка>`; `commit_in: {branch, message: <regex>}`; `clean: true` (нет незакоммиченных изменений); `merged: {from, into}`.
 
 **Команды симулятора** — в `solution` и в задачах только они; нужна другая — согласовать с «Разработкой»:
-- Linux: `pwd`, `cd`, `ls [-l -a]`, `cat`, `echo [> >>]`, `mkdir [-p]`, `touch`, `rm [-r]`, `cp [-r]`, `mv`, `head`, `tail`, `wc [-l]`, `grep [-i -n -r -c]`, `sort`, `uniq [-c]`, `cut`, `find [-name]`, `chmod` (числом), конвейер `|`;
+- Linux: `pwd`, `cd`, `ls [-l -a]`, `cat`, `echo`, `mkdir [-p]`, `touch`, `rm [-r]`, `cp [-r]`, `mv`, `ln -s`, `head [-n N]`, `tail [-n N]`, `wc [-l]`, `grep [-i -n -r -c -v]`, `sort [-n -r]`, `uniq [-c]`, `cut [-d -f]`, `find [-name -type -size]`, `tar [-czf -xzf]`, `chmod` (числом и буквами: `u+x`), `chown [-R]`; конвейер `|`, перенаправления `>`, `>>`, `2>`, `2>&1`, `/dev/null` (команды из этого пункта, кроме исходного списка, «Разработка» добавляет на этапе 5);
 - Git: `init`, `status`, `add`, `commit -m`, `log [--oneline --graph]`, `branch`, `switch [-c]`, `merge`, `rebase`, `reset [--soft --hard]`, `restore [--staged]`, `stash [pop]`, `diff`, `cherry-pick`, `revert`, `tag`.
 
 `check_tasks.py` проверяет у таких задач структуру, шаблоны и то, что `solution` использует только команды и флаги из списка. Сам эталон прогоняет тест сайта через симулятор, когда тот появится.

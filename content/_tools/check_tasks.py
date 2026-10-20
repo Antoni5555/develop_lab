@@ -186,9 +186,10 @@ def check_fix(task):
 # None — флаги не поддерживаются; набор — разрешённые флаги.
 LINUX_COMMANDS = {
     "pwd": None, "cd": None, "ls": {"-l", "-a"}, "cat": None, "echo": None, "mkdir": {"-p"},
-    "touch": None, "rm": {"-r"}, "cp": {"-r"}, "mv": None, "head": None, "tail": None,
-    "wc": {"-l"}, "grep": {"-i", "-n", "-r", "-c"}, "sort": None, "uniq": {"-c"}, "cut": None,
-    "find": {"-name"}, "chmod": None,
+    "touch": None, "rm": {"-r"}, "cp": {"-r"}, "mv": None, "ln": {"-s"}, "head": {"-n"}, "tail": {"-n"},
+    "wc": {"-l"}, "grep": {"-i", "-n", "-r", "-c", "-v"}, "sort": {"-n", "-r"}, "uniq": {"-c"},
+    "cut": {"-d", "-f"}, "find": {"-name", "-type", "-size"}, "tar": {"-c", "-x", "-z", "-f"},
+    "chmod": None, "chown": {"-R"},
 }
 GIT_COMMANDS = {
     "init": None, "status": None, "add": None, "commit": {"-m"}, "log": {"--oneline", "--graph"},
@@ -196,7 +197,8 @@ GIT_COMMANDS = {
     "restore": {"--staged"}, "stash": None, "diff": None, "cherry-pick": None, "revert": None, "tag": None,
 }
 STATE_RULES = {  # ключ, по которому узнаём правило → какие ещё ключи обязательны
-    "exists": {"path"}, "contains": {"path"}, "mode": {"path"}, "output_matches": set(),
+    "exists": {"path"}, "contains": {"path"}, "mode": {"path"}, "owner": {"path"}, "link_to": {"path"},
+    "output_matches": set(),
     "head": set(), "commit_in": set(), "clean": set(), "merged": set(),
 }
 
@@ -206,7 +208,7 @@ def check_command(line):
     problems = []
     line_wo_strings = re.sub(r"\"[^\"]*\"|'[^']*'", "STR", line)   # текст в кавычках — не флаги
     for part in line_wo_strings.split("|"):
-        part = re.split(r">>?", part)[0]          # перенаправление: дальше — имя файла
+        part = re.split(r"\d?>>?", part)[0]       # перенаправление (>, >>, 2>, 2>&1): дальше — цель
         tokens = part.split()
         if not tokens:
             continue
@@ -222,10 +224,12 @@ def check_command(line):
         else:
             problems.append(f"команды {tokens[0]!r} нет в симуляторе: {line!r}")
             continue
-        for flag in (t for t in flags if t.startswith("-") and not re.fullmatch(r"-?\d+", t)):
+        for flag in (t for t in flags if t.startswith("-") and not re.fullmatch(r"[-+]?\d+[KMG]?", t)):
             letters = [flag] if flag.startswith("--") or len(flag) == 2 else [f"-{c}" for c in flag[1:]]
             if flag in (allowed or set()):
                 continue
+            if any(flag.startswith(v) and v in (allowed or set()) for v in ("-n", "-d", "-f")):
+                continue                        # значение слитно с флагом: -n20, -d, -f1
             if any(f not in (allowed or set()) for f in letters):
                 problems.append(f"флаг {flag} у {tokens[0] if tokens[0] != 'git' else 'git ' + tokens[1]} не поддерживается симулятором: {line!r}")
     return problems
@@ -242,6 +246,24 @@ def check_state(task):
     for path in list((setup.get("files") or {})) + list(setup.get("dirs") or []):
         if not str(path).startswith("/"):
             problems.append(f"путь в setup не абсолютный: {path!r}")
+    file_keys = {"content", "size", "owner", "mode"}
+    for path, value in (setup.get("files") or {}).items():
+        if isinstance(value, dict):
+            if set(value) - file_keys:
+                problems.append(f"у файла {path} неизвестные ключи: {sorted(set(value) - file_keys)}")
+            if "content" in value and "size" in value:
+                problems.append(f"у файла {path} либо content, либо size")
+            if "size" in value and not re.fullmatch(r"\d+[KMG]?", str(value["size"])):
+                problems.append(f"размер файла {path} — число с K, M или G: {value['size']!r}")
+            if "mode" in value and not (isinstance(value["mode"], str) and re.fullmatch(r"[0-7]{3}", value["mode"])):
+                problems.append(f"mode файла {path} — три цифры строкой")
+        elif not isinstance(value, str):
+            problems.append(f"файл {path}: текст или словарь content/size, owner, mode")
+    dirs = setup.get("dirs") or []
+    if isinstance(dirs, dict):
+        for path, value in dirs.items():
+            if not isinstance(value, dict) or set(value) - {"owner", "mode"}:
+                problems.append(f"папка {path}: словарь с owner/mode")
     for commit in setup.get("commits") or []:
         if not isinstance(commit, dict) or "message" not in commit:
             problems.append(f"у коммита в setup нужен message: {commit!r}")
