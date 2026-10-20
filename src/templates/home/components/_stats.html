@@ -1,7 +1,7 @@
-{# Этап 1: числа из БД #}
+{% load plural %}
 <div class="stats">
-  <div class="stat"><span class="stat__value">5</span><span class="stat__label">курсов</span></div>
-  <div class="stat"><span class="stat__value">134</span><span class="stat__label">задачи</span></div>
-  <div class="stat"><span class="stat__value">48</span><span class="stat__label">уроков теории</span></div>
+  <div class="stat"><span class="stat__value">{{ stats.courses }}</span><span class="stat__label">{{ stats.courses|plural_word:"курс,курса,курсов" }}</span></div>
+  <div class="stat"><span class="stat__value">{{ stats.exercises }}</span><span class="stat__label">{{ stats.exercises|plural_word:"задача,задачи,задач" }}</span></div>
+  <div class="stat"><span class="stat__value">{{ stats.lessons }}</span><span class="stat__label">{{ stats.lessons|plural_word:"урок,урока,уроков" }} теории</span></div>
   <div class="stat"><span class="stat__value">0 ₽</span><span class="stat__label">навсегда</span></div>
 </div>

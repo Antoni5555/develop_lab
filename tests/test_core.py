@@ -1,10 +1,12 @@
 """Общий код из core/: название сайта, страницы ошибок, health-check."""
+import pytest
 from django.test import RequestFactory
 from django.urls import reverse
 
 from core.errors import server_error
 
 
+@pytest.mark.django_db
 def test_site_name_in_html(client, settings):
     """SITE_NAME из настроек попадает в шапку, подвал и <title>."""
     settings.SITE_NAME = 'Тестовый сайт'

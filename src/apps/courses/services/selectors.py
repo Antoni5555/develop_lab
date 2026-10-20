@@ -9,7 +9,7 @@ from django.db.models import Count, Prefetch, Q, Sum
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from apps.courses.models import Course, Exercise, Section, Topic, Track
+from apps.courses.models import Course, Exercise, Lesson, Section, Topic, Track
 
 
 PUBLISHED_TOPICS = Q(sections__is_published=True, sections__topics__is_published=True)
@@ -152,4 +152,21 @@ def lesson_page(course_slug, section_slug, topic_slug):
         'sections': sections,
         'prev_topic': topics[index - 1][1] if index > 0 else None,
         'next_topic': topics[index + 1][1] if index + 1 < len(topics) else None,
+    }
+
+
+def home_summary():
+    """Для главной: первые курсы программы и общие числа."""
+    _, _, cards = catalog()
+    open_cards = [card for card in cards if not card.is_soon]
+    return {
+        'start_cards': open_cards[:3],
+        'stats': {
+            'courses': len(open_cards),
+            'lessons': Lesson.objects.published().filter(
+                topic__is_published=True, topic__section__is_published=True,
+                topic__section__course__in=[card.course for card in open_cards],
+            ).count(),
+            'exercises': sum(card.course.exercise_count for card in open_cards),
+        },
     }

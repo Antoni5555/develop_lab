@@ -1,34 +1,12 @@
-{# Этап 1: первые курсы направления из БД (по Course.order) через common/_course_card.html #}
+{# Первые открытые курсы программы направления (по Course.order) #}
 <section>
   <div class="section-head">
     <h2 class="section-title">С чего начать</h2>
     <a href="{% url 'courses:list' %}" class="link-arrow">Все курсы <span aria-hidden="true">→</span></a>
   </div>
-  {# Первые шаги программы направления Backend (по Course.order) #}
   <div class="course-grid course-grid--3">
-    <a href="{% url 'courses:list' %}" class="course-card course-card--accent">
-      <div class="course-card__top">
-        <span class="course-card__step">Шаг 1</span>
-        <span class="badge badge--on-accent">Начни здесь</span>
-      </div>
-      <h3 class="course-card__title">Python</h3>
-      <p class="course-card__text">Коллекции, функции, ООП, итераторы, исключения.</p>
-    </a>
-    <a href="{% url 'courses:list' %}" class="course-card">
-      <div class="course-card__top">
-        <span class="course-card__step">Шаг 2</span>
-        <span class="round-btn" aria-hidden="true">↗</span>
-      </div>
-      <h3 class="course-card__title">Linux</h3>
-      <p class="course-card__text">Файлы и права, пайпы, grep, процессы, переменные окружения.</p>
-    </a>
-    <a href="{% url 'courses:list' %}" class="course-card">
-      <div class="course-card__top">
-        <span class="course-card__step">Шаг 3</span>
-        <span class="round-btn" aria-hidden="true">↗</span>
-      </div>
-      <h3 class="course-card__title">SQL</h3>
-      <p class="course-card__text">Создание таблиц, выборка, JOIN, агрегация, оконные функции.</p>
-    </a>
+    {% for card in start_cards %}
+      {% include 'common/_course_card.html' with accent=forloop.first %}
+    {% endfor %}
   </div>
 </section>

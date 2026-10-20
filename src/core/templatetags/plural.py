@@ -20,3 +20,9 @@ def plural(number, forms):
     """'3' + 'задача,задачи,задач' → '3 задачи'."""
     one, few, many = forms.split(',')
     return f'{number} {plural_form(number, one, few, many)}'
+
+
+@register.filter
+def plural_word(number, forms):
+    """Только слово: '3' + 'задача,задачи,задач' → 'задачи'."""
+    return plural_form(number, *forms.split(','))

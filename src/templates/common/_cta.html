@@ -4,7 +4,9 @@
     <p class="cta__text">Регистрация не нужна. Аккаунт — когда захочешь сохранить прогресс и шпаргалки.</p>
   </div>
   <div class="cta__actions">
-    <a href="{% url 'courses:list' %}" class="btn btn--accent btn--lg">Начать с Python</a>
+    {% with first=start_cards.0.course %}
+    {% if first %}<a href="{{ first.get_absolute_url }}" class="btn btn--accent btn--lg">Начать с {{ first.title }}</a>{% endif %}
+    {% endwith %}
     <a href="{% url 'accounts:signup' %}" class="btn btn--on-ink btn--lg">Создать аккаунт</a>
   </div>
 </div>
