@@ -1,0 +1,20 @@
+[flake8]
+max-line-length = 88
+
+exclude =
+    .git,
+    .venv,
+    venv,
+    __pycache__,
+    .pytest_cache,
+    migrations,
+    staticfiles
+
+# W503 и E203 спорят с современным стилем переноса строк
+extend-ignore =
+    W503,
+    E203
+
+# В настройках `from .base import *` — нормальная практика
+per-file-ignores =
+    src/config/settings/*.py: F401, F403, F405

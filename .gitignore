@@ -1,1 +1,24 @@
 .obsidian/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Тесты и линтеры
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
+staticfiles/
+media/
+*.sqlite3
+
+# Секреты
+.env
+
+# Редакторы
+.idea/
+.vscode/
