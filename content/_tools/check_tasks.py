@@ -243,7 +243,23 @@ def check_state(task):
         problems.append(f"неизвестные ключи setup: {sorted(unknown)}")
     if "cwd" in setup and not str(setup["cwd"]).startswith("/"):
         problems.append("setup.cwd — абсолютный путь")
-    for path in list((setup.get("files") or {})) + list(setup.get("dirs") or []):
+    dirs = setup.get("dirs") or []
+    dir_items = []                      # (путь, настройки) — элемент: путь или {путь: {owner, mode}}
+    for item in (dirs.items() if isinstance(dirs, dict) else dirs):
+        if isinstance(item, tuple):
+            dir_items.append(item)
+        elif isinstance(item, dict) and len(item) == 1:
+            dir_items.append(next(iter(item.items())))
+        elif isinstance(item, str):
+            dir_items.append((item, {}))
+        else:
+            problems.append(f"папка в setup.dirs — путь или {{путь: {{owner, mode}}}}: {item!r}")
+    for path, value in dir_items:
+        if not isinstance(value, dict) or set(value) - {"owner", "mode"}:
+            problems.append(f"папка {path}: настройки — словарь с owner/mode")
+        elif "mode" in value and not (isinstance(value["mode"], str) and re.fullmatch(r"[0-7]{3}", value["mode"])):
+            problems.append(f"mode папки {path} — три цифры строкой")
+    for path in list((setup.get("files") or {})) + [p for p, _ in dir_items]:
         if not str(path).startswith("/"):
             problems.append(f"путь в setup не абсолютный: {path!r}")
     file_keys = {"content", "size", "owner", "mode"}
@@ -259,11 +275,6 @@ def check_state(task):
                 problems.append(f"mode файла {path} — три цифры строкой")
         elif not isinstance(value, str):
             problems.append(f"файл {path}: текст или словарь content/size, owner, mode")
-    dirs = setup.get("dirs") or []
-    if isinstance(dirs, dict):
-        for path, value in dirs.items():
-            if not isinstance(value, dict) or set(value) - {"owner", "mode"}:
-                problems.append(f"папка {path}: словарь с owner/mode")
     for commit in setup.get("commits") or []:
         if not isinstance(commit, dict) or "message" not in commit:
             problems.append(f"у коммита в setup нужен message: {commit!r}")
