@@ -1,5 +1,8 @@
 Django==5.2.18
 gunicorn==26.2.0
+markdown-it-py==4.2.0
 psycopg[binary]==3.3.6
+Pygments==2.21.0
 python-dotenv==1.2.4
+PyYAML==6.0.3
 redis==8.1.0
