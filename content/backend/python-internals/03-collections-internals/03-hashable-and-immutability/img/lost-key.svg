@@ -29,11 +29,11 @@
 <text x="80" y="124" text-anchor="middle" class="fig-s">0</text>
 <rect x="40" y="132" width="80" height="64" rx="10" class="fig-box2"/>
 <text x="165" y="124" text-anchor="middle" class="fig-s">1</text>
-<rect x="125" y="132" width="80" height="64" rx="10" class="fig-box2"/>
+<rect x="125" y="132" width="80" height="64" rx="10" class="fig-err"/>
+<text x="165" y="158" text-anchor="middle" class="fig-cs">SKU(1002)</text>
+<text x="165" y="180" text-anchor="middle" class="fig-cs">→ 12</text>
 <text x="250" y="124" text-anchor="middle" class="fig-s">2</text>
-<rect x="210" y="132" width="80" height="64" rx="10" class="fig-err"/>
-<text x="250" y="158" text-anchor="middle" class="fig-cs">SKU(KB-02)</text>
-<text x="250" y="180" text-anchor="middle" class="fig-cs">→ 12</text>
+<rect x="210" y="132" width="80" height="64" rx="10" class="fig-dash"/>
 <text x="335" y="124" text-anchor="middle" class="fig-s">3</text>
 <rect x="295" y="132" width="80" height="64" rx="10" class="fig-box2"/>
 <text x="420" y="124" text-anchor="middle" class="fig-s">4</text>
@@ -41,15 +41,15 @@
 <text x="505" y="124" text-anchor="middle" class="fig-s">5</text>
 <rect x="465" y="132" width="80" height="64" rx="10" class="fig-box2"/>
 <text x="590" y="124" text-anchor="middle" class="fig-s">6</text>
-<rect x="550" y="132" width="80" height="64" rx="10" class="fig-dash"/>
+<rect x="550" y="132" width="80" height="64" rx="10" class="fig-box2"/>
 <text x="675" y="124" text-anchor="middle" class="fig-s">7</text>
 <rect x="635" y="132" width="80" height="64" rx="10" class="fig-box2"/>
-<text x="40" y="222" text-anchor="start" class="fig-h">ячейки таблицы dict (схематично)</text>
-<text x="40" y="26" text-anchor="start" class="fig-c">SKU(&quot;KB-01&quot;) in stock</text>
-<text x="40" y="48" text-anchor="start" class="fig-s">hash(&quot;KB-01&quot;) → ячейка 2: ячейка та, но в ней уже ключ KB-02</text>
-<path d="M250 58V128" class="fig-ln" marker-end="url(#a)"/>
-<text x="262" y="96" text-anchor="start" class="fig-errt">== даёт False → не найден</text>
-<path d="M590 248V200" class="fig-ln" marker-end="url(#a)"/>
-<text x="420" y="268" text-anchor="start" class="fig-c">key in stock</text>
-<text x="420" y="290" text-anchor="start" class="fig-s">hash(&quot;KB-02&quot;) → ячейка 6: она пуста → не найден</text>
+<text x="420" y="222" text-anchor="start" class="fig-h">ячейки таблицы dict из 8 мест</text>
+<text x="40" y="26" text-anchor="start" class="fig-c">SKU(1001) in stock</text>
+<text x="40" y="48" text-anchor="start" class="fig-s">hash(1001) % 8 = 1 → ячейка 1: ячейка та, но в ней уже ключ 1002</text>
+<path d="M165 58V128" class="fig-ln" marker-end="url(#a)"/>
+<text x="177" y="96" text-anchor="start" class="fig-errt">== даёт False → не найден</text>
+<path d="M250 248V200" class="fig-ln" marker-end="url(#a)"/>
+<text x="220" y="268" text-anchor="start" class="fig-c">key in stock</text>
+<text x="220" y="290" text-anchor="start" class="fig-s">hash(1002) % 8 = 2 → ячейка 2: она пуста → не найден</text>
 </svg>

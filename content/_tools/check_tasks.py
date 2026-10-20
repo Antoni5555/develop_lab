@@ -1,9 +1,17 @@
 """Проверка контента курсов Python: эталоны задач и оформление уроков.
 
-Запуск: python3 content/_tools/check_tasks.py [путь]   (по умолчанию — content/backend)
+Запуск: python3 content/_tools/check_tasks.py [путь] [--quick]   (по умолчанию — content/backend)
 Правила — docs/content-format.md, разделы 4–5.
+
+Проверка идёт параллельно при SEEDS разных PYTHONHASHSEED: хеш строк в Python случаен
+в каждом запуске, и пример, зависящий от него (порядок множества строк, совпадение ячеек
+словаря), даёт разный вывод. Такие ошибки помечаются как нестабильные. --quick — один запуск.
 """
+import concurrent.futures
 import contextlib
+import json
+import os
+import subprocess
 import difflib
 import io
 import re
@@ -309,9 +317,12 @@ def check_lesson(path):
     return problems
 
 
-def main():
-    base = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "backend"
-    total = bad = 0
+SEEDS = 16
+
+
+def collect(base):
+    """{файл: [проблемы]} для одного запуска интерпретатора."""
+    results = {}
     for path in sorted(base.rglob("*")):
         if path.name.startswith("_") or path.parent.name == "img":
             continue
@@ -321,13 +332,44 @@ def main():
             problems = check_lesson(path)
         else:
             continue
-        total += 1
-        if problems:
-            bad += 1
-            print(f"✗ {path.relative_to(base) if path.is_relative_to(base) else path}")
-            for p in problems:
-                print(f"    {p}")
-    print(f"\nПроверено файлов: {total}, с ошибками: {bad}")
+        results[str(path.relative_to(base) if path.is_relative_to(base) else path)] = problems
+    return results
+
+
+def run_seed(base, seed):
+    env = {**os.environ, "PYTHONHASHSEED": str(seed)}
+    proc = subprocess.run([sys.executable, __file__, str(base), "--json"],
+                          capture_output=True, text=True, env=env)
+    if proc.returncode != 0:
+        raise RuntimeError(proc.stderr)
+    return json.loads(proc.stdout)
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    base = Path(args[0]).resolve() if args else ROOT / "backend"
+    if "--json" in sys.argv:
+        print(json.dumps(collect(base), ensure_ascii=False))
+        return
+    if "--quick" in sys.argv:
+        runs = [collect(base)]
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()) as pool:
+            runs = list(pool.map(lambda seed: run_seed(base, seed), range(SEEDS)))
+    bad = 0
+    for name in runs[0]:
+        counts = {}
+        for run in runs:
+            for problem in run.get(name, []):
+                counts[problem] = counts.get(problem, 0) + 1
+        if not counts:
+            continue
+        bad += 1
+        print(f"✗ {name}")
+        for problem, n in counts.items():
+            note = "" if n == len(runs) else f"  [нестабильно: в {n} из {len(runs)} запусков — зависит от хеша строк?]"
+            print(f"    {problem}{note}")
+    print(f"\nПроверено файлов: {len(runs[0])}, с ошибками: {bad}, запусков: {len(runs)}")
     sys.exit(1 if bad else 0)
 
 

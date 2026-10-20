@@ -145,18 +145,18 @@ def lost_key():
     for i in range(8):
         x = 40 + i * 85
         f.text(x + 40, 124, str(i), "s", "middle")
-        if i == 2:
+        if i == 1:
             f.raw(f'<rect x="{x}" y="132" width="80" height="64" rx="10" class="fig-err"/>')
-            f.text(x + 40, 158, "SKU(KB-02)", "cs", "middle"); f.text(x + 40, 180, "→ 12", "cs", "middle")
+            f.text(x + 40, 158, "SKU(1002)", "cs", "middle"); f.text(x + 40, 180, "→ 12", "cs", "middle")
         else:
-            f.raw(f'<rect x="{x}" y="132" width="80" height="64" rx="10" class="fig-{"dash" if i == 6 else "box2"}"/>')
-    f.text(40, 222, "ячейки таблицы dict (схематично)", "h")
-    f.text(40, 26, 'SKU("KB-01") in stock', "c")
-    f.text(40, 48, 'hash("KB-01") → ячейка 2: ячейка та, но в ней уже ключ KB-02', "s")
-    f.arrow("M250 58V128"); f.text(262, 96, "== даёт False → не найден", "errt")
-    f.arrow("M590 248V200")
-    f.text(420, 268, "key in stock", "c")
-    f.text(420, 290, 'hash("KB-02") → ячейка 6: она пуста → не найден', "s")
+            f.raw(f'<rect x="{x}" y="132" width="80" height="64" rx="10" class="fig-{"dash" if i == 2 else "box2"}"/>')
+    f.text(420, 222, "ячейки таблицы dict из 8 мест", "h")
+    f.text(40, 26, "SKU(1001) in stock", "c")
+    f.text(40, 48, "hash(1001) % 8 = 1 → ячейка 1: ячейка та, но в ней уже ключ 1002", "s")
+    f.arrow("M165 58V128"); f.text(177, 96, "== даёт False → не найден", "errt")
+    f.arrow("M250 248V200")
+    f.text(220, 268, "key in stock", "c")
+    f.text(220, 290, "hash(1002) % 8 = 2 → ячейка 2: она пуста → не найден", "s")
     f.save(out(INT3 / "03-hashable-and-immutability" / "img" / "lost-key.svg"))
 
 
