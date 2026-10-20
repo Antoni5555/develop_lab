@@ -896,6 +896,9 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 .module-nav--done > summary .topic__count { color: var(--success); }
 .module-nav[open] > summary { margin-bottom: var(--space-2); }
 .module-nav .topic { margin-left: 30px; padding-top: var(--space-2); border-top: 0; }
+/* Пока тема — одна ссылка (без своего выпадающего списка), лишние отступы убираем */
+.module-nav > .topic { padding-top: 0; }
+.module-nav > .topic > ul { margin-top: 0; }
 .module-nav .topic summary { font-weight: var(--fw-regular); }
 
 /* --- Тренажёр: сессия, журнал выполнения, визуализация JOIN --- */
