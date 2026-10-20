@@ -42,4 +42,8 @@
   .prev-next { grid-template-columns: 1fr; }
   .author { flex-direction: column; align-items: flex-start; }
   .footer__inner { grid-template-columns: 1fr; }
+
+  /* Рисунок урока не ужимаем до нечитаемого текста — он прокручивается вбок */
+  .article p:has(> svg) { overflow-x: auto; }
+  .article svg { width: 760px; max-width: none; }
 }
