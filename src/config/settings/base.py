@@ -124,3 +124,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Уроки и задачи (папка content/ в корне репозитория). Загружаются командой
+# manage.py load_content; в Docker папка подключена в /content
+CONTENT_DIR = Path(os.getenv('CONTENT_DIR', BASE_DIR.parent / 'content'))

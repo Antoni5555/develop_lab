@@ -1,0 +1,276 @@
+"""Загрузка контента из папки content/ в БД (команда load_content).
+
+Структура и поля — docs/content-format.md:
+
+    content/<направление>/_track.yaml
+    content/<направление>/<курс>/_course.yaml
+    content/<направление>/<курс>/NN-<раздел>/_section.yaml
+    content/<направление>/<курс>/NN-<раздел>/NN-<тема>/_topic.yaml
+                                                    NN-<slug>.md     — урок
+                                                    NN-<slug>.yaml   — задачи
+
+Правила:
+- повторный запуск обновляет записи, а не создаёт дубли (ищем по slug внутри родителя);
+- всё в одной транзакции: ошибка в любом файле — БД не меняется;
+- то, чего больше нет в content/, не удаляется, а скрывается (is_published=False).
+"""
+import re
+from collections import Counter
+from dataclasses import dataclass, field
+
+import yaml
+from django.db import transaction
+
+from apps.courses.models import Course, Exercise, Lesson, Section, Topic, Track
+
+from .rendering import render_inline, render_markdown
+
+
+class ContentError(Exception):
+    """Ошибка в файле контента: какой файл и что не так."""
+
+    def __init__(self, path, message):
+        super().__init__(f'{path}: {message}')
+
+
+@dataclass
+class LoadReport:
+    """Итог загрузки: сколько записей создано, обновлено, скрыто."""
+
+    created: Counter = field(default_factory=Counter)
+    updated: Counter = field(default_factory=Counter)
+    hidden: Counter = field(default_factory=Counter)
+
+
+NUMBERED = re.compile(r'^(\d+)-([a-z0-9]+(?:-[a-z0-9]+)*)$')
+FRONT_MATTER = re.compile(r'\A---\n(.*?)\n---\n', flags=re.S)
+
+
+def read_yaml(path):
+    """YAML-файл → словарь. Битый YAML — понятная ошибка с именем файла."""
+    try:
+        data = yaml.safe_load(path.read_text(encoding='utf-8'))
+    except yaml.YAMLError as error:
+        raise ContentError(path, f'YAML не читается: {error}') from error
+    if not isinstance(data, dict):
+        raise ContentError(path, 'ожидался словарь полей')
+    return data
+
+
+def require(data, path, *keys):
+    """Проверяет, что обязательные поля есть и не пустые."""
+    missing = [key for key in keys if data.get(key) in (None, '', [], {})]
+    if missing:
+        raise ContentError(path, f'нет обязательных полей: {", ".join(missing)}')
+
+
+def numbered(path):
+    """'02-variables-and-types' → (2, 'variables-and-types')."""
+    match = NUMBERED.match(path.stem if path.is_file() else path.name)
+    if not match:
+        raise ContentError(path, 'имя должно быть вида NN-slug (латиница, kebab-case)')
+    return int(match.group(1)), match.group(2)
+
+
+def child_dirs(path, marker):
+    """Подпапки, в которых лежит файл-маркер (_course.yaml, _section.yaml…)."""
+    return sorted(
+        child for child in path.iterdir()
+        if child.is_dir() and (child / marker).is_file()
+    )
+
+
+class ContentLoader:
+    """Обходит content/ и сохраняет контент в БД."""
+
+    def __init__(self, content_dir):
+        self.content_dir = content_dir
+        self.report = LoadReport()
+        models = (Track, Course, Section, Topic, Lesson, Exercise)
+        self.seen = {model: set() for model in models}
+
+    def load(self):
+        """Загружает всё. Возвращает LoadReport."""
+        with transaction.atomic():
+            for track_dir in child_dirs(self.content_dir, '_track.yaml'):
+                self.load_track(track_dir)
+            self.hide_missing()
+        return self.report
+
+    # --- сохранение ---
+
+    def save(self, model, lookup, fields):
+        """Создаёт или обновляет запись; сохраняет, только если что-то изменилось."""
+        obj = model.objects.filter(**lookup).first()
+        if obj is None:
+            obj = model.objects.create(**lookup, **fields)
+            self.report.created[model.__name__] += 1
+        else:
+            changed = [
+                name for name, value in fields.items() if getattr(obj, name) != value
+            ]
+            if changed:
+                for name in changed:
+                    setattr(obj, name, fields[name])
+                obj.save(update_fields=changed)
+                self.report.updated[model.__name__] += 1
+        self.seen[model].add(obj.pk)
+        return obj
+
+    def hide_missing(self):
+        """Скрывает записи, которых больше нет в content/."""
+        for model, ids in self.seen.items():
+            count = (
+                model.objects.filter(is_published=True)
+                .exclude(pk__in=ids)
+                .update(is_published=False)
+            )
+            if count:
+                self.report.hidden[model.__name__] += count
+
+    # --- уровни иерархии ---
+
+    def load_track(self, track_dir):
+        path = track_dir / '_track.yaml'
+        data = read_yaml(path)
+        require(data, path, 'title')
+        track = self.save(Track, {'slug': track_dir.name}, {
+            'title': data['title'],
+            'description': data.get('description') or '',
+            'order': data.get('order') or 0,
+            'is_published': True,
+        })
+        for course_dir in child_dirs(track_dir, '_course.yaml'):
+            self.load_course(track, course_dir)
+
+    def load_course(self, track, course_dir):
+        path = course_dir / '_course.yaml'
+        data = read_yaml(path)
+        require(data, path, 'title', 'order')
+        engine = data.get('engine') or ''
+        if engine not in Course.Engine.values + ['']:
+            raise ContentError(path, f'неизвестный engine: {engine}')
+        course = self.save(Course, {'slug': course_dir.name}, {
+            'track': track,
+            'title': data['title'],
+            'description': data.get('description') or '',
+            'engine': engine,
+            'order': data['order'],
+            'is_published': True,
+        })
+        for section_dir in child_dirs(course_dir, '_section.yaml'):
+            self.load_section(course, section_dir)
+
+    def load_section(self, course, section_dir):
+        path = section_dir / '_section.yaml'
+        data = read_yaml(path)
+        require(data, path, 'title')
+        order, slug = numbered(section_dir)
+        level = data.get('level') or 1
+        if level not in Section.Level.values:
+            raise ContentError(path, 'level — 1, 2 или 3')
+        section = self.save(Section, {'course': course, 'slug': slug}, {
+            'title': data['title'],
+            'level': level,
+            'order': order,
+            'is_published': True,
+        })
+        for topic_dir in child_dirs(section_dir, '_topic.yaml'):
+            self.load_topic(section, topic_dir)
+
+    def load_topic(self, section, topic_dir):
+        path = topic_dir / '_topic.yaml'
+        data = read_yaml(path)
+        require(data, path, 'title')
+        order, slug = numbered(topic_dir)
+        topic = self.save(Topic, {'section': section, 'slug': slug}, {
+            'title': data['title'],
+            'order': order,
+            'is_published': True,
+        })
+
+        lessons = sorted(topic_dir.glob('*.md'))
+        if len(lessons) > 1:
+            raise ContentError(topic_dir, 'в теме должен быть один урок (.md)')
+        if lessons:
+            self.load_lesson(topic, lessons[0])
+
+        for exercise_path in sorted(topic_dir.glob('*.yaml')):
+            if not exercise_path.name.startswith('_'):
+                self.load_exercise(topic, exercise_path)
+
+    def load_lesson(self, topic, path):
+        text = path.read_text(encoding='utf-8')
+        match = FRONT_MATTER.match(text)
+        if not match:
+            raise ContentError(path, 'нет блока --- с полями урока в начале файла')
+        try:
+            meta = yaml.safe_load(match.group(1)) or {}
+        except yaml.YAMLError as error:
+            message = f'YAML в начале урока не читается: {error}'
+            raise ContentError(path, message) from error
+        require(meta, path, 'title')
+        try:
+            body_html = render_markdown(text[match.end():], base_dir=path.parent)
+        except FileNotFoundError as error:
+            raise ContentError(path, str(error)) from error
+        self.save(Lesson, {'topic': topic}, {
+            'title': meta['title'],
+            'body_html': body_html,
+            'reading_time': meta.get('reading_time') or 5,
+            'is_published': True,
+        })
+
+    def load_exercise(self, topic, path):
+        data = read_yaml(path)
+        require(data, path, 'title', 'type', 'difficulty', 'pitfall', 'statement',
+                'explanation')
+        order, slug = numbered(path)
+        if data['type'] not in Exercise.Type.values:
+            raise ContentError(path, f'неизвестный type: {data["type"]}')
+        self.save(Exercise, {'topic': topic, 'slug': slug}, {
+            'type': data['type'],
+            'title': data['title'],
+            'difficulty': data['difficulty'],
+            'pitfall': data['pitfall'],
+            'statement_html': render_markdown(data['statement']),
+            'explanation_html': render_markdown(data['explanation']),
+            'spec': exercise_spec(data, path),
+            'order': order,
+            'is_published': True,
+        })
+
+
+# Что нужно странице задачи каждого типа (кроме общих полей)
+SPEC_FIELDS = {
+    'exercise': (['starter_code', 'solution', 'check'], ['inputs']),
+    'predict': (['code', 'answer'], []),
+    'quiz': (['kind', 'options', 'answer'], []),
+    'fix': (['files', 'check', 'solution'], []),
+}
+
+
+def exercise_spec(data, path):
+    """Поля задачи, зависящие от её типа, — для JSON-поля Exercise.spec.
+
+    Код, тесты и правила сохраняются как есть; текст для показа
+    (подсказки, варианты ответа) — сразу в HTML.
+    """
+    required, optional = SPEC_FIELDS[data['type']]
+    require(data, path, *required)
+    spec = {key: data[key] for key in required + optional if key in data}
+
+    check = spec.get('check')
+    if check is not None:
+        expected = {'exercise': 'tests', 'fix': 'rules'}[data['type']]
+        if not isinstance(check, dict) or check.get('type') != expected:
+            raise ContentError(path, f'check.type должен быть {expected}')
+        require(check, path, expected)
+
+    if data['type'] == 'quiz':
+        if data['kind'] not in ('single', 'multiple', 'order'):
+            raise ContentError(path, 'kind — single, multiple или order')
+        spec['options'] = [render_inline(str(option)) for option in data['options']]
+
+    spec['hints'] = [render_inline(str(hint)) for hint in data.get('hints') or []]
+    return spec
