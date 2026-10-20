@@ -1,34 +1,59 @@
-# Курс: SQLAlchemy 2.0 — карта
+# Курс: SQLAlchemy 2.0 — шаг 60
 
-Источники: **нет** (ни в THEORY_BOOK, ни в КОНСПЕКТЫ). Можно глянуть `КОНСПЕКТЫ/ТЕОРИЯ/FastAPI/` — там SQLAlchemy может встречаться.
-Всё ниже — моё предложение программы, все темы ❌.
+**Контекст:** магазину нужен отдельный сервис отчётов и интеграций (не Django: например, на FastAPI). Он работает с той же БД. Ученик описывает те же таблицы через SQLAlchemy и пишет отчёты, которые уже делал на SQL и Django ORM. Сравнение трёх способов — сквозная линия курса.
+**Тренажёр:** Pyodide + SQLAlchemy + SQLite; показ сгенерированного SQL.
+**Источники:** нет. Можно проверить `КОНСПЕКТЫ/ТЕОРИЯ/FastAPI/FastAPI.docx` — там может встретиться SQLAlchemy. Курс пишется с нуля по документации 2.0 (только стиль `select()`).
 
-## 1. Введение
-- Что такое SQLAlchemy: Core и ORM, чем отличается от Django ORM (таблица-сравнение)
-- `Engine`, подключение, `Session`
+Структура и легенда — [01-standard.md](01-standard.md).
 
-## 2. Модели (Declarative, стиль 2.0)
-- `DeclarativeBase`, `Mapped[...]`, `mapped_column()`
-- Ограничения, значения по умолчанию
-- Создание таблиц `metadata.create_all()`; миграции Alembic — обзорно
+## 1. Введение ●○○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Что такое SQLAlchemy | Core vs ORM, сравнение с Django ORM (таблица) | зачем сервису отчётов SQLAlchemy | ❌ |
+| 02 | Engine и первый запрос | `create_engine`, `connect`, `text()`, параметры | посчитать заказы «сырым» SQL | ❌ |
+| 03 | Session | `Session`, `with Session(engine) as session`, `sessionmaker` | открыть сессию сервиса | ❌ |
 
-## 3. Запросы `select()`
-- `session.scalars(select(...))`, `session.execute()`
-- `where`, `order_by`, `limit`
-- `scalar_one`, `first`, `all` — что когда
+## 2. Модели ●○○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Декларативные модели | `DeclarativeBase`, `Mapped[...]`, `mapped_column()` | модель `Product` | ❌ |
+| 02 | Типы и ограничения | `Numeric`, `String`, `nullable` через `Mapped[X | None]`, `unique`, `server_default`, `CheckConstraint` | модель `PromoCode` | ❌ |
+| 03 | Связь 1:N | `ForeignKey`, `relationship`, `back_populates` | `User.orders` ↔ `Order.user` | ❌ |
+| 04 | Связи N:M и 1:1 | таблица-связка (`secondary`), association object, `uselist=False` | теги; `OrderItem` с ценой; `Profile` | ❌ |
+| 05 | Создание схемы и миграции | `metadata.create_all()`, Alembic — обзор | откуда берутся таблицы в проде | ❌ (Alembic — теория) |
 
-## 4. Изменение данных
-- `session.add`, `commit`, `rollback`; `update()`/`delete()` конструкцией
-- Жизненный цикл объекта в сессии (identity map) — коротко
+## 3. Изменение данных ●●○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Добавление | `session.add`, `add_all`, `commit`, `flush`, `refresh` | создать заказ с позициями | ❌ |
+| 02 | Изменение и удаление объектов | изменение атрибутов, `delete`, `cascade` | отменить заказ | ❌ |
+| 03 | Массовые операции | `insert()`, `update()`, `delete()` конструкциями | поднять цены категории | ❌ |
+| 04 | Жизненный цикл объекта | состояния (transient/pending/persistent/detached), identity map, `rollback` | почему объект «устарел» после коммита | ❌ |
 
-## 5. Связи
-- `relationship()`, `back_populates`, 1:N и N:M (`secondary`)
-- `join()` в запросах
-- Ленивая загрузка и N+1; `selectinload`, `joinedload`
+## 4. Запросы `select()` ●●○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | select, scalars, execute | разница `scalars()` и `execute()`, строки vs объекты | все активные пользователи | ❌ |
+| 02 | Условия | `where`, операторы, `and_`, `or_`, `in_`, `like/ilike`, `is_(None)` | товары от 1000 до 5000 ₽ | ❌ |
+| 03 | Сортировка и пагинация | `order_by`, `desc`, `limit/offset`, `distinct` | вторая страница каталога | ❌ |
+| 04 | Получение результата | `all`, `first`, `one`, `one_or_none`, `scalar_one`, `session.get` | найти пользователя по email | ❌ |
 
-## 6. Агрегация и продвинутое
-- `func.count`, `group_by`, `having`
-- Подзапросы и CTE (`.subquery()`, `.cte()`)
+## 5. Связи и загрузка ●●●
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | JOIN | `join`, `outerjoin`, по `relationship` и явное условие | заказы с email покупателя | ❌ |
+| 02 | Ленивая загрузка и N+1 | `lazy`, как увидеть N+1 (`echo=True`) | список заказов с пользователями | ❌ |
+| 03 | Стратегии загрузки | `selectinload`, `joinedload`, когда что | отчёт «заказы + позиции + товары» | ❌ |
+
+## 6. Агрегация и продвинутое ●●●
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Агрегация | `func.count/sum`, `group_by`, `having`, `label` | выручка по категориям | ❌ |
+| 02 | Подзапросы и CTE | `.subquery()`, `.cte()`, `exists()` | товары дороже средней цены | ❌ |
+| 03 | Оконные функции | `func.rank().over(partition_by=...)` | топ-3 товара в каждой категории | ❌ |
+| 04 | Транзакции | `session.begin()`, `with_for_update`, savepoint `begin_nested` | оформление заказа со списанием остатков | ❌ |
+| 05 | Асинхронный SQLAlchemy | `create_async_engine`, `AsyncSession`, `await session.execute` | асинхронный эндпоинт отчёта | ❌ (теория + задачи, если Pyodide позволит) ⚠️ |
 
 ## Итог
-Пишется полностью с нуля. ⚠️ Нужно подтвердить у «Разработки», что SQLAlchemy запускается в браузере (Pyodide) с PGlite/SQLite — от этого зависят задачи.
+6 разделов, 24 темы, всё с нуля. Задачи по возможности те же, что в SQL и Django ORM.
+⚠️ «Разработке»: подтвердить SQLAlchemy 2.0 в Pyodide и вариант с async.

@@ -1,63 +1,72 @@
-# Курс: Django ORM (Django 5.x) — карта
+# Курс: Django ORM (Django 5.x) — шаг 50
 
-Источники:
-- `THEORY_BOOK/README.md`, «Блок: Изучение Django → День 1» — **подробный план** 8 тем (текста нет)
-- `django_learning/day_1_models_and_orm/01_models_fields_and_relationships.md` — **пустой**
-- `practice/create_foodgram/create_foodgrame.md` — «Проектирование моделей» (ход мысли при проектировании) — кандидат в пример
-- `middle_course/new_admin_panel_sprint_1` — модели кино-БД (код)
+**Контекст:** та же БД магазина, но теперь через модели Django (приложение `shop`). Ученик делает то же, что в курсе SQL, на ORM. В каждой задаче видно, какой SQL ушёл в базу. Это мост между двумя курсами.
+**Тренажёр:** Pyodide + Django + SQLite; визуализация «какие SQL ушли», подсветка N+1.
+**Рамки:** строго модели и QuerySet. Views, формы, шаблоны, админка, middleware, сигналы — позже, отдельным курсом.
+**Источники:** `THEORY_BOOK/README.md`, «Django → День 1» (**PLAN**) — только план, текста нет; файл `django_learning/.../01_models_fields_and_relationships.md` пустой. Код моделей — `middle_course/new_admin_panel_sprint_1`, `practice/create_foodgram` (как ориентир).
 
-Легенда — в [00-overview.md](00-overview.md).
+Структура и легенда — [01-standard.md](01-standard.md).
 
-## 1. Модели
-| Тема | Покрытие | Комментарий |
-|---|---|---|
-| Модель = таблица; поля и их типы | 🟡 план | README 1 |
-| Параметры полей: `null`, `blank`, `default`, `choices`, `unique`, `db_index` | 🟡 план | README 1 |
-| Связи: `ForeignKey`, `on_delete`, `related_name` | 🟡 план | README 1 |
-| `ManyToManyField`, `through`; `OneToOneField` | 🟡 план | README 1 |
-| `class Meta`: `ordering`, `constraints`, `db_table` | 🟡 план | README 2 |
-| Методы модели: `save()`, `clean()`, `__str__` | 🟡 план | README 2 |
-| Миграции: `makemigrations`, `migrate`, `sqlmigrate` | 🟡 план | README 8 — ⚠️ в браузере не запустить; показывать «какой SQL получится» |
+## 1. Модели ●○○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Что такое ORM | модель = таблица, объект = строка; SQL vs ORM рядом | `Product` и таблица `products` | ❌ |
+| 02 | Поля модели | `CharField`, `TextField`, `IntegerField`, `DecimalField`, `BooleanField`, `DateTimeField(auto_now_add)`, `EmailField`, `SlugField` | описать модель `Product` | 🟡 PLAN 1 |
+| 03 | Параметры полей | `null` vs `blank`, `default`, `unique`, `db_index`, `choices` / `TextChoices` | статус заказа через `TextChoices` | 🟡 PLAN 1 |
+| 04 | ForeignKey | `on_delete`, `related_name` | `Order` → `User` | 🟡 PLAN 1 |
+| 05 | ManyToMany | простое M2M, `through` с доп. полями | теги товара; заказ ↔ товары через `OrderItem` | 🟡 PLAN 1 |
+| 06 | OneToOne | когда нужен, обратный доступ | `Profile` пользователя | 🟡 PLAN 1 |
+| 07 | Meta | `ordering`, `db_table`, `indexes`, `UniqueConstraint`, `CheckConstraint`, `verbose_name` | один отзыв на товар от пользователя | 🟡 PLAN 2 |
+| 08 | Миграции | `makemigrations`, `migrate`, `sqlmigrate`, `showmigrations`, конфликты | какой SQL создаст новое поле | 🟡 PLAN 8 (теория + показ SQL) |
 
-## 2. Чтение данных (QuerySet)
-| Тема | Покрытие | Комментарий |
-|---|---|---|
-| Ленивость QuerySet, когда уходит запрос | 🟡 план | README 3 — ключевая тема для визуализации «какие SQL ушли» |
-| `all`, `filter`, `exclude`, `get`, `first`, `exists`, `count` | 🟡 план | README 3 |
-| Lookups: `__gt`, `__in`, `__contains`, связи через `__` | 🟡 план | README 3 |
-| `Q`-объекты, `F`-выражения | 🟡 / ❌ | `Q` в плане, `F` нет — нужен |
-| `order_by`, срезы | ❌ | |
-| `values`, `values_list` | 🟡 план | README 5 |
+## 2. Создание и изменение данных ●○○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Создание | `Model()` + `save()`, `objects.create()` | добавить товар | ❌ |
+| 02 | Изменение и удаление | изменение полей + `save()`, `delete()`, каскад | снять товар с продажи | ❌ |
+| 03 | `save()` vs `update()` | один объект vs массовое изменение, что теряется | поднять цены категории | 🟡 PLAN «День 5» |
+| 04 | `get_or_create`, `update_or_create` | атомарность, `defaults` | применить промокод | ❌ |
+| 05 | Массовые операции | `bulk_create`, `bulk_update`, ограничения | импорт 1000 товаров | ❌ |
 
-## 3. Связи и N+1
-| Тема | Покрытие | Комментарий |
-|---|---|---|
-| Обратные связи, `related_name` в запросах | 🟡 план | |
-| Проблема N+1 | 🟡 план | README 4 — главная «фишка» тренажёра (подсветка N+1) |
-| `select_related` vs `prefetch_related`, `Prefetch` | 🟡 план | README 4 |
+## 3. Выборка: QuerySet ●●○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | QuerySet и ленивость | когда уходит SQL, кэш QuerySet, цепочки | сколько запросов выполнит этот код | 🟡 PLAN 3 |
+| 02 | Базовые методы | `all`, `filter`, `exclude`, `get` (`DoesNotExist`, `MultipleObjectsReturned`) | активные пользователи | 🟡 PLAN 3 |
+| 03 | Lookups | `__gt`, `__in`, `__icontains`, `__range`, `__isnull`, `__date` | товары от 1000 до 5000 ₽ | 🟡 PLAN 3 |
+| 04 | Сортировка и срезы | `order_by`, срезы = `LIMIT/OFFSET`, `first/last`, `exists/count` | вторая страница каталога | 🟡 PLAN 3 |
+| 05 | `values` и выбор полей | `values`, `values_list(flat=True)`, `only`, `defer` | список email для рассылки | 🟡 PLAN 5 |
+| 06 | Q-объекты | `|`, `&`, `~` | товары дешевле 500 ₽ или без отзывов | 🟡 PLAN 3 |
+| 07 | F-выражения | сравнение полей, обновление без гонки | списать остаток `F('stock') - 1` | ❌ |
 
-## 4. Агрегация
-| Тема | Покрытие | Комментарий |
-|---|---|---|
-| `aggregate` vs `annotate`; `Count`, `Sum`, `Avg` | 🟡 план | README 5 |
-| `Subquery`, `OuterRef` | 🟡 план | README 5 — «дополнительно» |
+## 4. Связи в запросах ●●○
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Фильтр через связи | `__` через FK и M2M, дубли и `distinct()` | пользователи с оплаченными заказами | ❌ |
+| 02 | Обратные связи | `related_name`, `_set`, `related_query_name` | все заказы пользователя | 🟡 PLAN 1 |
+| 03 | Проблема N+1 | откуда берётся, как увидеть | список заказов с email — 1 + N запросов | 🟡 PLAN 4 |
+| 04 | select_related | JOIN для FK и O2O | убрать N+1 из списка заказов | 🟡 PLAN 4 |
+| 05 | prefetch_related | отдельный запрос для M2M и обратных связей, `Prefetch` с фильтром | товары с тегами и последними отзывами | 🟡 PLAN 4 |
 
-## 5. Изменение данных
-| Тема | Покрытие | Комментарий |
-|---|---|---|
-| `create`, `save`, `update`, `delete`; `save()` vs `update()` | 🟡 | разбросано по README 3 и Дню 5 |
-| `bulk_create`, `get_or_create` | ❌ | |
-| Транзакции `transaction.atomic()` | 🟡 план | README 7 |
+## 5. Агрегация ●●●
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | aggregate | `Count`, `Sum`, `Avg`, `Min`, `Max` по всей выборке | выручка за месяц | 🟡 PLAN 5 |
+| 02 | annotate | значение на каждый объект, `aggregate` vs `annotate` | число заказов у каждого пользователя | 🟡 PLAN 5 |
+| 03 | Группировка и условия | `values().annotate()` = GROUP BY, `filter` в агрегате, `Count(distinct=True)` | заказы по статусам; ловушка двойного JOIN | ❌ |
+| 04 | Условные выражения | `Case`, `When`, `Value`, `Coalesce` | категория цены: «дёшево/средне/дорого» | ❌ |
+| 05 | Подзапросы | `Subquery`, `OuterRef`, `Exists` | дата последнего заказа у каждого пользователя | 🟡 PLAN 5 |
 
-## 6. Продвинутое
-| Тема | Покрытие | Комментарий |
-|---|---|---|
-| Кастомные менеджеры и QuerySet | 🟡 план | README 6 |
-| Сигналы | 🟡 план | README 7 — ⚠️ не совсем ORM; можно убрать в будущий курс Django |
+## 6. Продвинутое ●●●
+| # | Тема | Что разбираем | Задача из магазина | Сырьё |
+|---|---|---|---|---|
+| 01 | Свои QuerySet и менеджеры | методы QuerySet, `as_manager()`, менеджер по умолчанию | `Product.objects.in_stock().cheap()` | 🟡 PLAN 6 |
+| 02 | Методы модели | `__str__`, `@property`, `clean()`, переопределение `save()` | пересчёт итога заказа при сохранении | 🟡 PLAN 2 |
+| 03 | Транзакции | `transaction.atomic`, вложенные точки сохранения, `select_for_update` | оформление заказа без «минусовых» остатков | 🟡 PLAN 7 |
+| 04 | Сырой SQL и безопасность | `raw()`, параметры, SQL-инъекции | почему нельзя `f"... WHERE email = '{email}'"` | ❌ |
 
-## Вне курса ORM (в README есть, но это «Django целиком»)
-Views/CBV, URL, формы, шаблоны, админка, аутентификация, middleware, безопасность, тесты, деплой (README Дни 2–4). В браузерном тренажёре это не запустить → кандидат в будущий теоретический курс «Django» или в DevOps.
+## Позже (не в этом курсе)
+Сигналы (PLAN 7), views/URL/формы/шаблоны (PLAN «День 2»), админка/auth/middleware («День 3»), настройки/безопасность/тесты/деплой («День 4»).
 
 ## Итог
-- Оглавление хорошее и готово почти целиком; **текста нет** — писать всё.
-- Нужно решить, как тренажёр выполняет ORM в браузере (Django в Pyodide?) — вопрос к «Разработке», влияет на то, какие задачи возможны.
+6 разделов, 34 темы. Оглавление по PLAN хорошее, но текста нет: пишем всё. Задачи по возможности — **те же, что в курсе SQL**, чтобы ученик видел соответствие SQL ↔ ORM.

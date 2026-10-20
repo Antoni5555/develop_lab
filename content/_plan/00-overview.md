@@ -1,61 +1,57 @@
-# Карта контента Backend (Python) — обзор
+# Программа направления Backend (Python) — обзор
 
-> Черновик от 2026-10-20. Составлен по структуре папок и заголовкам конспектов, без чтения текста.
-> Детальные карты по курсам — в соседних файлах.
+> Черновик от 2026-10-20. Карты составлены по структуре и заголовкам конспектов.
+> Стандарт темы и сквозной контекст — [01-standard.md](01-standard.md).
 
-## Легенда
-- ✅ — есть содержательный конспект (можно брать как сырьё)
-- 🟡 — частично: тема упомянута, есть только команды/план или файл пустой
-- ❌ — нет материала, писать с нуля
-- ⚠️ — по заголовкам видна возможная неточность, проверить при работе с темой
+## Принятые решения
+- Курс **Git** добавлен. За основу берём конспект `Git.docx` (он по чужому курсу): теорию и примеры пишем заново, своими словами.
+- **ООП и асинхронность** — разделы курса Python.
+- **NoSQL** убран.
+- **Django ORM** — строго модели и QuerySet. Остальное из Django — позже.
+- **Python** — с нуля.
+- Во всех курсах один контекст: **backend интернет-магазина**. Внутри курса сложность растёт от раздела к разделу (●○○ → ●●○ → ●●●).
+
+## Курсы
+| Шаг | Курс | Разделов | Тем | Сырьё в конспектах | Карта |
+|---|---|---|---|---|---|
+| 10 | Python | 8 | 57 | ~половина (коллекции, функции, ООП, SOLID); с нуля — основы, файлы, asyncio | [python.md](python.md) |
+| 20 | Linux | 6 | 24 | почти нет | [linux.md](linux.md) |
+| 30 | Git | 5 | 24 | `Git.docx` → разделы 1–4 | [git.md](git.md) |
+| 40 | SQL | 9 | 47 | лучшее покрытие (~35 тем) | [sql.md](sql.md) |
+| 50 | Django ORM | 6 | 34 | только план в README | [django-orm.md](django-orm.md) |
+| 60 | SQLAlchemy | 6 | 24 | нет | [sqlalchemy.md](sqlalchemy.md) |
+| 70 | Docker | 4 | 17 | команды есть, Dockerfile/compose нет | [docker.md](docker.md) |
+| 80 | Nginx | 5 | 17 | кэш и ошибки есть, синтаксис конфига нет | [nginx.md](nginx.md) |
+| | **Всего** | **49** | **244** | | |
+
+Docker и Nginx разделены на два курса: у них разные тренажёры (в `docs/architecture.md` они упомянуты отдельно), и каждый получился полноценным.
 
 ## Источники
-| Где | Что там | Ценность |
+| Где | Что там | Используем в |
 |---|---|---|
-| `THEORY_BOOK/base_python_backend_theory/day_1_python_basics` | Python: типы, коллекции, функции, декораторы, исключения, генераторы | высокая |
-| `THEORY_BOOK/base_python_backend_theory/day_2_databases` | SQL: SELECT/JOIN, агрегация, CTE, индексы, транзакции, нормализация, NoSQL | высокая |
-| `THEORY_BOOK/base_python_backend_theory/day_3_oop` | ООП: 10 файлов, от классов до SOLID и паттернов | высокая |
-| `THEORY_BOOK/base_python_backend_theory/day_4_async` | Асинхронность: 1 заполненный файл из 7 | низкая |
-| `THEORY_BOOK/base_python_backend_theory/django_learning` | Django: 1 пустой файл | нет |
-| `THEORY_BOOK/README.md` | **План** Django-курса (дни 1–5, ~35 тем с перечнем подтем) | высокая как оглавление |
-| `THEORY_BOOK/training_skills/SQL` | DDL (CREATE/ALTER, типы, ограничения) + большой практикум SELECT/JOIN/GROUP BY с заданиями | высокая |
-| `THEORY_BOOK/training_skills/Docker`, `DevOps/Nginx`, `nginx_gunicorn.md`, `website_performance_optimization.md` | Docker-команды, Postgres в Docker, деплой Django, proxy_cache | средняя |
-| `THEORY_BOOK/training_skills/connect_to_*.md`, `Python/pyenv.md` | SSH-ключи, pyenv | низкая (инструкции) |
-| `КОНСПЕКТЫ/ТЕОРИЯ/Базы данных/Базы данных.docx` | Хорошее оглавление по SQL: NULL, ALTER, подзапросы, функции/процедуры, JSON | средняя (дополнение к SQL) |
-| `КОНСПЕКТЫ/ТЕОРИЯ/Git/` | Git: уроки и кейсы | на будущее (курса Git в плане нет) |
-| `КОНСПЕКТЫ/план обучения/*.docx` | Планы обучения (Backend, Python, SQL…) | можно сверить оглавления |
-| `middle_course/` | Код спринтов курса (admin panel, ETL, docker-compose) | идеи для задач, не теория |
+| `THEORY_BOOK/base_python_backend_theory/day_1_python_basics`, `day_3_oop`, `day_4_async` | Python | Python |
+| `THEORY_BOOK/base_python_backend_theory/day_2_databases/01–05` | SQL-теория | SQL |
+| `THEORY_BOOK/training_skills/SQL` | DDL + практикум с заданиями | SQL |
+| `КОНСПЕКТЫ/ТЕОРИЯ/Базы данных/Базы данных.docx` | оглавление по SQL | SQL |
+| `THEORY_BOOK/README.md` | план Django | Django ORM |
+| `КОНСПЕКТЫ/ТЕОРИЯ/Git/Git.docx` | конспект по Git | Git |
+| `THEORY_BOOK/training_skills/Docker`, `DevOps/Nginx`, `nginx_gunicorn.md`, `website_performance_optimization.md` | Docker, деплой, кэш | Docker, Nginx |
+| `training_skills/connect_to_*.md`, `Python/pyenv.md` | SSH, pyenv | Linux, Git, Python |
 
-**Не берём в контент** (личное/проектное): `practice/` (foodgram, портфолио), `reserve_data_server/`, `Linux_useful_skill/edit_img_video.md` (ffmpeg), `promt*.md`, `test.*`, `time_table.md`.
+**Не используем:** `day_2_databases/06_nosql_overview.md`, `practice/` (кроме хода мысли о проектировании моделей), `reserve_data_server/`, ffmpeg, файлы с промптами, папки практики Git-курса, `middle_course/` (только как ориентир по коду).
 
-## Сводка по курсам
-Порядок — из `docs/roles/content.md`: Python → Linux → SQL → Django ORM → SQLAlchemy → Docker и Nginx.
+## Исправить в источниках при написании (⚠️)
+- SQL: «кластеризованные индексы» — термин MySQL/SQL Server, к PostgreSQL не относится; пример Phantom Read для MySQL — заменить на PostgreSQL.
+- Git: вероятно, старые `checkout`/`reset HEAD` → даём `switch`/`restore`.
+- Python: `OrderedDict` подавать как устаревающий; `super()` перенести из функций в ООП.
 
-| # | Курс | Покрытие конспектами | Файл |
-|---|---|---|---|
-| 1 | Python | 🟡 основы и ООП ✅, строки и async — пусто, нет модулей/файлов/типизации | [python.md](python.md) |
-| 2 | Linux-терминал | ❌ почти ничего (только SSH, pyenv, ffmpeg) | [linux.md](linux.md) |
-| 3 | SQL (PostgreSQL) | ✅ лучшее покрытие; не хватает INSERT/UPDATE/DELETE как темы, оконных функций | [sql.md](sql.md) |
-| 4 | Django ORM | 🟡 есть подробный план (README), текста нет | [django-orm.md](django-orm.md) |
-| 5 | SQLAlchemy | ❌ ничего | [sqlalchemy.md](sqlalchemy.md) |
-| 6 | Docker и Nginx | 🟡 команды и деплой-инструкции, мало «почему» | [docker-nginx.md](docker-nginx.md) |
+## Вопросы к «Разработке» (влияют на типы задач)
+1. Git в браузере (isomorphic-git?) — будут ли живые задачи по веткам и remote.
+2. Django + SQLAlchemy 2.0 в Pyodide; async SQLAlchemy.
+3. Новые типы задач для тем без живого запуска: `quiz` и `fix` (проверка конфига или кода по правилам).
 
-## Главные выводы
-1. **Готовое сырьё есть для трёх курсов**: Python (основы + ООП), SQL, частично Docker/Nginx. С них логично начинать.
-2. **SQL — лучший кандидат для пилотной темы**: максимум конспектов, тренажёр с визуализацией, сквозная БД «магазин».
-3. **Linux и SQLAlchemy пишем почти с нуля** — по ним нужна будет моя предложенная программа и твоё согласование.
-4. **Django ORM**: оглавление готово в README, но оно шире ORM (views, формы, админка, middleware). Для курса «Django ORM» берём только «День 1» (модели и ORM) — остальное либо отдельный курс «Django» позже, либо вне сайта (тренажёр в браузере это не запустит).
-5. **Конспекты построены как диалог с репетитором**: теория → контрольные вопросы → разбор ответов → доп. примеры → итог. Блоки «вопросы + разбор» — готовое сырьё для задач и вопросов с собеседований.
-6. **Лишнее для курсов**: NoSQL-обзор, SOLID и паттерны, деплой React, кэширование конкретного сайта. Не выбрасываем — кандидаты в «дополнительные» темы или будущие курсы (архитектура, DevOps).
-
-## Ограничения тренажёра, влияющие на программу
-Код выполняется только в браузере. По заголовкам видно темы, которые там трудно или невозможно показать:
-- Python: `threading`/`multiprocessing` (в браузерном Python не работают), реальные HTTP-запросы (`aiohttp`/`httpx`), работа с файлами — только виртуальная ФС.
-- SQL: блокировки, deadlock, уровни изоляции — нужны две параллельные сессии; в PGlite одна. Тему даём теорией + схемой, без задачи в тренажёре (или имитация двух сессий — вопрос к «Разработке»).
-- Docker/Nginx: живого запуска нет — задачи вида «найди ошибку в конфиге», «собери Dockerfile», проверка текстом/тестами.
-
-## Вопросы к тебе
-1. Курс Git — добавить в Backend (материал в `КОНСПЕКТЫ/ТЕОРИЯ/Git/` есть) или пока нет?
-2. ООП и асинхронность — разделы курса Python или отдельные курсы («Python», «ООП в Python», «Асинхронность»)? Я бы сделал разделами одного курса, async — последним.
-3. Транзакции и нормализацию оставляем в SQL (я за), NoSQL — убираем из MVP?
-4. Django шире ORM — курс называем «Django ORM» строго про модели и QuerySet, остальное позже?
+## Что дальше
+1. Ты смотришь программы и стандарт ([01-standard.md](01-standard.md)), правишь или говоришь «ок».
+2. Обновляем черновик схемы магазина: `profiles`, `tags`, `attributes jsonb`, `promo_codes`.
+3. Пилотная тема в стандарте (предлагаю SQL → «LEFT и RIGHT JOIN»): урок + 5 задач.
+4. После оценки пилота — пишем курсы по порядку, порциями по разделу.
