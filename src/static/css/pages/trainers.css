@@ -1,0 +1,315 @@
+/* Тренажёры: задача и песочница. Подключается только на своих страницах. */
+
+/* --- Задача --- */
+.task { display: grid; gap: var(--space-3); padding: var(--space-5); }
+.task__head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+.task__nav { display: flex; gap: var(--space-2); }
+.task__title { font-size: var(--fs-xl); font-weight: var(--fw-bold); letter-spacing: -0.01em; }
+.hint summary { font-size: var(--fs-sm); font-weight: var(--fw-bold); cursor: pointer; }
+.hint p { margin-top: var(--space-2); font-size: var(--fs-sm); color: var(--muted); }
+
+.workspace,
+.result { overflow: hidden; }
+
+.engine-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+  padding-right: var(--space-2);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.editor {
+  display: flex;
+  min-height: 200px;
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  background: var(--code-bg);
+}
+
+.editor__gutter {
+  padding: var(--space-4) var(--space-3);
+  font-family: var(--font-code);
+  text-align: right;
+  color: var(--muted);
+  user-select: none;
+  border-right: 1px solid var(--border);
+}
+
+.editor__code { flex: 1; padding: var(--space-4); overflow-x: auto; outline: none; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.toolbar__right { margin-left: auto; }
+
+.result__meta {
+  margin-left: auto;
+  padding-right: var(--space-2);
+  font-family: var(--font-code);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.sql-output { background: var(--code-bg); }
+/* Схема БД (ER) */
+.schema {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.schema-table--active { border-color: var(--text); }
+.db-table__alias { font-weight: var(--fw-regular); opacity: 0.6; }
+/* Контейнер с отступом для карточек внутри панелей */
+.db-stage { padding: var(--space-4); }
+.schema-table ul { margin: 0; padding: var(--space-2) 0; list-style: none; }
+.schema-table li { padding: 3px 14px; }
+
+.pk,
+.fk { display: inline-block; width: 24px; font-size: 10px; font-weight: var(--fw-bold); }
+.pk { color: var(--warning); }
+.fk { color: var(--code-kw); }
+.schema-link { font-family: var(--font-code); font-size: var(--fs-xs); color: var(--muted); }
+
+/* --- Тренажёр (песочница) --- */
+.playground {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--sidebar-w);
+  align-items: start;
+  gap: var(--space-5);
+}
+
+.console {
+  min-height: 140px;
+  padding: var(--space-4);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.console__line--muted { color: var(--muted); }
+
+.terminal {
+  overflow: hidden;
+  color: var(--term-text);
+  background: var(--term-bg);
+  border-radius: var(--radius-lg);
+}
+
+.terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.terminal__bar span { width: 10px; height: 10px; background: var(--border); border-radius: 50%; }
+.terminal__bar em { margin-left: var(--space-2); font-family: var(--font-code); font-size: var(--fs-xs); font-style: normal; color: var(--muted); }
+.terminal__bar { border-color: #222226; }
+.terminal__bar span { background: #2c2c31; }
+
+.terminal__body {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  min-height: 360px;
+  padding: var(--space-4);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.terminal__prompt { color: #d6f05a; }
+.terminal__out { color: #a3a39e; white-space: pre; }
+
+.terminal__cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.1em;
+  vertical-align: text-bottom;
+  background: var(--term-text);
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+.file-tree,
+.file-tree ul { margin: 0; padding-left: var(--space-4); list-style: none; font-family: var(--font-code); font-size: var(--fs-sm); line-height: 1.9; }
+.file-tree { padding-left: 0; }
+
+/* --- Тренажёр: сессия, журнал выполнения, визуализация JOIN --- */
+.session { display: flex; align-items: center; gap: var(--space-2); }
+.run-log { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+
+.run-step {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.run-step__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 14px;
+  font-size: var(--fs-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+.run-step__num {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  font-size: var(--fs-xs);
+  color: var(--on-ink);
+  background: var(--ink);
+  border-radius: 50%;
+}
+
+.run-step__head code { background: transparent; padding: 0; }
+.run-step__time { margin-left: auto; font-family: var(--font-code); font-size: var(--fs-xs); color: var(--muted); }
+.run-step__body { display: grid; gap: var(--space-3); padding: var(--space-4); overflow-x: auto; }
+.run-step__body .sql-output { border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.schema--inline { padding: 0; }
+.schema-table--new { border-color: var(--success); box-shadow: 0 0 0 3px var(--success-bg); }
+
+.join-viz {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-content: start;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.join-viz__op {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-xs);
+  text-align: center;
+}
+
+.join-viz__kind {
+  padding: 4px 10px;
+  font-weight: var(--fw-bold);
+  color: var(--on-ink);
+  background: var(--ink);
+  border-radius: var(--radius-pill);
+}
+
+/* Строки с одинаковым цветом совпали по ключу */
+.m1 { background: var(--match-1); }
+.m2 { background: var(--match-2); }
+.m3 { background: var(--match-3); }
+.row--unmatched { color: var(--muted); opacity: 0.55; }
+.file-tree .file--added { color: var(--success); }
+.file-tree .file--changed { color: var(--warning); }
+.file-tree .file--removed { color: var(--error); text-decoration: line-through; }
+
+/* --- Справочник в сайдбаре тренажёра: схема базы / модели --- */
+.explorer { display: grid; gap: 2px; }
+
+.explorer__item summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 10px;
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  list-style: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.explorer__item summary::-webkit-details-marker { display: none; }
+.explorer__item summary::before { content: '▸'; color: var(--muted); font-size: var(--fs-xs); }
+.explorer__item[open] summary::before { content: '▾'; }
+.explorer__item summary:hover { background: var(--surface-2); }
+.explorer__name { font-weight: var(--fw-bold); }
+.explorer__meta { margin-left: auto; font-size: var(--fs-xs); color: var(--muted); white-space: nowrap; }
+.explorer__item .badge { padding: 1px 8px; font-family: var(--font-main); }
+
+.explorer__cols {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 var(--space-2) 22px;
+  padding: 6px 10px;
+  font-family: var(--font-code);
+  font-size: var(--fs-xs);
+  list-style: none;
+  border-left: 1px solid var(--border);
+}
+
+/* --- Примеры: клик вставляет код в редактор --- */
+.snippets { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+
+.snippet-btn {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 10px 12px;
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.snippet-btn:hover { border-color: var(--text); }
+.snippet-btn__title { font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.snippet-btn code { padding: 0; font-size: var(--fs-xs); white-space: normal; color: var(--muted); background: transparent; }
+.legend--log { padding: 0 var(--space-1); }
+
+/* --- Схема базы / модели: свёрнутая полоса под редактором --- */
+.schema-strip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.schema-strip > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-4);
+  list-style: none;
+  cursor: pointer;
+}
+
+.schema-strip > summary::-webkit-details-marker { display: none; }
+.schema-strip > summary::before { content: '▸'; font-size: var(--fs-xs); color: var(--muted); }
+.schema-strip[open] > summary::before { content: '▾'; }
+.schema-strip__title { font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+
+.schema-strip .explorer {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  align-items: start;
+  padding: 0 var(--space-3) var(--space-3);
+}
+
+/* --- Linux: карточка файловой системы под терминалом --- */
+.fs-card {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.fs-card__body { display: grid; gap: var(--space-3); padding: var(--space-4); }

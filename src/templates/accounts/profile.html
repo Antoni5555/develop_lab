@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Профиль — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/accounts.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container stack-lg">
+  {% include 'common/_page_head.html' with title='Профиль' lead='Пройденные курсы, активность по дням и последние заметки.' %}
+  {% include 'common/_coming_soon.html' with stage=3 %}
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/home.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container stack-xl">
+  {% include 'home/components/_hero.html' %}
+  {% include 'home/components/_how_it_works.html' %}
+  {% include 'home/components/_features.html' %}
+  {% include 'home/components/_popular_courses.html' %}
+  {% include 'home/components/_stats.html' %}
+  {% include 'common/_cta.html' %}
+</div>
+{% endblock %}

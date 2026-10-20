@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Ошибка сервера — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/errors.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container error-page">
+  <pre class="error-page__code"><span class="kw">SELECT</span> * <span class="kw">FROM</span> pages;
+<span class="cm">-- ERROR: что-то пошло не так на сервере</span></pre>
+  <h1 class="page-title">Ошибка сервера</h1>
+  <p class="muted">Мы уже знаем о проблеме. Попробуйте обновить страницу чуть позже.</p>
+  <a href="{% url 'pages:home' %}" class="btn btn--accent">На главную</a>
+</div>
+{% endblock %}

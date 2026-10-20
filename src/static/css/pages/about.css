@@ -1,0 +1,52 @@
+/* О проекте. Подключается только на своих страницах. */
+
+/* --- Главная --- */
+/* Карточка-ссылка («Что здесь есть» на странице «О проекте») */
+.step--link { display: flex; flex-direction: column; text-decoration: none; transition: border-color var(--transition), transform var(--transition); }
+.step--link:hover { border-color: var(--text); transform: translateY(-2px); }
+.step__more { margin-top: auto; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+
+/* --- О проекте --- */
+.about-hero { display: grid; gap: var(--space-4); }
+.about-hero__lead { max-width: 60ch; font-size: var(--fs-lg); color: var(--muted); }
+.roadmap { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+
+.roadmap__item {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: 0 0 var(--space-5) var(--space-6);
+  border-left: 2px solid var(--border);
+  margin-left: 7px;
+}
+
+.roadmap__item:last-child { padding-bottom: 0; }
+
+.roadmap__item::before {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+}
+
+.roadmap__item--done::before { background: var(--success); border-color: var(--success); }
+.roadmap__item--current::before { background: var(--accent); border-color: var(--text); }
+.roadmap__item .muted { font-size: var(--fs-sm); }
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.author .section-title { margin-bottom: var(--space-1); }
+.author__links { display: flex; gap: var(--space-2); margin-top: var(--space-3); }

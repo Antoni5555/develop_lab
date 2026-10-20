@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Страница не найдена — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/errors.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container error-page">
+  <pre class="error-page__code"><span class="kw">SELECT</span> * <span class="kw">FROM</span> pages <span class="kw">WHERE</span> url = <span class="str">'…'</span>;
+<span class="cm">-- (0 rows)</span></pre>
+  <h1 class="page-title">Страница не найдена</h1>
+  <p class="muted">Возможно, её переименовали или она ещё не написана.</p>
+  <a href="{% url 'pages:home' %}" class="btn btn--accent">На главную</a>
+</div>
+{% endblock %}

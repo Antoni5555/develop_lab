@@ -1,0 +1,171 @@
+/* Шпаргалки. Подключается только на своих страницах. */
+
+/* --- Шпаргалки --- */
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+
+.sheet-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.sheet-card:hover { border-color: var(--text); transform: translateY(-2px); }
+.sheet-card__title { font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+.sheet-card__meta { font-size: var(--fs-xs); color: var(--muted); }
+
+.sheet-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  align-items: start;   /* раскрытая заметка удлиняет только свою карточку, не весь ряд */
+  gap: var(--space-4);
+}
+
+.sheet-section {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.sheet-section__title { font-size: var(--fs-md); font-weight: var(--fw-bold); }
+
+/* --- Шпаргалка: колонки секций и ссылка на урок --- */
+.sheet-card--accent { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.sheet-card--accent .sheet-card__meta { color: inherit; opacity: 0.7; }
+
+/* --- Шпаргалки: заметки пользователя по курсам и темам --- */
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+  counter-reset: how;
+}
+
+.how-steps li {
+  position: relative;
+  padding: var(--space-4) var(--space-4) var(--space-4) 56px;
+  font-size: var(--fs-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  counter-increment: how;
+}
+
+.how-steps li::before {
+  content: counter(how);
+  position: absolute;
+  left: var(--space-4);
+  top: var(--space-4);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.sheet-card__top { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3); }
+.sheet-card__topics { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.sheet-card__topics span { padding: 2px 8px; font-size: var(--fs-xs); background: var(--surface-2); border-radius: 6px; }
+.sheet-card--accent .sheet-card__topics span { background: rgb(0 0 0 / 0.08); }
+.sheet-card--empty { color: var(--muted); background: transparent; border-style: dashed; }
+.sheet-card--empty:hover { transform: none; border-color: var(--border); }
+.sheet-section__label { font-size: var(--fs-xs); color: var(--muted); }
+.sheet-section__title { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-lg); }
+.sheet-section__title a { text-decoration: none; }
+.sheet-section__title a span { font-size: var(--fs-sm); color: var(--muted); }
+.sheet-section__title a:hover { text-decoration: underline; }
+/* Заметка в шпаргалке: виден заголовок, по клику разворачивается (details) */
+.sheet-note {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+}
+
+.sheet-note__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-3);
+  list-style: none;
+  cursor: pointer;
+}
+
+.sheet-note__head::-webkit-details-marker { display: none; }
+
+.sheet-note__head::before {
+  content: '▸';
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.sheet-note[open] > .sheet-note__head::before { content: '▾'; }
+.sheet-note__head:hover { background: var(--surface-2); }
+.sheet-note__title { flex: 1; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.sheet-note__date { flex-shrink: 0; font-size: var(--fs-xs); color: var(--muted); }
+
+.sheet-note__body {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-3) calc(var(--space-3) + 18px);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.sheet-note__body h4 { margin: var(--space-2) 0 0; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.sheet-note__body h4:first-child { margin-top: 0; }
+
+.sheet-note__body p,
+.sheet-note__body ul,
+.sheet-note__body ol { margin: 0; }
+
+.sheet-note__body ul,
+.sheet-note__body ol { display: grid; gap: 4px; padding-left: var(--space-5); }
+.sheet-note__body pre { padding: 8px 12px; overflow-x: auto; font-size: var(--fs-xs); background: var(--code-bg); border-radius: var(--radius-sm); }
+
+.sheet-note__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-3) 6px calc(var(--space-3) + 18px);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  border-top: 1px dashed var(--border);
+}
+
+.sheet-note__foot a { color: inherit; }
+.sheet-note__foot a:hover { color: var(--text); }
+.sheet-note__actions { display: flex; gap: 2px; }
+
+.sheet-note__actions button {
+  width: 26px;
+  height: 26px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+}
+
+.sheet-note__actions button:hover { color: var(--text); background: var(--surface-2); }

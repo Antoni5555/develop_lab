@@ -1,0 +1,94 @@
+/* Курсы: каталог, курс, урок. Подключается только на своих страницах. */
+
+/* --- Курс --- */
+.course-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+  padding: var(--space-6);
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: var(--radius-lg);
+}
+
+.course-hero__text { display: grid; gap: var(--space-4); max-width: 60ch; }
+.course-hero__title { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -0.03em; line-height: 1; }
+.course-hero__side { display: grid; gap: var(--space-3); justify-items: start; min-width: 260px; }
+.course-hero__progress { display: grid; gap: var(--space-2); width: 100%; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.course-hero__progress .progress { background: rgb(0 0 0 / 0.12); }
+.course-hero__progress .progress__bar { background: var(--on-accent); }
+.course-hero__next { font-size: var(--fs-xs); opacity: 0.7; }
+.mini-schema { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.mini-schema li { padding: 2px 8px; font-family: var(--font-code); font-size: var(--fs-xs); background: var(--surface-2); border-radius: 6px; }
+
+/* --- Урок --- */
+.article {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.article__meta { display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-sm); }
+.article__title { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -0.03em; line-height: 1.05; }
+.article__lead { font-size: var(--fs-lg); color: var(--muted); }
+.article h2 { margin-top: var(--space-4); font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+
+.article p,
+.article li { max-width: 72ch; }
+.article ul { display: grid; gap: var(--space-2); margin: 0; padding-left: var(--space-5); }
+
+/* --- Курс: разделы программы --- */
+.module-list { display: grid; gap: var(--space-3); }
+
+.module {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.module--current { border-color: var(--text); }
+
+.module__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  list-style: none;
+  cursor: pointer;
+}
+
+.module__head::-webkit-details-marker { display: none; }
+.module__num { font-family: var(--font-code); font-size: var(--fs-sm); color: var(--muted); }
+.module__info { display: grid; gap: 2px; }
+.module__title { font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+.module__desc { font-size: var(--fs-sm); color: var(--muted); }
+
+.module__topics {
+  display: grid;
+  margin: 0;
+  padding: 0 var(--space-5) var(--space-3);
+  list-style: none;
+  counter-reset: topic;
+}
+
+.topic-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 64px;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 0 10px 44px;
+  font-size: var(--fs-sm);
+  border-top: 1px solid var(--border);
+}
+
+.topic-item a { font-weight: var(--fw-bold); text-decoration: none; }
+.topic-item a:hover { text-decoration: underline; }
+.topic-item__status { text-align: right; font-size: var(--fs-xs); color: var(--muted); }
+.topic-item--done .topic-item__status { color: var(--success); }
+.topic-item--current a { padding: 2px 8px; margin-left: -8px; background: var(--accent); color: var(--on-accent); border-radius: 6px; justify-self: start; }

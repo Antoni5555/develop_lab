@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Шпаргалки — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/cheatsheets.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container stack-lg">
+  {% include 'common/_page_head.html' with title='Шпаргалки' lead='Ваши заметки, собранные по курсам и темам.' %}
+  {% include 'common/_coming_soon.html' with stage=3 %}
+</div>
+{% endblock %}

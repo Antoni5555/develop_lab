@@ -1,0 +1,23 @@
+<header class="header">
+  <div class="container header__inner">
+    <a href="{% url 'pages:home' %}" class="logo">
+      <span class="logo__mark" aria-hidden="true"></span>
+      {{ SITE_NAME }}
+    </a>
+
+    <nav class="header__nav" aria-label="Основная навигация">
+      {% include 'base/components/_nav_links.html' %}
+    </nav>
+
+    <div class="header__actions">
+      <button type="button" class="icon-btn" data-theme-toggle title="Сменить тему" aria-label="Сменить тему">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
+        </svg>
+      </button>
+      <a href="{% url 'accounts:login' %}" class="btn btn--ghost">Войти</a>
+
+      {% include 'base/components/_mobile_menu.html' %}
+    </div>
+  </div>
+</header>

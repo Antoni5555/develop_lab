@@ -1,0 +1,34 @@
+/* Аккаунт: вход, регистрация, профиль. Подключается только на своих страницах. */
+
+/* --- Аккаунт --- */
+.auth { display: grid; place-items: center; }
+
+.auth__card {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.auth__title { font-size: var(--fs-xl); font-weight: var(--fw-bold); }
+.auth__foot { text-align: center; font-size: var(--fs-sm); }
+.profile-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); }
+.profile-head__action { margin-left: auto; }
+.stats--light .stat { background: var(--surface); }
+.profile-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); }
+.progress-list { display: grid; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
+.progress-list li { display: grid; gap: var(--space-2); }
+.progress-list__head { display: flex; justify-content: space-between; font-size: var(--fs-sm); }
+.progress-list__head a { font-weight: var(--fw-bold); text-decoration: none; }
+.heatmap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; max-width: 280px; }
+.heatmap i { aspect-ratio: 1; background: var(--surface-2); border-radius: 4px; }
+.heatmap i[data-l="1"] { background: color-mix(in srgb, var(--accent) 35%, var(--surface-2)); }
+.heatmap i[data-l="2"] { background: color-mix(in srgb, var(--accent) 70%, var(--surface-2)); }
+.heatmap i[data-l="3"] { background: var(--accent); }
+
+/* --- Профиль: вкладки внутри панели --- */
+.tabs--flush { margin: calc(var(--space-5) * -1) calc(var(--space-5) * -1) 0; padding: var(--space-3) var(--space-4); }

@@ -1,0 +1,6 @@
+{# Пункты меню — общие для шапки и мобильного меню. active_nav задаёт view (extra_context). #}
+<a href="{% url 'pages:home' %}" class="nav-link{% if active_nav == 'home' %} nav-link--active" aria-current="page{% endif %}">Главная</a>
+<a href="{% url 'courses:list' %}" class="nav-link{% if active_nav == 'courses' %} nav-link--active" aria-current="page{% endif %}">Курсы</a>
+<a href="{% url 'cheatsheets:list' %}" class="nav-link{% if active_nav == 'cheatsheets' %} nav-link--active" aria-current="page{% endif %}">Шпаргалки</a>
+<a href="{% url 'trainers:playground' %}" class="nav-link{% if active_nav == 'playground' %} nav-link--active" aria-current="page{% endif %}">Тренажёр</a>
+<a href="{% url 'pages:about' %}" class="nav-link{% if active_nav == 'about' %} nav-link--active" aria-current="page{% endif %}">О проекте</a>

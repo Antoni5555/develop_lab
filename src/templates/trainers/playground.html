@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Тренажёр — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/trainers.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container stack-lg">
+  {% include 'common/_page_head.html' with title='Тренажёр' lead='Свободная практика без задач. Всё выполняется в твоём браузере.' %}
+  {% include 'common/_coming_soon.html' with stage=2 %}
+</div>
+{% endblock %}

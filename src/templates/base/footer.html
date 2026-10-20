@@ -1,0 +1,25 @@
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__col">
+      <a href="{% url 'pages:home' %}" class="logo logo--sm"><span class="logo__mark" aria-hidden="true"></span>{{ SITE_NAME }}</a>
+      <span class="muted">Бесплатная практика для разработчиков</span>
+    </div>
+    <nav class="footer__col">
+      <span class="footer__label">Разделы</span>
+      <a href="{% url 'courses:list' %}">Курсы</a>
+      <a href="{% url 'cheatsheets:list' %}">Шпаргалки</a>
+      <a href="{% url 'trainers:playground' %}">Тренажёр</a>
+      <a href="{% url 'pages:about' %}">О проекте</a>
+    </nav>
+    <nav class="footer__col">
+      <span class="footer__label">Аккаунт</span>
+      <a href="{% url 'accounts:login' %}">Вход</a>
+      <a href="{% url 'accounts:signup' %}">Регистрация</a>
+      <a href="{% url 'accounts:profile' %}">Профиль</a>
+    </nav>
+  </div>
+  <div class="container footer__bottom">
+    <span class="muted">© {% now 'Y' %} {{ SITE_NAME }} · открытый код</span>
+    {# Ссылки GitHub / Telegram из макета добавим, когда появится репозиторий #}
+  </div>
+</footer>

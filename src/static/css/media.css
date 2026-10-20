@@ -1,0 +1,45 @@
+/* =========================================================
+   Адаптив. Подключается после style.css.
+   Точки: 1100 — меню в бургер; 1024 — сайдбар под контент; 720 — телефон.
+   ========================================================= */
+@media (max-width: 1100px) {
+  .header__inner { grid-template-columns: auto 1fr; }
+  .header__nav { display: none; }
+  .mobile-menu { display: block; }
+}
+
+@media (max-width: 1024px) {
+  .course-layout,
+  .playground { grid-template-columns: 1fr; }
+  .sidebar,
+  .side-panel { position: static; max-height: none; }
+  .side-card__body { max-height: none; }
+  .bento { grid-template-columns: 1fr 1fr; }
+  .course-hero { grid-template-columns: 1fr; }
+  .footer__inner { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px) {
+  .stack-xl { gap: var(--space-7); }
+  .hero,
+  .cta { padding: var(--space-5); }
+  .bento { grid-template-columns: 1fr; }
+  .bento__item--wide { grid-column: auto; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .search { flex-direction: column; }
+  .toolbar__right { margin-left: 0; }
+  .task,
+  .article,
+  .course-hero { padding: var(--space-4); }
+  .module__head { padding: var(--space-3) var(--space-4); }
+  .module__num { display: none; }
+  .module__head { grid-template-columns: minmax(0, 1fr) auto; }
+  .module__topics { padding: 0 var(--space-4) var(--space-3); }
+  .topic-item { grid-template-columns: minmax(0, 1fr) auto; padding-left: 0; }
+  .topic-item > .muted { display: none; }
+  .join-viz { grid-template-columns: 1fr; }
+  .session { width: 100%; }
+  .prev-next { grid-template-columns: 1fr; }
+  .author { flex-direction: column; align-items: flex-start; }
+  .footer__inner { grid-template-columns: 1fr; }
+}

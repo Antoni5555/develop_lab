@@ -1,0 +1,243 @@
+/* =========================================================
+   Дизайн-система: переменные и база (разделы 1–2 макета).
+   Компоненты — components.css, страницы — pages/*.css, адаптив — media.css.
+   ========================================================= */
+
+/* ===== 0. ШРИФТЫ =====
+   Свои файлы в static/fonts/ (Fontsource, лицензия SIL OFL).
+   Браузер качает только нужный набор символов (unicode-range): латиницу и/или кириллицу. */
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/manrope-cyrillic-400.woff2') format('woff2');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/manrope-latin-400.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/manrope-cyrillic-600.woff2') format('woff2');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/manrope-latin-600.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-cyrillic-400.woff2') format('woff2');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/jetbrains-mono-latin-400.woff2') format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
+
+/* ===== 1. ПЕРЕМЕННЫЕ ===== */
+:root {
+  color-scheme: light dark;
+
+  /* ----- ШРИФТЫ ----- */
+  /* Два семейства и минимум начертаний: Manrope 400/600, JetBrains Mono 400 */
+  --font-main: 'Manrope', system-ui, sans-serif;
+  --font-code: 'JetBrains Mono', ui-monospace, monospace;
+
+  --fw-regular: 400;
+  --fw-bold: 600;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: clamp(1.75rem, 3vw, 2.25rem);
+  --fs-2xl: clamp(2.25rem, 5vw, 3.75rem);
+
+  /* ----- ГЛОБАЛЬНЫЕ ЦВЕТА (палитра) ----- */
+  --gl-color-black: #0e0e0e;
+  --gl-color-black-soft: #151517;
+  --gl-color-black-muted: #1e1e21;
+  --gl-color-black-line: #2a2a2e;
+  --gl-color-white: #ffffff;
+  --gl-color-paper: #f3f3f1;
+  --gl-color-gray: #ebebe8;
+  --gl-color-gray-line: #e0e0dc;
+  --gl-color-gray-text: #6e6e6a;
+  --gl-color-snow: #f1f1ee;
+  --gl-color-accent: #dcf25c;          /* лайм */
+  --gl-color-green: #1f9d55;
+  --gl-color-red: #d93025;
+  --gl-color-orange: #b7791f;
+  --gl-color-violet: #5b3cc4;
+  --gl-color-teal: #0b7285;
+  --gl-shadow-default: rgb(0 0 0 / 0.12);
+
+  /* ----- ТЕМА: light-dark(светлая, тёмная) ----- */
+  /* Тему выбирает [data-theme] на <html> (js/theme.js); без него — как в системе */
+  --bg:         light-dark(var(--gl-color-paper), #0b0b0c);
+  --surface:    light-dark(var(--gl-color-white), var(--gl-color-black-soft));
+  --surface-2:  light-dark(var(--gl-color-gray), var(--gl-color-black-muted));
+  --border:     light-dark(var(--gl-color-gray-line), var(--gl-color-black-line));
+  --text:       light-dark(var(--gl-color-black), var(--gl-color-snow));
+  --muted:      light-dark(var(--gl-color-gray-text), #8e8e8a);
+  --accent:     var(--gl-color-accent);
+  --on-accent:  var(--gl-color-black);
+  --ink:        light-dark(var(--gl-color-black), var(--gl-color-snow));   /* «чёрные» блоки */
+  --on-ink:     light-dark(var(--gl-color-white), var(--gl-color-black));
+
+  /* ----- СТАТУСЫ ----- */
+  --success:    light-dark(var(--gl-color-green), #4ade80);
+  --error:      light-dark(var(--gl-color-red), #f87171);
+  --warning:    light-dark(var(--gl-color-orange), #fbbf24);
+  --success-bg: light-dark(#e7f6ec, #12261a);
+  --error-bg:   light-dark(#fdecea, #2a1414);
+  --warning-bg: light-dark(#fdf5e3, #2a2210);
+
+  /* ----- КОД ----- */
+  --code-bg:    light-dark(#f7f7f5, #101012);
+  --code-kw:    light-dark(var(--gl-color-violet), #c4b5fd);
+  --code-fn:    light-dark(var(--gl-color-teal), #66d9e8);
+  --code-str:   light-dark(#2b8a3e, #a9e34b);
+  --code-num:   light-dark(#c2410c, #fdba74);
+  --code-cm:    light-dark(#8a8a85, #6c6c68);
+  --term-bg:    #0d0d0f;                 /* терминал всегда тёмный */
+  --term-text:  #e6e6e3;
+
+  /* Пары для визуализации JOIN: строки с одинаковым цветом совпали по ключу */
+  --match-1: light-dark(#dbe4ff, #1e2a4a);
+  --match-2: light-dark(#ffe3e3, #3a1d22);
+  --match-3: light-dark(#d3f9d8, #16301c);
+
+  /* ----- ОТСТУПЫ И ФОРМЫ ----- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 80px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+
+  /* ----- РАЗМЕТКА ----- */
+  --container: 1280px;
+  --sidebar-w: 340px;
+  --header-h: 68px;
+  --transition: 0.15s ease;
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+
+/* ===== 2. БАЗА ===== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: var(--header-h);
+  scrollbar-gutter: stable;   /* место под скроллбар всегда занято — страница не дёргается, когда он появляется */
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-main);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+}
+
+main { flex: 1; }
+
+h1, h2, h3, p, dl, dd { margin: 0; }
+
+a { color: inherit; }
+
+code,
+kbd,
+pre { font-family: var(--font-code); }
+
+pre { margin: 0; }
+
+code {
+  padding: 1px 6px;
+  font-size: 0.9em;
+  background: var(--surface-2);
+  border-radius: 6px;
+}
+
+button,
+input { font: inherit; color: inherit; }
+
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: 0.5; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.muted { color: var(--muted); }
+.small { font-size: var(--fs-sm); }
+
+.stack-lg { display: grid; gap: var(--space-6); }
+.stack-xl { display: grid; gap: var(--space-8); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* Подсветка синтаксиса */
+.kw  { color: var(--code-kw); font-weight: var(--fw-bold); }
+.fn  { color: var(--code-fn); }
+.str { color: var(--code-str); }
+.num { color: var(--code-num); }
+.cm  { color: var(--code-cm); font-style: italic; }

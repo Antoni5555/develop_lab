@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Регистрация — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/accounts.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container stack-lg">
+  {% include 'common/_page_head.html' with title='Регистрация' lead='Прогресс из этого браузера перенесётся в аккаунт.' %}
+  {% include 'common/_coming_soon.html' with stage=3 %}
+</div>
+{% endblock %}

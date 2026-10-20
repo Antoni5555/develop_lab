@@ -1,0 +1,29 @@
+<section>
+  <div class="section-head"><h2 class="section-title">Что здесь есть</h2></div>
+  <div class="steps">
+    <a href="{% url 'courses:list' %}" class="step step--link">
+      <span class="step__num">Курсы</span>
+      <h3 class="step__title">Программа по шагам</h3>
+      <p class="muted">Курсы идут в порядке обучения, внутри — разделы и темы с короткой теорией и задачами.</p>
+      <span class="step__more">Открыть курсы →</span>
+    </a>
+    <a href="{% url 'trainers:playground' %}" class="step step--link">
+      <span class="step__num">Тренажёр</span>
+      <h3 class="step__title">SQL, ORM, Python, Linux</h3>
+      <p class="muted">Песочница без задач. Журнал выполнения показывает таблицы, изменённые строки и SQL от ORM.</p>
+      <span class="step__more">Открыть тренажёр →</span>
+    </a>
+    <a href="{% url 'cheatsheets:list' %}" class="step step--link">
+      <span class="step__num">Шпаргалки</span>
+      <h3 class="step__title">Из ваших заметок</h3>
+      <p class="muted">Заметка, написанная на уроке, сама попадает в шпаргалку курса — в нужную тему.</p>
+      <span class="step__more">Открыть шпаргалки →</span>
+    </a>
+    <a href="{% url 'accounts:profile' %}" class="step step--link">
+      <span class="step__num">Профиль</span>
+      <h3 class="step__title">Прогресс</h3>
+      <p class="muted">Пройденные курсы, активность по дням и последние заметки.</p>
+      <span class="step__more">Открыть профиль →</span>
+    </a>
+  </div>
+</section>
