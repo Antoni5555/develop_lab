@@ -1,0 +1,21 @@
+title: Исправить конфиг
+type: fix
+difficulty: 2
+pitfall: Лимит 1 МБ по умолчанию.
+statement: |
+  Разрешите файлы до 10 МБ.
+files:
+  nginx.conf: |
+    server {}
+check:
+  type: rules
+  rules:
+    - must_match: '^\s*client_max_body_size\s+10m;'
+      fail: Нужна директива client_max_body_size.
+solution:
+  nginx.conf: |
+    server {
+        client_max_body_size 10m;
+    }
+explanation: |
+  Директива задаёт лимит.

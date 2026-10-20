@@ -1,0 +1,12 @@
+title: Что выведет
+type: predict
+difficulty: 2
+pitfall: True равно 1.
+statement: |
+  Что выведет код?
+code: |
+  print(True + True)
+answer: |
+  2
+explanation: |
+  `True` — это 1.

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" class="fig" viewBox="0 0 100 50" role="img" aria-labelledby="t"><title id="t">Схема</title>
+<defs><marker id="a"><path d="M0 0L10 5L0 10z"/></marker></defs>
+<path d="M0 0L50 50" marker-end="url(#a)"/>
+</svg>

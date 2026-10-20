@@ -1,0 +1,19 @@
+title: Приветствие
+type: exercise
+difficulty: 1
+pitfall: Строка печатается без кавычек.
+statement: |
+  Выведите `Привет`.
+starter_code: |
+  print(...)
+check:
+  type: tests
+  tests:
+    - code: assert output == "Привет\n"
+      fail: Нужно вывести слово Привет.
+solution: |
+  print("Привет")
+hints:
+  - Используйте `print`.
+explanation: |
+  `print` выводит строку без кавычек.

@@ -1,0 +1,13 @@
+title: Выбор
+type: quiz
+kind: single
+difficulty: 1
+pitfall: Код 404 — нет ресурса.
+statement: |
+  Какой код ответа?
+options:
+  - 200 OK
+  - "`409` Conflict"
+answer: [1]
+explanation: |
+  Конфликт состояния.
