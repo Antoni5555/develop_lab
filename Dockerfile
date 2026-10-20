@@ -29,6 +29,10 @@ COPY --from=builder /venv /venv
 WORKDIR /app
 COPY --chown=app:app src/ .
 
+# Контент для load_content (на сервере — отдельный шаг деплоя после миграций)
+COPY --chown=app:app content/ /content/
+ENV CONTENT_DIR=/content
+
 # Статика собирается при сборке образа: у каждой версии образа своя статика.
 # SECRET_KEY здесь фиктивный — collectstatic ничего не шифрует и не ходит в БД.
 RUN DJANGO_SETTINGS_MODULE=config.settings.production SECRET_KEY=collectstatic \

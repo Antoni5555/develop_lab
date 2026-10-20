@@ -9,6 +9,8 @@ venv
 .obsidian
 design
 docs
+content/_plan
+content/_tools
 tests
 src/staticfiles
 src/media

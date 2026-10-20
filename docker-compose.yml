@@ -32,11 +32,14 @@ services:
       DJANGO_SETTINGS_MODULE: config.settings.development
       DB_HOST: db
       REDIS_URL: redis://redis:6379/0
+      CONTENT_DIR: /content
     # Код подключён папкой: правки видны сразу, runserver перезапускается сам.
     # Миграции при старте — только в разработке; на сервере это отдельный шаг деплоя.
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./src:/app
+      # Контент — только для чтения: load_content читает, но не меняет его
+      - ./content:/content:ro
     ports:
       - "8000:8000"
     depends_on:
