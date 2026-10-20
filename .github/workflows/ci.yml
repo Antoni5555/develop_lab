@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: flake8
+
+  tests:
+    runs-on: ubuntu-latest
+    # Postgres как на сервере: тесты с моделями пойдут на той же СУБД
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: develop_lab
+          POSTGRES_USER: develop_lab
+          POSTGRES_PASSWORD: develop_lab
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      SECRET_KEY: ci-secret-key
+      POSTGRES_DB: develop_lab
+      POSTGRES_USER: develop_lab
+      POSTGRES_PASSWORD: develop_lab
+      DB_HOST: localhost
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: pytest
+
+  # Образ должен собираться — иначе сломанный Dockerfile заметим только при деплое.
+  # Деплой добавим позже отдельной задачей с `needs: [lint, tests, docker]`.
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t develop-lab-web:${{ github.sha }} .
