@@ -87,27 +87,29 @@
 | Python | Python (Pyodide) | `exercise` с тестами |
 | Python под капотом | Python (Pyodide) | `predict` |
 | Linux | Linux (симулятор shell) | `exercise`; теория для systemd/cron — `quiz` |
-| Git | ⏳ git в браузере — решаем | `exercise` или `quiz` — зависит от решения |
-| Веб и HTTP | Python (Pyodide, `httpx` с подменой транспорта) — ⏳ проверить | `exercise`, `quiz` |
+| Git | нет до этапа 6 разработки (потом — isomorphic-git) | `quiz`, `fix`; живые задачи — после этапа 6 |
+| Веб и HTTP | Python (Pyodide; `httpx` против учебного API через `httpx.MockTransport`) | `exercise`, `quiz` |
 | SQL | SQL (PGlite) | `exercise` с проверкой результата; транзакции и блокировки — теория |
-| Django | Django (Pyodide + тестовый клиент) — подтверждено | `exercise`, многофайловые задачи |
+| Django | Django (Pyodide + тестовый клиент) | `exercise`, многофайловые задачи (формат — на этапе 5 разработки) |
 | Docker | нет | `quiz`, `fix` |
 | Nginx и деплой | нет | `quiz`, `fix` |
 
-У курса может не быть движка (`engine` пустой) — тогда задачи только `quiz`/`fix`.
+`Course.engine`: `python` — общий для «Python», «Python под капотом» и «Веб и HTTP»; пустой — курс без тренажёра, задачи только `quiz`/`fix` (Git, Docker, Nginx).
 
 ## Вопросы к «Разработке»
 Решено:
 - ✅ Django через тестовый клиент в Pyodide — подтверждено (вес 10–15 МБ при первом заходе, ленивая загрузка; перед этапом 5 — прототип).
 - ✅ Тренажёр SQLAlchemy отложен до курса FastAPI.
+- ✅ Форматы `quiz` и `fix` — в `docs/content-format.md`.
+- ✅ SVG inline: классы рисунков с префиксом `fig-`, `id` делает уникальными загрузчик.
 
-Открыто (разберём при проверке совместимости, когда контент-план будет закончен):
-1. Git в браузере.
-2. pytest и `httpx` в Pyodide.
-3. Типы задач `quiz` и `fix`.
-4. SVG-рисунки уроков inline в HTML страницы.
-5. Формат многофайловой задачи (Django).
-6. `Course.engine` для курсов без тренажёра (Docker, Nginx) и с общим движком (Python и «Под капотом»).
+- ✅ `^\s*` в начале шаблонов `fix` — защита от закомментированного «решения»; `check_tasks.py` это проверяет.
+- ✅ `Course.engine`: `python` общий для трёх курсов, пустой — для Git, Docker, Nginx.
+- ✅ Git в браузере — не раньше этапа 6 разработки; до этого курс Git на `quiz`/`fix`.
+- ✅ pytest в Pyodide работает; `httpx` — только с `httpx.MockTransport` (настоящие запросы из браузера блокирует CORS).
+- ✅ Формат многофайловых задач Django — на этапе 5 разработки, вместе с тренажёром.
+
+Открытых вопросов нет. Ответы «Разработки» — в `docs/architecture.md`, «Статус решений».
 
 ## Статус
 1. ✅ Программы всех курсов этапа 1.

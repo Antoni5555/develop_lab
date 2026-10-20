@@ -4,6 +4,7 @@
 Правила — docs/content-format.md, разделы 4–5.
 """
 import contextlib
+import difflib
 import io
 import re
 import signal
@@ -78,6 +79,100 @@ def run_tests(code, task):
     return failed
 
 
+def check_quiz(task):
+    problems, options, answer, kind = [], task.get("options") or [], task.get("answer"), task.get("kind")
+    if kind not in ("single", "multiple", "order"):
+        return [f"kind должен быть single, multiple или order, а не {kind!r}"]
+    if len(options) < 2:
+        problems.append("вариантов ответа меньше двух")
+    if not isinstance(answer, list) or not all(isinstance(i, int) for i in answer):
+        return problems + ["answer — список индексов (целых чисел)"]
+    if any(i < 0 or i >= len(options) for i in answer):
+        problems.append(f"индекс в answer вне options (вариантов {len(options)}, индексы с нуля)")
+    if len(set(answer)) != len(answer):
+        problems.append("индексы в answer повторяются")
+    if kind == "single" and len(answer) != 1:
+        problems.append("для single в answer ровно один индекс")
+    if kind == "multiple" and not answer:
+        problems.append("для multiple в answer хотя бы один индекс")
+    if kind == "order" and sorted(answer) != list(range(len(options))):
+        problems.append("для order в answer должны быть все индексы options")
+    return problems
+
+
+def failed_rules(files, rules):
+    """Сообщения fail для правил, которые files не проходят (как на сайте: поиск по файлу, флаг m)."""
+    failed = []
+    for rule in rules:
+        name = rule.get("file") or next(iter(files))
+        text = files.get(name, "")
+        if "must_match" in rule and not re.search(rule["must_match"], text, flags=re.M):
+            failed.append(rule["fail"])
+        if "must_not_match" in rule and re.search(rule["must_not_match"], text, flags=re.M):
+            failed.append(rule["fail"])
+    return failed
+
+
+COMMENT = {".sql": "-- ", ".js": "// "}  # остальные файлы (nginx, Python, YAML, Dockerfile, bash) — "# "
+
+
+def comment_out_changes(files, solution):
+    """Эталон, в котором строки, отличающиеся от исходных файлов, закомментированы."""
+    result, changed = {}, False
+    for name, text in solution.items():
+        marker = COMMENT.get(Path(name).suffix, "# ")
+        old, new = files.get(name, "").splitlines(), text.splitlines()
+        lines = list(new)
+        for tag, _, _, j1, j2 in difflib.SequenceMatcher(None, old, new).get_opcodes():
+            if tag in ("replace", "insert"):
+                for j in range(j1, j2):
+                    if lines[j].strip():
+                        indent = len(lines[j]) - len(lines[j].lstrip())
+                        lines[j] = lines[j][:indent] + marker + lines[j][indent:]
+                        changed = True
+        result[name] = "\n".join(lines) + "\n"
+    return result, changed
+
+
+def check_fix(task):
+    problems = []
+    files, solution = task.get("files") or {}, task.get("solution") or {}
+    rules = (task.get("check") or {}).get("rules") or []
+    if task.get("check", {}).get("type") != "rules":
+        problems.append("check.type для fix — rules")
+    if not files or not rules:
+        return problems + ["нужны files и check.rules"]
+    for rule in rules:
+        kinds = [k for k in ("must_match", "must_not_match") if k in rule]
+        if len(kinds) != 1:
+            problems.append(f"в правиле должно быть ровно одно из must_match / must_not_match: {rule}")
+            continue
+        if "fail" not in rule:
+            problems.append(f"у правила нет fail: {rule}")
+        if "file" not in rule and len(files) > 1:
+            problems.append(f"файлов несколько — у правила нужен file: {rule}")
+        if rule.get("file", next(iter(files))) not in files:
+            problems.append(f"файла {rule['file']!r} нет в files")
+        try:
+            re.compile(rule[kinds[0]])
+        except re.error as e:
+            problems.append(f"шаблон не компилируется: {rule[kinds[0]]!r}: {e}")
+        if "(?P<" in rule[kinds[0]] or re.search(r"\\[AZ]|\(\?[aiLmsux]+\)", rule[kinds[0]]):
+            problems.append(f"шаблон несовместим с JavaScript: {rule[kinds[0]]!r}")
+    if problems:
+        return problems
+    if set(solution) != set(files):
+        return problems + ["в solution должны быть те же файлы, что в files"]
+    if fails := failed_rules(solution, rules):
+        problems.append(f"эталон не проходит правила: {fails}")
+    if not failed_rules(files, rules):
+        problems.append("исходные файлы проходят все правила — задача ничего не проверяет")
+    commented, changed = comment_out_changes(files, solution)
+    if changed and not failed_rules(commented, rules):
+        problems.append("закомментированный эталон проходит правила — начните шаблоны директив с ^\\s*")
+    return problems
+
+
 def check_task(path):
     try:
         task = yaml.safe_load(path.read_text())
@@ -106,6 +201,10 @@ def check_task(path):
             problems.append(f"эталон не проходит: {fails}")
         if not run_tests(task["starter_code"], task):
             problems.append("заготовка проходит все тесты — задача ничего не проверяет")
+    elif task["type"] == "quiz":
+        problems += check_quiz(task)
+    elif task["type"] == "fix":
+        problems += check_fix(task)
     elif task["type"] == "predict":
         ns, error = execute(task["code"])
         if ns["output"] != task["answer"]:

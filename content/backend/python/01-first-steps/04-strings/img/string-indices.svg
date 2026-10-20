@@ -1,58 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 250" width="620" height="250" role="img" aria-labelledby="t"><title id="t">Индексы символов строки: положительные слева, отрицательные справа; срез не включает конец</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 250" width="620" height="250" class="fig" role="img" aria-labelledby="t"><title id="t">Индексы символов строки: положительные слева, отрицательные справа; срез не включает конец</title>
 <style>
-text{white-space:pre}
-.t{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
-.c{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
-.cs{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:12px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
-.h{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;letter-spacing:.04em;text-transform:uppercase;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
-.s{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
-.box{fill:#ffffff;fill:var(--surface,#ffffff);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
-.box2{fill:#ebebe8;fill:var(--surface-2,#ebebe8);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
-.acc{fill:#dcf25c;fill:var(--accent,#dcf25c)}
-.onacc{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#0e0e0e;fill:var(--on-accent,#0e0e0e)}
-.ln{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none}
-.lnd{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
-.ah{fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
-.err{fill:#fdecea;fill:var(--error-bg,#fdecea);stroke:#d93025;stroke:var(--error,#d93025);stroke-width:1.5}
-.errt{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:13px;fill:#d93025;fill:var(--error,#d93025)}
-.ok{fill:#e7f6ec;fill:var(--success-bg,#e7f6ec);stroke:#1f9d55;stroke:var(--success,#1f9d55);stroke-width:1.5}
-.dash{fill:none;stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;stroke-dasharray:5 4}
-.term{fill:#0d0d0f;fill:var(--term-bg,#0d0d0f)}
-.tt{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#e6e6e3;fill:var(--term-text,#e6e6e3)}
-.tterr{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#f87171}
+.fig text{white-space:pre}
+.fig-t{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.fig-c{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.fig-cs{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:12px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.fig-h{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;letter-spacing:.04em;text-transform:uppercase;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.fig-s{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.fig-box{fill:#ffffff;fill:var(--surface,#ffffff);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
+.fig-box2{fill:#ebebe8;fill:var(--surface-2,#ebebe8);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
+.fig-acc{fill:#dcf25c;fill:var(--accent,#dcf25c)}
+.fig-onacc{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#0e0e0e;fill:var(--on-accent,#0e0e0e)}
+.fig-ln{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none}
+.fig-lnd{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
+.fig-ah{fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.fig-err{fill:#fdecea;fill:var(--error-bg,#fdecea);stroke:#d93025;stroke:var(--error,#d93025);stroke-width:1.5}
+.fig-errt{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:13px;fill:#d93025;fill:var(--error,#d93025)}
+.fig-ok{fill:#e7f6ec;fill:var(--success-bg,#e7f6ec);stroke:#1f9d55;stroke:var(--success,#1f9d55);stroke-width:1.5}
+.fig-dash{fill:none;stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;stroke-dasharray:5 4}
+.fig-term{fill:#0d0d0f;fill:var(--term-bg,#0d0d0f)}
+.fig-tt{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#e6e6e3;fill:var(--term-text,#e6e6e3)}
+.fig-tterr{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#f87171}
 </style>
-<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ah"/></marker></defs>
-<text x="20" y="72" text-anchor="start" class="s">индекс</text>
-<text x="20" y="172" text-anchor="start" class="s">с конца</text>
-<rect x="60" y="90" width="64" height="56" rx="10" class="box2"/>
-<text x="92.0" y="125" text-anchor="middle" class="c">K</text>
-<text x="92.0" y="76" text-anchor="middle" class="cs">0</text>
-<text x="92.0" y="172" text-anchor="middle" class="cs">-7</text>
-<rect x="130" y="90" width="64" height="56" rx="10" class="box2"/>
-<text x="162.0" y="125" text-anchor="middle" class="c">B</text>
-<text x="162.0" y="76" text-anchor="middle" class="cs">1</text>
-<text x="162.0" y="172" text-anchor="middle" class="cs">-6</text>
-<rect x="200" y="90" width="64" height="56" rx="10" class="box2"/>
-<text x="232.0" y="125" text-anchor="middle" class="c">-</text>
-<text x="232.0" y="76" text-anchor="middle" class="cs">2</text>
-<text x="232.0" y="172" text-anchor="middle" class="cs">-5</text>
-<rect x="270" y="90" width="64" height="56" rx="10" class="acc"/>
-<text x="302.0" y="125" text-anchor="middle" class="onacc">0</text>
-<text x="302.0" y="76" text-anchor="middle" class="cs">3</text>
-<text x="302.0" y="172" text-anchor="middle" class="cs">-4</text>
-<rect x="340" y="90" width="64" height="56" rx="10" class="acc"/>
-<text x="372.0" y="125" text-anchor="middle" class="onacc">1</text>
-<text x="372.0" y="76" text-anchor="middle" class="cs">4</text>
-<text x="372.0" y="172" text-anchor="middle" class="cs">-3</text>
-<rect x="410" y="90" width="64" height="56" rx="10" class="acc"/>
-<text x="442.0" y="125" text-anchor="middle" class="onacc">4</text>
-<text x="442.0" y="76" text-anchor="middle" class="cs">5</text>
-<text x="442.0" y="172" text-anchor="middle" class="cs">-2</text>
-<rect x="480" y="90" width="64" height="56" rx="10" class="acc"/>
-<text x="512.0" y="125" text-anchor="middle" class="onacc">2</text>
-<text x="512.0" y="76" text-anchor="middle" class="cs">6</text>
-<text x="512.0" y="172" text-anchor="middle" class="cs">-1</text>
-<text x="20" y="30" text-anchor="start" class="c">sku = &quot;KB-0142&quot;</text>
-<text x="20" y="214" text-anchor="start" class="c">sku[3:7] → &quot;0142&quot;  (символы 3, 4, 5, 6 — индекс 7 не входит)</text>
-<text x="20" y="238" text-anchor="start" class="cs">sku[0] → &quot;K&quot;   sku[-1] → &quot;2&quot;   sku[:2] → &quot;KB&quot;</text>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="fig-ah"/></marker></defs>
+<text x="20" y="72" text-anchor="start" class="fig-s">индекс</text>
+<text x="20" y="172" text-anchor="start" class="fig-s">с конца</text>
+<rect x="60" y="90" width="64" height="56" rx="10" class="fig-box2"/>
+<text x="92.0" y="125" text-anchor="middle" class="fig-c">K</text>
+<text x="92.0" y="76" text-anchor="middle" class="fig-cs">0</text>
+<text x="92.0" y="172" text-anchor="middle" class="fig-cs">-7</text>
+<rect x="130" y="90" width="64" height="56" rx="10" class="fig-box2"/>
+<text x="162.0" y="125" text-anchor="middle" class="fig-c">B</text>
+<text x="162.0" y="76" text-anchor="middle" class="fig-cs">1</text>
+<text x="162.0" y="172" text-anchor="middle" class="fig-cs">-6</text>
+<rect x="200" y="90" width="64" height="56" rx="10" class="fig-box2"/>
+<text x="232.0" y="125" text-anchor="middle" class="fig-c">-</text>
+<text x="232.0" y="76" text-anchor="middle" class="fig-cs">2</text>
+<text x="232.0" y="172" text-anchor="middle" class="fig-cs">-5</text>
+<rect x="270" y="90" width="64" height="56" rx="10" class="fig-acc"/>
+<text x="302.0" y="125" text-anchor="middle" class="fig-onacc">0</text>
+<text x="302.0" y="76" text-anchor="middle" class="fig-cs">3</text>
+<text x="302.0" y="172" text-anchor="middle" class="fig-cs">-4</text>
+<rect x="340" y="90" width="64" height="56" rx="10" class="fig-acc"/>
+<text x="372.0" y="125" text-anchor="middle" class="fig-onacc">1</text>
+<text x="372.0" y="76" text-anchor="middle" class="fig-cs">4</text>
+<text x="372.0" y="172" text-anchor="middle" class="fig-cs">-3</text>
+<rect x="410" y="90" width="64" height="56" rx="10" class="fig-acc"/>
+<text x="442.0" y="125" text-anchor="middle" class="fig-onacc">4</text>
+<text x="442.0" y="76" text-anchor="middle" class="fig-cs">5</text>
+<text x="442.0" y="172" text-anchor="middle" class="fig-cs">-2</text>
+<rect x="480" y="90" width="64" height="56" rx="10" class="fig-acc"/>
+<text x="512.0" y="125" text-anchor="middle" class="fig-onacc">2</text>
+<text x="512.0" y="76" text-anchor="middle" class="fig-cs">6</text>
+<text x="512.0" y="172" text-anchor="middle" class="fig-cs">-1</text>
+<text x="20" y="30" text-anchor="start" class="fig-c">sku = &quot;KB-0142&quot;</text>
+<text x="20" y="214" text-anchor="start" class="fig-c">sku[3:7] → &quot;0142&quot;  (символы 3, 4, 5, 6 — индекс 7 не входит)</text>
+<text x="20" y="238" text-anchor="start" class="fig-cs">sku[0] → &quot;K&quot;   sku[-1] → &quot;2&quot;   sku[:2] → &quot;KB&quot;</text>
 </svg>

@@ -1,63 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 310" width="640" height="310" role="img" aria-labelledby="t"><title id="t">Имена переменных указывают на значения, у каждого значения свой тип</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 310" width="640" height="310" class="fig" role="img" aria-labelledby="t"><title id="t">Имена переменных указывают на значения, у каждого значения свой тип</title>
 <style>
-text{white-space:pre}
-.t{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
-.c{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
-.cs{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:12px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
-.h{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;letter-spacing:.04em;text-transform:uppercase;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
-.s{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
-.box{fill:#ffffff;fill:var(--surface,#ffffff);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
-.box2{fill:#ebebe8;fill:var(--surface-2,#ebebe8);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
-.acc{fill:#dcf25c;fill:var(--accent,#dcf25c)}
-.onacc{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#0e0e0e;fill:var(--on-accent,#0e0e0e)}
-.ln{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none}
-.lnd{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
-.ah{fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
-.err{fill:#fdecea;fill:var(--error-bg,#fdecea);stroke:#d93025;stroke:var(--error,#d93025);stroke-width:1.5}
-.errt{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:13px;fill:#d93025;fill:var(--error,#d93025)}
-.ok{fill:#e7f6ec;fill:var(--success-bg,#e7f6ec);stroke:#1f9d55;stroke:var(--success,#1f9d55);stroke-width:1.5}
-.dash{fill:none;stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;stroke-dasharray:5 4}
-.term{fill:#0d0d0f;fill:var(--term-bg,#0d0d0f)}
-.tt{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#e6e6e3;fill:var(--term-text,#e6e6e3)}
-.tterr{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#f87171}
+.fig text{white-space:pre}
+.fig-t{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.fig-c{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.fig-cs{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:12px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.fig-h{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;letter-spacing:.04em;text-transform:uppercase;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.fig-s{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.fig-box{fill:#ffffff;fill:var(--surface,#ffffff);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
+.fig-box2{fill:#ebebe8;fill:var(--surface-2,#ebebe8);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
+.fig-acc{fill:#dcf25c;fill:var(--accent,#dcf25c)}
+.fig-onacc{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#0e0e0e;fill:var(--on-accent,#0e0e0e)}
+.fig-ln{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none}
+.fig-lnd{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
+.fig-ah{fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.fig-err{fill:#fdecea;fill:var(--error-bg,#fdecea);stroke:#d93025;stroke:var(--error,#d93025);stroke-width:1.5}
+.fig-errt{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:13px;fill:#d93025;fill:var(--error,#d93025)}
+.fig-ok{fill:#e7f6ec;fill:var(--success-bg,#e7f6ec);stroke:#1f9d55;stroke:var(--success,#1f9d55);stroke-width:1.5}
+.fig-dash{fill:none;stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;stroke-dasharray:5 4}
+.fig-term{fill:#0d0d0f;fill:var(--term-bg,#0d0d0f)}
+.fig-tt{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#e6e6e3;fill:var(--term-text,#e6e6e3)}
+.fig-tterr{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#f87171}
 </style>
-<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ah"/></marker></defs>
-<text x="20" y="20" text-anchor="start" class="h">имя</text>
-<text x="260" y="20" text-anchor="start" class="h">значение</text>
-<text x="520" y="20" text-anchor="start" class="h">тип значения</text>
-<rect x="20" y="36" width="150" height="38" rx="19" class="box"/>
-<text x="95.0" y="60.0" text-anchor="middle" class="c">name</text>
-<path d="M174 55H254" class="ln" marker-end="url(#a)"/>
-<rect x="260" y="36" width="240" height="38" rx="10" class="box2"/>
-<text x="276" y="60" text-anchor="start" class="c">&quot;Беспроводная мышь&quot;</text>
-<rect x="520" y="41" width="100" height="28" rx="14" class="acc"/>
-<text x="570" y="60" text-anchor="middle" class="onacc">str</text>
-<rect x="20" y="90" width="150" height="38" rx="19" class="box"/>
-<text x="95.0" y="114.0" text-anchor="middle" class="c">price</text>
-<path d="M174 109H254" class="ln" marker-end="url(#a)"/>
-<rect x="260" y="90" width="240" height="38" rx="10" class="box2"/>
-<text x="276" y="114" text-anchor="start" class="c">1499</text>
-<rect x="520" y="95" width="100" height="28" rx="14" class="acc"/>
-<text x="570" y="114" text-anchor="middle" class="onacc">int</text>
-<rect x="20" y="144" width="150" height="38" rx="19" class="box"/>
-<text x="95.0" y="168.0" text-anchor="middle" class="c">rating</text>
-<path d="M174 163H254" class="ln" marker-end="url(#a)"/>
-<rect x="260" y="144" width="240" height="38" rx="10" class="box2"/>
-<text x="276" y="168" text-anchor="start" class="c">4.7</text>
-<rect x="520" y="149" width="100" height="28" rx="14" class="acc"/>
-<text x="570" y="168" text-anchor="middle" class="onacc">float</text>
-<rect x="20" y="198" width="150" height="38" rx="19" class="box"/>
-<text x="95.0" y="222.0" text-anchor="middle" class="c">is_active</text>
-<path d="M174 217H254" class="ln" marker-end="url(#a)"/>
-<rect x="260" y="198" width="240" height="38" rx="10" class="box2"/>
-<text x="276" y="222" text-anchor="start" class="c">True</text>
-<rect x="520" y="203" width="100" height="28" rx="14" class="acc"/>
-<text x="570" y="222" text-anchor="middle" class="onacc">bool</text>
-<rect x="20" y="252" width="150" height="38" rx="19" class="box"/>
-<text x="95.0" y="276.0" text-anchor="middle" class="c">discount</text>
-<path d="M174 271H254" class="ln" marker-end="url(#a)"/>
-<rect x="260" y="252" width="240" height="38" rx="10" class="box2"/>
-<text x="276" y="276" text-anchor="start" class="c">None</text>
-<rect x="520" y="257" width="100" height="28" rx="14" class="acc"/>
-<text x="570" y="276" text-anchor="middle" class="onacc">NoneType</text>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="fig-ah"/></marker></defs>
+<text x="20" y="20" text-anchor="start" class="fig-h">имя</text>
+<text x="260" y="20" text-anchor="start" class="fig-h">значение</text>
+<text x="520" y="20" text-anchor="start" class="fig-h">тип значения</text>
+<rect x="20" y="36" width="150" height="38" rx="19" class="fig-box"/>
+<text x="95.0" y="60.0" text-anchor="middle" class="fig-c">name</text>
+<path d="M174 55H254" class="fig-ln" marker-end="url(#a)"/>
+<rect x="260" y="36" width="240" height="38" rx="10" class="fig-box2"/>
+<text x="276" y="60" text-anchor="start" class="fig-c">&quot;Беспроводная мышь&quot;</text>
+<rect x="520" y="41" width="100" height="28" rx="14" class="fig-acc"/>
+<text x="570" y="60" text-anchor="middle" class="fig-onacc">str</text>
+<rect x="20" y="90" width="150" height="38" rx="19" class="fig-box"/>
+<text x="95.0" y="114.0" text-anchor="middle" class="fig-c">price</text>
+<path d="M174 109H254" class="fig-ln" marker-end="url(#a)"/>
+<rect x="260" y="90" width="240" height="38" rx="10" class="fig-box2"/>
+<text x="276" y="114" text-anchor="start" class="fig-c">1499</text>
+<rect x="520" y="95" width="100" height="28" rx="14" class="fig-acc"/>
+<text x="570" y="114" text-anchor="middle" class="fig-onacc">int</text>
+<rect x="20" y="144" width="150" height="38" rx="19" class="fig-box"/>
+<text x="95.0" y="168.0" text-anchor="middle" class="fig-c">rating</text>
+<path d="M174 163H254" class="fig-ln" marker-end="url(#a)"/>
+<rect x="260" y="144" width="240" height="38" rx="10" class="fig-box2"/>
+<text x="276" y="168" text-anchor="start" class="fig-c">4.7</text>
+<rect x="520" y="149" width="100" height="28" rx="14" class="fig-acc"/>
+<text x="570" y="168" text-anchor="middle" class="fig-onacc">float</text>
+<rect x="20" y="198" width="150" height="38" rx="19" class="fig-box"/>
+<text x="95.0" y="222.0" text-anchor="middle" class="fig-c">is_active</text>
+<path d="M174 217H254" class="fig-ln" marker-end="url(#a)"/>
+<rect x="260" y="198" width="240" height="38" rx="10" class="fig-box2"/>
+<text x="276" y="222" text-anchor="start" class="fig-c">True</text>
+<rect x="520" y="203" width="100" height="28" rx="14" class="fig-acc"/>
+<text x="570" y="222" text-anchor="middle" class="fig-onacc">bool</text>
+<rect x="20" y="252" width="150" height="38" rx="19" class="fig-box"/>
+<text x="95.0" y="276.0" text-anchor="middle" class="fig-c">discount</text>
+<path d="M174 271H254" class="fig-ln" marker-end="url(#a)"/>
+<rect x="260" y="252" width="240" height="38" rx="10" class="fig-box2"/>
+<text x="276" y="276" text-anchor="start" class="fig-c">None</text>
+<rect x="520" y="257" width="100" height="28" rx="14" class="fig-acc"/>
+<text x="570" y="276" text-anchor="middle" class="fig-onacc">NoneType</text>
 </svg>

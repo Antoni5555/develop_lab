@@ -1,7 +1,7 @@
 # Курс: Docker — шаг 70
 
 **Контекст:** магазин работает «только у автора на ноутбуке». Ученик упаковывает его в контейнеры: сначала запускает Postgres магазина в Docker, потом пишет Dockerfile для Django и собирает весь стек (Django + Postgres + Nginx) в compose.
-**Тренажёр:** живого Docker в браузере нет. Задачи — `fix` и «напиши Dockerfile/compose» с проверкой по правилам, плюс `quiz` и симулятор команд (вопрос к «Разработке»).
+**Тренажёр:** нет (`engine` пустой). Задачи — `fix` (исправить или дописать Dockerfile/compose, проверка по правилам) и `quiz` (что сделает команда, порядок шагов).
 **Источники:** `training_skills/Docker/DOCKER_basic_command.md` (**DB**), `clear_docker_imaage.md` (**CLR**), `training_skills/SQL/00_docker_container_postgres.md`, compose-файлы из `middle_course/new_admin_panel_sprint_2|3/docker_compose` (ориентир).
 
 Формат — [docs/content-format.md](../../docs/content-format.md), легенда — [00-overview.md](00-overview.md).

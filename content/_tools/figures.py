@@ -16,7 +16,7 @@ def out(path):
 # ---------- Python 1.01: устройство traceback ----------
 def traceback_anatomy():
     f = Figure(880, 276, "Устройство сообщения об ошибке: читаем снизу вверх")
-    f.raw('<rect x="20" y="20" width="560" height="176" rx="14" class="term"/>')
+    f.raw('<rect x="20" y="20" width="560" height="176" rx="14" class="fig-term"/>')
     rows = [
         ('Traceback (most recent call last):', "tt"),
         ('  File "main.py", line 2, in <module>', "tt"),
@@ -35,7 +35,7 @@ def traceback_anatomy():
     ]
     for y, n, s in notes:
         f.line(f"M584 {y - 5}H620", "lnd")
-        f.raw(f'<circle cx="634" cy="{y - 5}" r="11" class="acc"/>')
+        f.raw(f'<circle cx="634" cy="{y - 5}" r="11" class="fig-acc"/>')
         f.text(634, y, n, "onacc", "middle")
         f.text(652, y, s, "s")
     f.arrow("M870 180V40")
@@ -54,9 +54,9 @@ def names_to_values():
         y = 36 + i * 54
         f.box(20, y, 150, 38, n, "box", "c", rx=19)
         f.arrow(f"M174 {y + 19}H254")
-        f.raw(f'<rect x="260" y="{y}" width="240" height="38" rx="10" class="box2"/>')
+        f.raw(f'<rect x="260" y="{y}" width="240" height="38" rx="10" class="fig-box2"/>')
         f.text(276, y + 24, val, "c")
-        f.raw(f'<rect x="520" y="{y + 5}" width="100" height="28" rx="14" class="acc"/>')
+        f.raw(f'<rect x="520" y="{y + 5}" width="100" height="28" rx="14" class="fig-acc"/>')
         f.text(570, y + 24, t, "onacc", "middle")
     f.save(out(PY1 / "02-variables-and-types" / "img" / "names-to-values.svg"))
 
@@ -70,7 +70,7 @@ def string_indices():
     for i, ch in enumerate(sku):
         x = x0 + i * w
         cls = "acc" if 3 <= i <= 6 else "box2"
-        f.raw(f'<rect x="{x}" y="90" width="{w - 6}" height="56" rx="10" class="{cls}"/>')
+        f.raw(f'<rect x="{x}" y="90" width="{w - 6}" height="56" rx="10" class="fig-{cls}"/>')
         f.text(x + (w - 6) / 2, 125, ch, "onacc" if cls == "acc" else "c", "middle")
         f.text(x + (w - 6) / 2, 76, str(i), "cs", "middle")
         f.text(x + (w - 6) / 2, 172, str(i - len(sku)), "cs", "middle")
@@ -146,10 +146,10 @@ def lost_key():
         x = 40 + i * 85
         f.text(x + 40, 124, str(i), "s", "middle")
         if i == 2:
-            f.raw(f'<rect x="{x}" y="132" width="80" height="64" rx="10" class="err"/>')
+            f.raw(f'<rect x="{x}" y="132" width="80" height="64" rx="10" class="fig-err"/>')
             f.text(x + 40, 158, "SKU(KB-02)", "cs", "middle"); f.text(x + 40, 180, "→ 12", "cs", "middle")
         else:
-            f.raw(f'<rect x="{x}" y="132" width="80" height="64" rx="10" class="{"dash" if i == 6 else "box2"}"/>')
+            f.raw(f'<rect x="{x}" y="132" width="80" height="64" rx="10" class="fig-{"dash" if i == 6 else "box2"}"/>')
     f.text(40, 222, "ячейки таблицы dict (схематично)", "h")
     f.text(40, 26, 'SKU("KB-01") in stock', "c")
     f.text(40, 48, 'hash("KB-01") → ячейка 2: ячейка та, но в ней уже ключ KB-02', "s")
