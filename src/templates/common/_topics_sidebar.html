@@ -1,0 +1,23 @@
+{% load plural %}
+{% comment %} Программа курса: раздел → темы → урок и задачи. Один компонент для урока, задачи и тренажёра.
+   Параметры: sections (из selectors.course_outline), current_topic.
+{% endcomment %}
+{% for section in sections %}
+<details class="module-nav{% if current_topic.section_id == section.pk %} module-nav--current{% endif %}"{% if current_topic.section_id == section.pk %} open{% endif %}>
+  <summary><span class="module-nav__num">{{ forloop.counter }}</span><span class="module-nav__title">{{ section.title }}</span><span class="topic__count"></span></summary>
+  {% for topic in section.topics.all %}
+  <details class="topic"{% if topic.pk == current_topic.pk %} open{% endif %}>
+    <summary>{{ topic.title }} <span class="topic__count">{{ topic.exercises.all|length }}</span></summary>
+    <ul>
+      {% if topic.lesson %}
+      <li class="lesson{% if topic.pk == current_topic.pk %} lesson--current{% endif %}"><a href="{{ topic.get_absolute_url }}">Теория: {{ topic.lesson.title }}</a></li>
+      {% endif %}
+      {% for exercise in topic.exercises.all %}
+      {# Страницы задач появятся на этапе 2 — пока без ссылки #}
+      <li class="lesson"><a aria-disabled="true">{{ exercise.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endfor %}
+</details>
+{% endfor %}

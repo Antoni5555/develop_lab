@@ -1,0 +1,16 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} — {{ course.title }} — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/courses.css' %}">{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'js/code-copy.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% include 'common/_breadcrumbs.html' with current=topic.title %}
+  <div class="course-layout">
+    {% include 'courses/components/_lesson_article.html' %}
+    {% include 'common/_side_panel.html' with current_topic=topic %}
+  </div>
+</div>
+{% endblock %}

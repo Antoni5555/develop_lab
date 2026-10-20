@@ -1,0 +1,24 @@
+{% load plural %}
+{# Карточка курса. Параметры: card (CourseCard: course, step, is_soon), accent — выделить лаймом с бейджем «Начни здесь». #}
+{% with course=card.course %}
+{% if card.is_soon %}
+<div class="course-card course-card--soon">
+  <div class="course-card__top">
+    <span class="course-card__step">Шаг {{ card.step }}</span>
+    <span class="badge">Скоро</span>
+  </div>
+  <h3 class="course-card__title">{{ course.title }}</h3>
+  <p class="course-card__text">{{ course.description }}</p>
+</div>
+{% else %}
+<a href="{{ course.get_absolute_url }}" class="course-card{% if accent %} course-card--accent{% endif %}">
+  <div class="course-card__top">
+    <span class="course-card__step">Шаг {{ card.step }}</span>
+    {% if accent %}<span class="badge badge--on-accent">Начни здесь</span>{% else %}<span class="round-btn" aria-hidden="true">↗</span>{% endif %}
+  </div>
+  <h3 class="course-card__title">{{ course.title }}</h3>
+  <p class="course-card__text">{{ course.description }}</p>
+  <span class="course-card__meta">{{ course.topic_count|plural:"тема,темы,тем" }} · {{ course.exercise_count|plural:"задача,задачи,задач" }}</span>
+</a>
+{% endif %}
+{% endwith %}

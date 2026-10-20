@@ -1,0 +1,13 @@
+<aside class="sidebar">
+  <div class="sidebar__title">О курсе</div>
+  <dl class="facts">
+    {% if level_range %}<div><dt>Уровень</dt><dd>{{ level_range }}</dd></div>{% endif %}
+    {% if reading_time %}<div><dt>Теория</dt><dd>~{{ reading_time }} мин чтения</dd></div>{% endif %}
+    <div><dt>Тренажёр</dt><dd>{% if course.engine %}{{ course.get_engine_display }}{% else %}нет — задачи с выбором ответа{% endif %}</dd></div>
+    {% if prev_course %}<div><dt>Перед курсом</dt><dd><a href="{{ prev_course.get_absolute_url }}">{{ prev_course.title }}</a></dd></div>{% endif %}
+    {% if next_course %}<div><dt>После курса</dt><dd><a href="{{ next_course.get_absolute_url }}">{{ next_course.title }}</a></dd></div>{% endif %}
+  </dl>
+  {% if course.engine %}
+  <a href="{% url 'trainers:playground' %}" class="btn btn--ghost btn--block">Открыть тренажёр</a>
+  {% endif %}
+</aside>

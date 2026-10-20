@@ -1,0 +1,16 @@
+{% load plural %}
+{% comment %} Правая панель урока, задачи и тренажёра: плашки-аккордеон (<details name> — открыта одна).
+   Сейчас одна плашка «Программа курса»; «Заметка» появится на этапе 3.
+   Параметры: course, sections, current_topic.
+{% endcomment %}
+<aside class="side-panel">
+  <details class="side-card" name="side-panel" open>
+    <summary class="side-card__head">
+      <span class="side-card__title">Программа курса</span>
+      <span class="side-card__meta">{{ course.title }} · {{ sections|length|plural:"раздел,раздела,разделов" }}</span>
+    </summary>
+    <div class="side-card__body">
+      {% include 'common/_topics_sidebar.html' %}
+    </div>
+  </details>
+</aside>

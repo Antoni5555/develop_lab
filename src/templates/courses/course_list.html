@@ -5,8 +5,9 @@
 {% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/courses.css' %}">{% endblock %}
 
 {% block content %}
-<div class="container stack-lg">
+<div class="container">
   {% include 'common/_page_head.html' with title='Курсы' lead='Каждый курс — темы с короткой теорией и задачами на тренажёре.' %}
-  {% include 'common/_coming_soon.html' with stage=1 %}
+  {% include 'courses/components/_track_filter.html' %}
+  {% include 'courses/components/_course_grid.html' %}
 </div>
 {% endblock %}

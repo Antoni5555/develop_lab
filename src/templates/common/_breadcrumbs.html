@@ -1,0 +1,6 @@
+{# Хлебные крошки «Курсы / Курс / Тема». Параметры: course (необязательно), current — текущая страница. #}
+<nav class="breadcrumbs" aria-label="Навигация">
+  <a href="{% url 'courses:list' %}">Курсы</a>
+  {% if course and current %}<span>/</span><a href="{{ course.get_absolute_url }}">{{ course.title }}</a>{% endif %}
+  <span>/</span><span aria-current="page">{% if current %}{{ current }}{% else %}{{ course.title }}{% endif %}</span>
+</nav>

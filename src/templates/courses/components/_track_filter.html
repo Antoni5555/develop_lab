@@ -1,0 +1,8 @@
+{# Направления. Фильтры по категориям и сортировка из макета появятся, когда курсов станет много. #}
+<div class="filter-bar">
+  <nav class="tracks tracks--light" aria-label="Направления">
+    {% for item in tracks %}
+    <a href="{% url 'courses:list' %}?track={{ item.slug }}" class="track{% if item == track %} track--active{% endif %}">{{ item.title }}</a>
+    {% endfor %}
+  </nav>
+</div>

@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }} — {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ course.description }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/courses.css' %}">{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% include 'common/_breadcrumbs.html' %}
+  {% include 'courses/components/_course_hero.html' %}
+
+  <div class="section-head">
+    <h2 class="section-title section-title--sm">Программа курса</h2>
+    <span class="muted small">Раздел → темы → урок и задачи</span>
+  </div>
+
+  <div class="course-layout">
+    <div class="course-main">
+      {% if sections %}
+        {% include 'courses/components/_module_list.html' %}
+      {% else %}
+        {% include 'common/_coming_soon.html' with text='Курс в работе — темы появятся позже.' %}
+      {% endif %}
+    </div>
+    {% include 'courses/components/_course_info.html' %}
+  </div>
+</div>
+{% endblock %}

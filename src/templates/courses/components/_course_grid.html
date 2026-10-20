@@ -1,0 +1,8 @@
+{# Курсы направления по программе (Course.order). Номер шага — позиция в программе. #}
+<div class="course-grid">
+  {% for card in cards %}
+    {% include 'common/_course_card.html' %}
+  {% empty %}
+    <p class="muted">Курсов пока нет.</p>
+  {% endfor %}
+</div>

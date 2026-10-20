@@ -1,0 +1,18 @@
+{% load plural %}
+<div class="course-hero">
+  <div class="course-hero__text">
+    <div class="tags">
+      <span class="tag">{{ course.track.title }} · шаг {{ step }}</span>
+      <span class="tag">{% if course.engine %}{{ course.get_engine_display }}{% else %}Без тренажёра{% endif %}</span>
+      <span class="tag">{{ sections|length|plural:"раздел,раздела,разделов" }} · {{ course.exercise_count|plural:"задача,задачи,задач" }}</span>
+    </div>
+    <h1 class="course-hero__title">{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+  </div>
+  {% if first_topic %}
+  <div class="course-hero__side">
+    <a href="{{ first_topic.get_absolute_url }}" class="btn btn--ink btn--lg">Начать курс <span aria-hidden="true">→</span></a>
+    <span class="course-hero__next">Первая тема: «{{ first_topic.title }}»</span>
+  </div>
+  {% endif %}
+</div>

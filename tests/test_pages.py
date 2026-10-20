@@ -3,6 +3,9 @@ import pytest
 from django.urls import reverse
 
 
+# каталог и главная читают курсы из БД
+pytestmark = pytest.mark.django_db
+
 PAGES = [
     # (имя URL, шаблон, активный пункт меню)
     ('pages:home', 'home/home.html', 'home'),
