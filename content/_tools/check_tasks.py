@@ -181,6 +181,106 @@ def check_fix(task):
     return problems
 
 
+# Команды симулятора Linux/Git и их флаги (docs/content-format.md, «exercise с проверкой состояния»).
+# None — флаги не поддерживаются; набор — разрешённые флаги.
+LINUX_COMMANDS = {
+    "pwd": None, "cd": None, "ls": {"-l", "-a"}, "cat": None, "echo": None, "mkdir": {"-p"},
+    "touch": None, "rm": {"-r"}, "cp": {"-r"}, "mv": None, "head": None, "tail": None,
+    "wc": {"-l"}, "grep": {"-i", "-n", "-r", "-c"}, "sort": None, "uniq": {"-c"}, "cut": None,
+    "find": {"-name"}, "chmod": None,
+}
+GIT_COMMANDS = {
+    "init": None, "status": None, "add": None, "commit": {"-m"}, "log": {"--oneline", "--graph"},
+    "branch": None, "switch": {"-c"}, "merge": None, "rebase": None, "reset": {"--soft", "--hard"},
+    "restore": {"--staged"}, "stash": None, "diff": None, "cherry-pick": None, "revert": None, "tag": None,
+}
+STATE_RULES = {  # ключ, по которому узнаём правило → какие ещё ключи обязательны
+    "exists": {"path"}, "contains": {"path"}, "mode": {"path"}, "output_matches": set(),
+    "head": set(), "commit_in": set(), "clean": set(), "merged": set(),
+}
+
+
+def check_command(line):
+    """Проблемы одной строки solution: неизвестные команды и флаги."""
+    problems = []
+    line_wo_strings = re.sub(r"\"[^\"]*\"|'[^']*'", "STR", line)   # текст в кавычках — не флаги
+    for part in line_wo_strings.split("|"):
+        part = re.split(r">>?", part)[0]          # перенаправление: дальше — имя файла
+        tokens = part.split()
+        if not tokens:
+            continue
+        if tokens[0] == "git":
+            if len(tokens) < 2 or tokens[1] not in GIT_COMMANDS:
+                problems.append(f"команды git {tokens[1] if len(tokens) > 1 else ''!s} нет в симуляторе: {line!r}")
+                continue
+            allowed, flags = GIT_COMMANDS[tokens[1]], tokens[2:]
+            if tokens[1] == "stash" and flags[:1] == ["pop"]:
+                flags = flags[1:]
+        elif tokens[0] in LINUX_COMMANDS:
+            allowed, flags = LINUX_COMMANDS[tokens[0]], tokens[1:]
+        else:
+            problems.append(f"команды {tokens[0]!r} нет в симуляторе: {line!r}")
+            continue
+        for flag in (t for t in flags if t.startswith("-") and not re.fullmatch(r"-?\d+", t)):
+            letters = [flag] if flag.startswith("--") or len(flag) == 2 else [f"-{c}" for c in flag[1:]]
+            if flag in (allowed or set()):
+                continue
+            if any(f not in (allowed or set()) for f in letters):
+                problems.append(f"флаг {flag} у {tokens[0] if tokens[0] != 'git' else 'git ' + tokens[1]} не поддерживается симулятором: {line!r}")
+    return problems
+
+
+def check_state(task):
+    problems = []
+    setup, rules = task.get("setup") or {}, (task.get("check") or {}).get("expect") or []
+    unknown = set(setup) - {"cwd", "files", "dirs", "commits", "branch", "head"}
+    if unknown:
+        problems.append(f"неизвестные ключи setup: {sorted(unknown)}")
+    if "cwd" in setup and not str(setup["cwd"]).startswith("/"):
+        problems.append("setup.cwd — абсолютный путь")
+    for path in list((setup.get("files") or {})) + list(setup.get("dirs") or []):
+        if not str(path).startswith("/"):
+            problems.append(f"путь в setup не абсолютный: {path!r}")
+    for commit in setup.get("commits") or []:
+        if not isinstance(commit, dict) or "message" not in commit:
+            problems.append(f"у коммита в setup нужен message: {commit!r}")
+    if not rules:
+        problems.append("нет правил check.expect")
+    for rule in rules:
+        kinds = [k for k in STATE_RULES if k in rule]
+        if "branch" in rule and "exists" in rule and "path" not in rule:
+            kinds = ["exists"]
+        if len(kinds) != 1:
+            problems.append(f"в правиле должен быть ровно один вид проверки: {rule}")
+            continue
+        kind = kinds[0]
+        if "fail" not in rule:
+            problems.append(f"у правила нет fail: {rule}")
+        if kind == "exists" and "path" not in rule and "branch" not in rule:
+            problems.append(f"exists проверяет path или branch: {rule}")
+        if kind in ("contains", "mode") and "path" not in rule:
+            problems.append(f"{kind} требует path: {rule}")
+        if kind == "mode" and not (isinstance(rule["mode"], str) and re.fullmatch(r"[0-7]{3}", rule["mode"])):
+            problems.append(f"mode — три восьмеричные цифры строкой, например '644': {rule}")
+        if kind == "commit_in" and not {"branch", "message"} <= set(rule["commit_in"] or {}):
+            problems.append(f"commit_in требует branch и message: {rule}")
+        if kind == "merged" and not {"from", "into"} <= set(rule["merged"] or {}):
+            problems.append(f"merged требует from и into: {rule}")
+        for pattern in (rule.get("contains"), rule.get("output_matches"), (rule.get("commit_in") or {}).get("message")):
+            if pattern is None:
+                continue
+            try:
+                re.compile(pattern)
+            except re.error as e:
+                problems.append(f"шаблон не компилируется: {pattern!r}: {e}")
+    lines = [l.strip() for l in (task.get("solution") or "").splitlines() if l.strip()]
+    if not lines:
+        problems.append("нет solution — команды по одной на строку")
+    for line in lines:
+        problems += check_command(line)
+    return problems
+
+
 def check_task(path):
     try:
         task = yaml.safe_load(path.read_text())
@@ -204,7 +304,9 @@ def check_task(path):
     for key in ("title", "type", "difficulty", "pitfall", "statement", "explanation"):
         if key not in task:
             problems.append(f"нет поля {key}")
-    if task["type"] == "exercise":
+    if task["type"] == "exercise" and (task.get("check") or {}).get("type") == "state":
+        problems += check_state(task)
+    elif task["type"] == "exercise":
         if fails := run_tests(task["solution"], task):
             problems.append(f"эталон не проходит: {fails}")
         if not run_tests(task["starter_code"], task):
