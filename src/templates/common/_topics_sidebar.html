@@ -1,8 +1,12 @@
 {% comment %} Программа курса: раздел → тема → урок и задачи. Один компонент для урока, задачи и тренажёра.
+   Внутри темы: урок (с точкой) и задачи — правее, без точки, с подписью «Задача N».
    Параметры: sections (из selectors.course_outline), current_topic, current_exercise (если открыта задача).
+
 {% endcomment %}
 {% for section in sections %}
-<details class="module-nav{% if current_topic.section_id == section.pk %} module-nav--current{% endif %}"{% if current_topic.section_id == section.pk %} open{% endif %}>
+{# Открыт раздел текущей темы; если темы нет (песочница) — первый раздел, как на странице курса #}
+<details class="module-nav{% if current_topic.section_id == section.pk %} module-nav--current{% endif %}"{% if current_topic.section_id == section.pk or not current_topic and forloop.first %} open{% endif %}>
+
   <summary><span class="module-nav__num">{{ forloop.counter }}</span><span class="module-nav__title">{{ section.title }}</span><span class="topic__count"></span></summary>
   {% for topic in section.topics.all %}
   <details class="topic"{% if topic.pk == current_topic.pk %} open{% endif %}>
@@ -12,7 +16,8 @@
       <li class="lesson{% if topic.pk == current_topic.pk and not current_exercise %} lesson--current{% endif %}"><a href="{{ topic.get_absolute_url }}">Теория: {{ topic.lesson.title }}</a></li>
       {% endif %}
       {% for exercise in topic.exercises.all %}
-      <li class="lesson{% if exercise.pk == current_exercise.pk %} lesson--current{% endif %}"><a href="{{ exercise.get_absolute_url }}">{{ exercise.title }}</a></li>
+      <li class="lesson lesson--task{% if exercise.pk == current_exercise.pk %} lesson--current{% endif %}"><a href="{{ exercise.get_absolute_url }}"><span class="lesson__label">Задача {{ forloop.counter }}</span>{{ exercise.title }}</a></li>
+
       {% endfor %}
     </ul>
   </details>

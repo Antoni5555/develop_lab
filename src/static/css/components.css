@@ -627,6 +627,12 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 .lesson--done a::before { background: var(--success); border-color: var(--success); }
 .lesson--current a { color: var(--on-accent); background: var(--accent); font-weight: var(--fw-bold); }
 
+/* Задачи темы — правее урока и без точки, с подписью «Задача N», чтобы не путать с темами */
+.lesson--task a { margin-left: var(--space-5); }
+.lesson--task a::before { display: none; }
+.lesson__label { flex-shrink: 0; font-size: var(--fs-xs); font-weight: var(--fw-bold); opacity: 0.7; }
+
+
 .toc { display: grid; gap: 2px; }
 .toc a { padding: 6px 10px; font-size: var(--fs-sm); text-decoration: none; color: var(--muted); border-radius: var(--radius-sm); }
 .toc a:hover { color: var(--text); background: var(--surface-2); }

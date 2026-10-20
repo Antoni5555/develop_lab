@@ -50,8 +50,16 @@ def test_exercise_navigation(client, loaded_content):
 
     assert 'aria-label="Назад: Привет, Python"' in html
     assert 'aria-label="Дальше: Что выведет"' in html
-    assert ('<li class="lesson lesson--current">'
-            '<a href="/courses/python/basics/hello/greeting/">') in html
+    assert ('<li class="lesson lesson--task lesson--current">'
+            '<a href="/courses/python/basics/hello/greeting/">'
+            '<span class="lesson__label">Задача 1</span>Приветствие</a>') in html
+
+
+def test_playground_opens_first_section(client, loaded_content):
+    """В песочнице нет текущей темы — открыт первый раздел, как на странице курса."""
+    html = client.get(reverse('trainers:playground')).content.decode()
+
+    assert '<details class="module-nav" open>' in html
 
 
 def test_predict_page(client, loaded_content):
