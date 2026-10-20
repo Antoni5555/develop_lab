@@ -1,0 +1,37 @@
+title: Цена через float
+type: exercise
+difficulty: 2
+pitfall: Строку с ценой преобразуют сразу в Decimal — через float теряется точность.
+statement: |
+  Цена приходит из формы администратора строкой. Код сохраняет её в `Decimal`,
+  но в базе появляются цены вида `1499.900000000000090949…`. Исправьте:
+  `unit_price` должен в точности совпадать с введённой ценой.
+inputs: |
+  price = "1499.90"
+starter_code: |
+  from decimal import Decimal
+
+  # price — входные данные задачи
+  unit_price = Decimal(float(price))
+  print(unit_price)
+check:
+  type: tests
+  tests:
+    - code: |
+        from decimal import Decimal
+        assert run(price="1499.90")["unit_price"] == Decimal("1499.90")
+      fail: "Цена не совпадает с введённой. Выведите `float(price)` — какое значение получает `Decimal`?"
+    - code: |
+        assert str(run(price="1499.90")["unit_price"]) == "1499.90"
+      fail: "Цена должна сохранять запись с двумя знаками: `1499.90`."
+solution: |
+  from decimal import Decimal
+
+  unit_price = Decimal(price)
+  print(unit_price)
+hints:
+  - "Какой лишний шаг стоит между строкой и `Decimal`?"
+explanation: |
+  `float("1499.90")` превращает текст в двоичное приближение, и `Decimal` честно сохраняет это приближение
+  со всеми «хвостами». `Decimal("1499.90")` разбирает текст напрямую — значение точное, и даже
+  сохраняется количество знаков после запятой.

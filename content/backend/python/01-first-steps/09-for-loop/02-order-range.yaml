@@ -1,0 +1,29 @@
+title: Последний заказ потерялся
+type: exercise
+difficulty: 1
+pitfall: range не включает конец диапазона.
+statement: |
+  Нужно вывести строки `Заказ №N` для всех номеров с `first_id` по `last_id` **включительно**
+  — по одной строке на заказ. Последний заказ в выводе пропадает.
+inputs: |
+  first_id = 1040
+  last_id = 1043
+starter_code: |
+  # first_id и last_id — входные данные задачи
+  for order_id in range(first_id, last_id):
+      print(f"Заказ №{order_id}")
+check:
+  type: tests
+  tests:
+    - code: assert run(first_id=1040, last_id=1043)["output"] == "Заказ №1040\nЗаказ №1041\nЗаказ №1042\nЗаказ №1043\n"
+      fail: "Заказ №1043 не выведен. Какие числа выдаёт `range(1040, 1043)`?"
+    - code: assert run(first_id=1042, last_id=1042)["output"] == "Заказ №1042\n"
+      fail: "Если первый и последний номер совпадают, выводится один заказ."
+solution: |
+  for order_id in range(first_id, last_id + 1):
+      print(f"Заказ №{order_id}")
+hints:
+  - Конец диапазона в `range` не входит.
+explanation: |
+  `range(a, b)` выдаёт числа от `a` до `b - 1`. Чтобы включить `last_id`, конец сдвигают на единицу:
+  `range(first_id, last_id + 1)`. Так же устроены срезы строк — правило одно на весь Python.

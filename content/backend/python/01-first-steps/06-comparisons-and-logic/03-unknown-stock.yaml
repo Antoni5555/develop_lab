@@ -1,0 +1,30 @@
+title: Склад не ответил
+type: exercise
+difficulty: 2
+pitfall: Сравнение None с числом падает — порядок условий в and защищает от ошибки.
+statement: |
+  Если склад не ответил, остаток `stock` равен `None`. Тогда товар показываем как недоступный.
+  Сейчас карточка товара падает с ошибкой. Исправьте выражение: `available` — `True`,
+  только если остаток известен и больше нуля.
+inputs: |
+  stock = None
+starter_code: |
+  # stock — входные данные задачи: число или None
+  available = stock > 0
+check:
+  type: tests
+  tests:
+    - code: assert run(stock=None)["available"] is False
+      fail: "При `stock = None` программа падает или даёт не `False`. Что нужно проверить до сравнения с нулём?"
+    - code: assert run(stock=5)["available"] is True
+      fail: Остаток 5 — товар доступен.
+    - code: assert run(stock=0)["available"] is False
+      fail: Остаток 0 — товар недоступен.
+solution: |
+  available = stock is not None and stock > 0
+hints:
+  - "`None > 0` — `TypeError`."
+  - "`and` не вычисляет правую часть, если левая ложна. Что поставить слева?"
+explanation: |
+  `stock is not None and stock > 0`: при `None` левая часть ложна, и `and` сразу возвращает `False`,
+  не доходя до сравнения. Порядок важен: `stock > 0 and stock is not None` упадёт так же, как раньше.

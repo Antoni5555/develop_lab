@@ -1,0 +1,33 @@
+title: Пропавшие копейки
+type: exercise
+difficulty: 2
+pitfall: Decimal, созданный из float, наследует его неточность.
+statement: |
+  Сумма заказа из трёх товаров по 19,90 ₽ в чеке и в отчёте не совпадает.
+  Исправьте код так, чтобы `total` был `Decimal` и равнялся ровно `59.70`.
+starter_code: |
+  from decimal import Decimal
+
+  price = Decimal(19.9)
+  total = price * 3
+  print(total)
+check:
+  type: tests
+  tests:
+    - code: assert isinstance(total, Decimal)
+      fail: "`total` должен быть `Decimal`."
+    - code: assert total == Decimal("59.70")
+      fail: "Сумма не равна 59.70 ровно. Выведите `price` — откуда в нём лишние цифры?"
+solution: |
+  from decimal import Decimal
+
+  price = Decimal("19.90")
+  total = price * 3
+  print(total)
+hints:
+  - Выведите `price` отдельно.
+  - "`19.9` — это `float`, и он уже неточный до того, как попал в `Decimal`."
+explanation: |
+  `Decimal(19.9)` получает уже искажённое двоичное значение `float`:
+  `19.89999999999999857891452847979962825775146484375`. Умножение лишь переносит ошибку дальше.
+  `Decimal("19.90")` создаётся из текста — значение точное, и `* 3` даёт ровно `59.70`.

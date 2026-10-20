@@ -1,0 +1,33 @@
+title: Заказ «завершён» всегда
+type: exercise
+difficulty: 1
+pitfall: "x == \"a\" or \"b\" всегда истинно: непустая строка — True."
+statement: |
+  Заказ считается завершённым, если его статус `"paid"` или `"shipped"`.
+  Сейчас завершёнными считаются вообще все заказы. Исправьте выражение для `is_done`
+  — результат должен быть `bool`.
+inputs: |
+  status = "new"
+starter_code: |
+  # status — входные данные задачи
+  is_done = status == "paid" or "shipped"
+check:
+  type: tests
+  tests:
+    - code: assert run(status="new")["is_done"] is False
+      fail: "Для статуса \"new\" заказ не завершён, а выражение даёт истину. Как Python разбирает `status == \"paid\" or \"shipped\"`?"
+    - code: assert run(status="cancelled")["is_done"] is False
+      fail: Отменённый заказ — не завершённый.
+    - code: assert run(status="paid")["is_done"] is True
+      fail: Оплаченный заказ — завершённый.
+    - code: assert run(status="shipped")["is_done"] is True
+      fail: Отправленный заказ — завершённый.
+solution: |
+  is_done = status == "paid" or status == "shipped"
+hints:
+  - "Выведите `status == \"paid\" or \"shipped\"` при `status = \"new\"`."
+  - Каждое сравнение пишется полностью.
+explanation: |
+  `or` соединяет два выражения: `status == "paid"` и `"shipped"`. Второе — просто непустая строка,
+  она истинна, поэтому всё выражение истинно при любом статусе (и возвращает строку `"shipped"`, а не `bool`).
+  Правильно — сравнить `status` с каждым значением.

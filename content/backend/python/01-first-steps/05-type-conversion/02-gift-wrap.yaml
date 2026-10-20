@@ -1,0 +1,32 @@
+title: Подарочная упаковка для всех
+type: exercise
+difficulty: 1
+pitfall: bool() от непустой строки — всегда True, даже от "false".
+statement: |
+  Форма заказа передаёт флажок «подарочная упаковка» строкой: `"true"` или `"false"`.
+  Сейчас упаковку получают все покупатели. Исправьте код: `is_gift` должен быть `True`
+  только когда флажок `"true"` (регистр букв может быть любым).
+inputs: |
+  gift_wrap = "false"
+starter_code: |
+  # gift_wrap — входные данные задачи
+  is_gift = bool(gift_wrap)
+check:
+  type: tests
+  tests:
+    - code: assert run(gift_wrap="false")["is_gift"] is False
+      fail: "Для \"false\" упаковка не нужна. Что `bool()` проверяет у строки?"
+    - code: assert run(gift_wrap="true")["is_gift"] is True
+      fail: "Для \"true\" — нужна."
+    - code: assert run(gift_wrap="TRUE")["is_gift"] is True
+      fail: Регистр может быть любым — приведите строку к одному регистру.
+    - code: assert run(gift_wrap="")["is_gift"] is False
+      fail: Пустое значение — упаковка не нужна.
+solution: |
+  is_gift = gift_wrap.lower() == "true"
+hints:
+  - "`bool(\"false\")` — `True`: строка не пустая."
+  - Сравните строку с ожидаемым значением.
+explanation: |
+  `bool()` от строки отвечает только на вопрос «пустая ли строка». Смысл слова внутри он не видит.
+  Флаги из форм и URL сравнивают явно: `gift_wrap.lower() == "true"` — результат сравнения уже `bool`.

@@ -4,7 +4,7 @@
 **Тренажёр:** живого Docker в браузере нет. Задачи — `fix` и «напиши Dockerfile/compose» с проверкой по правилам, плюс `quiz` и симулятор команд (вопрос к «Разработке»).
 **Источники:** `training_skills/Docker/DOCKER_basic_command.md` (**DB**), `clear_docker_imaage.md` (**CLR**), `training_skills/SQL/00_docker_container_postgres.md`, compose-файлы из `middle_course/new_admin_panel_sprint_2|3/docker_compose` (ориентир).
 
-Структура и легенда — [01-standard.md](01-standard.md).
+Формат — [docs/content-format.md](../../docs/content-format.md), легенда — [00-overview.md](00-overview.md).
 
 ## 1. Основы ●○○
 | # | Тема | Что разбираем | Задача из магазина | Сырьё |
@@ -29,6 +29,7 @@
 | 03 | `.dockerignore` | что исключать | в образ попали `.git`, `venv` и `.env` | ❌ |
 | 04 | Инструкции подробнее | `CMD` vs `ENTRYPOINT`, `EXPOSE`, `ARG` vs `ENV`, Gunicorn как команда запуска | запуск через `gunicorn shop.wsgi` | ❌ |
 | 05 | Оптимизация образа | `slim`-образы, multi-stage, не-root пользователь, `PYTHONDONTWRITEBYTECODE` | уменьшить образ с 1 ГБ до 200 МБ | ❌ ●●● |
+| 06 | Публикация образа | registry (Docker Hub, GHCR), `tag`, `login`, `push`, `pull` на сервере | доставить образ магазина на сервер | ❌ |
 
 ## 4. Docker Compose ●●●
 | # | Тема | Что разбираем | Задача из магазина | Сырьё |
@@ -40,4 +41,4 @@
 | 05 | Обслуживание | `system df`, `prune` (что безопасно), логи контейнеров | на сервере кончилось место | ✅ CLR |
 
 ## Итог
-4 раздела, 17 тем. Есть хорошая база по командам. Dockerfile и compose — главное содержание курса — пишутся с нуля.
+4 раздела, 18 тем. Есть хорошая база по командам. Dockerfile и compose — главное содержание курса — пишутся с нуля.

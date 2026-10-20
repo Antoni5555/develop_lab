@@ -1,0 +1,49 @@
+title: Три попытки оплаты
+type: exercise
+difficulty: 1
+pitfall: Граница условия цикла сдвигает число повторов на один.
+statement: |
+  Оплату нужно пробовать **до трёх раз**. Сервис отвечает успехом на попытке `success_on`
+  (`0` — не отвечает успехом никогда). После цикла в `attempts` должно быть число сделанных
+  попыток, а в `paid` — прошла ли оплата. Сейчас при сбоях делается только две попытки.
+inputs: |
+  success_on = 0
+starter_code: |
+  # success_on — входные данные задачи: номер успешной попытки или 0
+  attempt = 1
+  attempts = 0
+  paid = False
+  while attempt < 3 and not paid:
+      attempts += 1
+      paid = attempt == success_on
+      attempt += 1
+check:
+  type: tests
+  tests:
+    - code: |
+        r = run(success_on=0)
+        assert r["attempts"] == 3 and r["paid"] is False
+      fail: "Если оплата не проходит, попыток должно быть ровно три. Проверьте условие цикла на третьей итерации."
+    - code: |
+        r = run(success_on=3)
+        assert r["attempts"] == 3 and r["paid"] is True
+      fail: "Оплата проходит с третьей попытки — до неё нужно дойти."
+    - code: |
+        r = run(success_on=1)
+        assert r["attempts"] == 1 and r["paid"] is True
+      fail: "Если первая попытка успешна, повторять не нужно."
+solution: |
+  attempt = 1
+  attempts = 0
+  paid = False
+  while attempt <= 3 and not paid:
+      attempts += 1
+      paid = attempt == success_on
+      attempt += 1
+hints:
+  - "Пройдите цикл вручную: `attempt` равен 1, 2, 3 — при каком значении условие станет ложным?"
+  - "`<` или `<=`?"
+explanation: |
+  `attempt` начинается с 1, а `attempt < 3` пропускает только значения 1 и 2 — две попытки.
+  Чтобы включить третью, граница должна быть включительной: `attempt <= 3` (или старт с 0 и `< 3`).
+  Ошибки «на единицу» — самые частые в циклах: проверяйте первую и последнюю итерацию.

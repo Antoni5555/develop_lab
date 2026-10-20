@@ -1,0 +1,46 @@
+title: Зависшая обработка заказов
+type: exercise
+difficulty: 2
+pitfall: continue пропускает остаток тела — в том числе изменение счётчика.
+statement: |
+  Скрипт обрабатывает заказы с `first_id` по `last_id` включительно и пропускает отменённый
+  заказ `cancelled`. На отменённом заказе скрипт зависает. Исправьте код:
+  в `processed` должно быть количество обработанных (не отменённых) заказов.
+inputs: |
+  first_id = 1040
+  last_id = 1045
+  cancelled = 1043
+starter_code: |
+  # first_id, last_id, cancelled — входные данные задачи
+  order_id = first_id
+  processed = 0
+  while order_id <= last_id:
+      if order_id == cancelled:
+          continue
+      processed += 1
+      order_id += 1
+check:
+  type: tests
+  tests:
+    - code: assert run(first_id=1040, last_id=1045, cancelled=1043)["processed"] == 5
+      fail: "6 заказов, один отменён — обработано 5. Если программа не завершается — что делает `continue` со строкой `order_id += 1`?"
+    - code: assert run(first_id=1040, last_id=1045, cancelled=1040)["processed"] == 5
+      fail: Отменённым может оказаться и первый заказ.
+    - code: assert run(first_id=1040, last_id=1042, cancelled=999)["processed"] == 3
+      fail: Если отменённого заказа нет в диапазоне, обрабатываются все.
+solution: |
+  order_id = first_id
+  processed = 0
+  while order_id <= last_id:
+      if order_id == cancelled:
+          order_id += 1
+          continue
+      processed += 1
+      order_id += 1
+hints:
+  - "Что происходит с `order_id`, когда срабатывает `continue`?"
+  - Счётчик должен увеличиваться на каждой итерации, в том числе пропущенной.
+explanation: |
+  `continue` сразу возвращает к проверке условия, пропуская всё ниже — и `order_id += 1` тоже.
+  `order_id` навсегда остаётся равен отменённому номеру, условие всегда истинно — цикл бесконечный.
+  Решение: увеличивать счётчик до `continue` (или в обеих ветках).

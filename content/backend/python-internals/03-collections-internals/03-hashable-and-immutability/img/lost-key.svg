@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760" height="300" role="img" aria-labelledby="t"><title id="t">Ключ изменили после вставки: поиск по старому и новому хешу не находит запись</title>
+<style>
+text{white-space:pre}
+.t{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.c{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:14px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.cs{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:12px;fill:#0e0e0e;fill:var(--text,#0e0e0e)}
+.h{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;letter-spacing:.04em;text-transform:uppercase;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.s{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:12px;fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.box{fill:#ffffff;fill:var(--surface,#ffffff);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
+.box2{fill:#ebebe8;fill:var(--surface-2,#ebebe8);stroke:#e0e0dc;stroke:var(--border,#e0e0dc);stroke-width:1.5}
+.acc{fill:#dcf25c;fill:var(--accent,#dcf25c)}
+.onacc{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#0e0e0e;fill:var(--on-accent,#0e0e0e)}
+.ln{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none}
+.lnd{stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
+.ah{fill:#6e6e6a;fill:var(--muted,#6e6e6a)}
+.err{fill:#fdecea;fill:var(--error-bg,#fdecea);stroke:#d93025;stroke:var(--error,#d93025);stroke-width:1.5}
+.errt{font-family:Manrope,sans-serif;font-family:var(--font-main,Manrope,sans-serif);font-size:13px;fill:#d93025;fill:var(--error,#d93025)}
+.ok{fill:#e7f6ec;fill:var(--success-bg,#e7f6ec);stroke:#1f9d55;stroke:var(--success,#1f9d55);stroke-width:1.5}
+.dash{fill:none;stroke:#6e6e6a;stroke:var(--muted,#6e6e6a);stroke-width:1.5;stroke-dasharray:5 4}
+.term{fill:#0d0d0f;fill:var(--term-bg,#0d0d0f)}
+.tt{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#e6e6e3;fill:var(--term-text,#e6e6e3)}
+.tterr{font-family:'JetBrains Mono',monospace;font-family:var(--font-code,'JetBrains Mono',monospace);font-size:13px;fill:#f87171}
+</style>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ah"/></marker></defs>
+<text x="80" y="124" text-anchor="middle" class="s">0</text>
+<rect x="40" y="132" width="80" height="64" rx="10" class="box2"/>
+<text x="165" y="124" text-anchor="middle" class="s">1</text>
+<rect x="125" y="132" width="80" height="64" rx="10" class="box2"/>
+<text x="250" y="124" text-anchor="middle" class="s">2</text>
+<rect x="210" y="132" width="80" height="64" rx="10" class="err"/>
+<text x="250" y="158" text-anchor="middle" class="cs">SKU(KB-02)</text>
+<text x="250" y="180" text-anchor="middle" class="cs">→ 12</text>
+<text x="335" y="124" text-anchor="middle" class="s">3</text>
+<rect x="295" y="132" width="80" height="64" rx="10" class="box2"/>
+<text x="420" y="124" text-anchor="middle" class="s">4</text>
+<rect x="380" y="132" width="80" height="64" rx="10" class="box2"/>
+<text x="505" y="124" text-anchor="middle" class="s">5</text>
+<rect x="465" y="132" width="80" height="64" rx="10" class="box2"/>
+<text x="590" y="124" text-anchor="middle" class="s">6</text>
+<rect x="550" y="132" width="80" height="64" rx="10" class="dash"/>
+<text x="675" y="124" text-anchor="middle" class="s">7</text>
+<rect x="635" y="132" width="80" height="64" rx="10" class="box2"/>
+<text x="40" y="222" text-anchor="start" class="h">ячейки таблицы dict (схематично)</text>
+<text x="40" y="26" text-anchor="start" class="c">SKU(&quot;KB-01&quot;) in stock</text>
+<text x="40" y="48" text-anchor="start" class="s">hash(&quot;KB-01&quot;) → ячейка 2: ячейка та, но в ней уже ключ KB-02</text>
+<path d="M250 58V128" class="ln" marker-end="url(#a)"/>
+<text x="262" y="96" text-anchor="start" class="errt">== даёт False → не найден</text>
+<path d="M590 248V200" class="ln" marker-end="url(#a)"/>
+<text x="420" y="268" text-anchor="start" class="c">key in stock</text>
+<text x="420" y="290" text-anchor="start" class="s">hash(&quot;KB-02&quot;) → ячейка 6: она пуста → не найден</text>
+</svg>

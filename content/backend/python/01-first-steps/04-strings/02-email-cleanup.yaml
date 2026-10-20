@@ -1,0 +1,31 @@
+title: Email не почистился
+type: exercise
+difficulty: 1
+pitfall: Методы строк возвращают новую строку и не меняют исходную.
+statement: |
+  При регистрации email нужно убрать пробелы по краям и привести к нижнему регистру.
+  Код вызывает нужные методы, но в базу всё равно попадает грязный email.
+  Исправьте так, чтобы в `email` оказался очищенный адрес.
+inputs: |
+  email = "  Ivan.Petrov@Mail.RU  "
+starter_code: |
+  # email — входные данные задачи
+  email.strip()
+  email.lower()
+  print(email)
+check:
+  type: tests
+  tests:
+    - code: assert run(email="  Ivan.Petrov@Mail.RU  ")["email"] == "ivan.petrov@mail.ru"
+      fail: "В `email` осталась исходная строка. Что возвращают `strip()` и `lower()` — и куда это девается?"
+    - code: assert run(email="SHOP@Example.com")["email"] == "shop@example.com"
+      fail: Email без пробелов тоже нужно привести к нижнему регистру.
+solution: |
+  email = email.strip().lower()
+  print(email)
+hints:
+  - Выведите `email.strip()` и `email` — они разные.
+  - Результат метода нужно присвоить переменной.
+explanation: |
+  Строки неизменяемы, поэтому `strip()` и `lower()` возвращают новые строки, а исходная остаётся как была.
+  Результат первой строки кода просто выбрасывается. Нужно сохранить его: `email = email.strip().lower()`.

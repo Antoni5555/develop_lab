@@ -1,0 +1,34 @@
+title: Два одинаковых элемента в множестве
+type: predict
+difficulty: 3
+pitfall: Если хеш зависит от изменяемого поля, в множестве могут оказаться два равных элемента.
+statement: |
+  Склад хранит множество артикулов `SKU`, которые нужно пересчитать.
+  Одному товару поменяли артикул, а потом добавили новый. Что выведет код?
+code: |
+  class SKU:
+      def __init__(self, code):
+          self.code = code
+
+      def __eq__(self, other):
+          return isinstance(other, SKU) and self.code == other.code
+
+      def __hash__(self):
+          return hash(self.code)
+
+  key = SKU("KB-01")
+  to_recount = {key}
+  key.code = "KB-02"
+  to_recount.add(SKU("KB-02"))
+
+  a, b = to_recount
+  print(len(to_recount))
+  print(a == b)
+answer: |
+  2
+  True
+explanation: |
+  `key` лежит в ячейке, выбранной по хешу `"KB-01"`. Новый `SKU("KB-02")` ищется по хешу `"KB-02"` —
+  в другой ячейке, там пусто, поэтому множество считает его новым элементом.
+  В итоге в множестве два равных элемента, хотя множество для того и нужно, чтобы этого не было.
+  Ошибки нет, а данные испорчены. Поля, от которых зависит хеш, должны быть неизменяемыми.

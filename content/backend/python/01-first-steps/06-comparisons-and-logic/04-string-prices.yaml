@@ -1,0 +1,31 @@
+title: Какой товар дешевле
+type: exercise
+difficulty: 2
+pitfall: Строки сравниваются посимвольно — "990" больше "1200".
+statement: |
+  Сравнение цен в каталоге работает странно: товар за 990 ₽ оказывается «дороже» товара за 1200 ₽.
+  Цены приходят из фильтра на сайте строками. Исправьте: `a_is_cheaper` — `True`,
+  если `price_a` меньше `price_b` как число.
+inputs: |
+  price_a = "990"
+  price_b = "1200"
+starter_code: |
+  # price_a и price_b — входные данные задачи (строки из целых чисел)
+  a_is_cheaper = price_a < price_b
+check:
+  type: tests
+  tests:
+    - code: assert run(price_a="990", price_b="1200")["a_is_cheaper"] is True
+      fail: "990 меньше 1200, а выражение говорит обратное. Какого типа `price_a` и `price_b`?"
+    - code: assert run(price_a="1500", price_b="200")["a_is_cheaper"] is False
+      fail: 1500 не меньше 200.
+    - code: assert run(price_a="300", price_b="300")["a_is_cheaper"] is False
+      fail: Равные цены — не «дешевле».
+solution: |
+  a_is_cheaper = int(price_a) < int(price_b)
+hints:
+  - "Строки сравниваются посимвольно: `\"9\"` против `\"1\"`."
+  - Приведите значения к числам.
+explanation: |
+  Для строк `<` сравнивает символы слева направо: `"9" > "1"`, поэтому `"990" > "1200"`, какой бы длины
+  ни были строки. Числа, пришедшие строками, перед сравнением приводят к `int` (или `Decimal` для копеек).

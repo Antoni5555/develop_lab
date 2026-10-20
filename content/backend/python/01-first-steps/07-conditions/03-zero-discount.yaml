@@ -1,0 +1,30 @@
+title: Нулевая скидка
+type: exercise
+difficulty: 2
+pitfall: "or подставляет значение по умолчанию вместо любого ложного значения, включая 0."
+statement: |
+  Скидка в настройках товара: `None` — не задана (по умолчанию 10 %), число — задана явно.
+  Менеджер выставил товару скидку 0 %, а на сайте всё равно 10 %.
+  Исправьте вычисление `discount`.
+inputs: |
+  raw_discount = 0
+starter_code: |
+  # raw_discount — входные данные задачи: число или None
+  discount = raw_discount or 10
+check:
+  type: tests
+  tests:
+    - code: assert run(raw_discount=0)["discount"] == 0
+      fail: "Скидка 0 задана явно — должна остаться 0. Какие значения `or` считает «пустыми»?"
+    - code: assert run(raw_discount=None)["discount"] == 10
+      fail: Скидка не задана — по умолчанию 10.
+    - code: assert run(raw_discount=25)["discount"] == 25
+      fail: Явная скидка 25 — остаётся 25.
+solution: |
+  discount = 10 if raw_discount is None else raw_discount
+hints:
+  - "`0 or 10` — это `10`: ноль ложен."
+  - Проверяйте именно на `None`.
+explanation: |
+  `or` возвращает правый операнд, если левый ложен, а `0` ложен так же, как `None`.
+  Условное выражение `10 if raw_discount is None else raw_discount` реагирует только на «не задано».

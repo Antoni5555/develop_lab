@@ -1,0 +1,33 @@
+title: Dataclass в множестве
+type: predict
+difficulty: 3
+pitfall: Обычный @dataclass не hashable, а с eq=False сравнивает по идентичности.
+statement: |
+  Разработчик описал позицию корзины через dataclass и хочет убрать дубли через `set`.
+  Он попробовал два варианта. Что выведет код?
+code: |
+  from dataclasses import dataclass
+
+  @dataclass
+  class CartItem:
+      product_id: int
+
+  @dataclass(eq=False)
+  class CartLine:
+      product_id: int
+
+  print(CartLine(1) == CartLine(1), len({CartLine(1), CartLine(1)}))
+
+  try:
+      print(len({CartItem(1), CartItem(1)}))
+  except TypeError as e:
+      print("TypeError:", e)
+answer: |
+  False 2
+  TypeError: unhashable type: 'CartItem'
+explanation: |
+  `@dataclass` по умолчанию генерирует `__eq__` по полям, а значит, как и в обычном классе,
+  `__hash__` становится `None`: `CartItem` нельзя положить в множество.
+  С `eq=False` dataclass не трогает сравнение: `==` и `hash()` остаются по идентичности.
+  Объекты hashable, но два разных объекта не равны, поэтому дубли не убираются.
+  Нужный вариант — `@dataclass(frozen=True)`: сравнение и хеш по полям.

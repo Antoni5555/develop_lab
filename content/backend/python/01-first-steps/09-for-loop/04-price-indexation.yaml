@@ -1,0 +1,47 @@
+title: Индексация цен
+type: exercise
+difficulty: 2
+pitfall: Накопитель, заданный внутри цикла, обнуляется на каждой итерации.
+statement: |
+  Цена товара каждый месяц растёт на 5 %. Посчитайте в `price` цену через `months` месяцев,
+  начиная с `start_price` (`Decimal`). Сейчас цена растёт только за один месяц,
+  сколько бы месяцев ни прошло.
+inputs: |
+  from decimal import Decimal
+  start_price = Decimal("1000")
+  months = 3
+starter_code: |
+  from decimal import Decimal
+
+  # start_price и months — входные данные задачи
+  for month in range(months):
+      price = start_price
+      price = price * Decimal("1.05")
+check:
+  type: tests
+  tests:
+    - code: |
+        from decimal import Decimal
+        assert run(start_price=Decimal("1000"), months=3)["price"] == Decimal("1157.625")
+      fail: "За 3 месяца: 1000 → 1050 → 1102.5 → 1157.625. Почему каждый месяц считается от 1000?"
+    - code: |
+        from decimal import Decimal
+        assert run(start_price=Decimal("2000"), months=1)["price"] == Decimal("2100")
+      fail: "За один месяц 2000 ₽ → 2100 ₽."
+    - code: |
+        from decimal import Decimal
+        assert run(start_price=Decimal("1000"), months=0)["price"] == Decimal("1000")
+      fail: "За 0 месяцев цена не меняется — но переменная `price` должна существовать."
+solution: |
+  from decimal import Decimal
+
+  price = start_price
+  for month in range(months):
+      price = price * Decimal("1.05")
+hints:
+  - "Что происходит со значением `price` в начале каждой итерации?"
+  - Начальное значение накопителя задают до цикла.
+explanation: |
+  Строка `price = start_price` внутри цикла на каждой итерации сбрасывает накопленную цену,
+  и рост считается заново от начальной — итог всегда за один месяц. Накопитель инициализируют
+  до цикла. Заодно это решает случай `months = 0`: цикл не выполнится, но `price` уже задана.

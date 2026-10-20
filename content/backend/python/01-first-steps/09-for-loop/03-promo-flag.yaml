@@ -1,0 +1,41 @@
+title: Промокод с дефисом прошёл проверку
+type: exercise
+difficulty: 2
+pitfall: Флаг, который переписывается на каждой итерации, отражает только последний элемент.
+statement: |
+  Промокод допустим, только если **все** его символы — буквы или цифры.
+  Проверка пропустила промокод `-SALE10`. Исправьте код: `is_valid` — `True`,
+  только если в `code` нет ни одного недопустимого символа.
+inputs: |
+  code = "-SALE10"
+starter_code: |
+  # code — входные данные задачи
+  for ch in code:
+      if ch.isalnum():
+          is_valid = True
+      else:
+          is_valid = False
+check:
+  type: tests
+  tests:
+    - code: assert run(code="-SALE10")["is_valid"] is False
+      fail: "В `-SALE10` есть дефис — код недопустим. От какого символа на самом деле зависит результат?"
+    - code: assert run(code="SALE-10")["is_valid"] is False
+      fail: Дефис в середине — код недопустим.
+    - code: assert run(code="SALE10")["is_valid"] is True
+      fail: "`SALE10` — только буквы и цифры, код допустим."
+    - code: assert run(code="SALE10!")["is_valid"] is False
+      fail: Недопустимый символ в конце — код недопустим.
+solution: |
+  is_valid = True
+  for ch in code:
+      if not ch.isalnum():
+          is_valid = False
+          break
+hints:
+  - "Пройдите цикл для `-SALE10`: каким будет `is_valid` после последнего символа `0`?"
+  - Начальное значение флага задайте до цикла, а в цикле меняйте его только при нарушении.
+explanation: |
+  Каждая итерация перезаписывает `is_valid`, поэтому после цикла в нём результат проверки последнего
+  символа. «Все элементы удовлетворяют условию» проверяют так: флаг `True` до цикла, при первом
+  нарушении — `False` и `break`. Позже для этого будет встроенная функция `all()`.

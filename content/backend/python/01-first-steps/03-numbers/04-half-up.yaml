@@ -1,0 +1,45 @@
+title: Скидка до копейки
+type: exercise
+difficulty: 3
+pitfall: quantize по умолчанию округляет к чётному — правило округления задают явно.
+statement: |
+  Цена товара `price` (Decimal) со скидкой 12,5 % должна округляться до копеек
+  по правилу «пять и больше — вверх». Сохраните результат в `final_price`.
+  Для товара за 999 ₽ должно получиться `874.13`.
+inputs: |
+  from decimal import Decimal
+  price = Decimal("999")
+starter_code: |
+  from decimal import Decimal
+
+  # price — входные данные задачи (Decimal)
+  discounted = price * Decimal("0.875")
+  final_price = discounted.quantize(Decimal("0.01"))
+check:
+  type: tests
+  tests:
+    - code: |
+        from decimal import Decimal
+        assert run(price=Decimal("999"))["final_price"] == Decimal("874.13")
+      fail: "999 × 0.875 = 874.125 должно округлиться до 874.13. Каким правилом `quantize` округляет по умолчанию?"
+    - code: |
+        from decimal import Decimal
+        assert run(price=Decimal("1000"))["final_price"] == Decimal("875.00")
+      fail: "1000 ₽ со скидкой 12,5 % — 875.00."
+    - code: |
+        from decimal import Decimal
+        assert run(price=Decimal("1003"))["final_price"] == Decimal("877.63")
+      fail: "1003 × 0.875 = 877.625 → 877.63 по правилу «пять — вверх»."
+solution: |
+  from decimal import Decimal, ROUND_HALF_UP
+
+  discounted = price * Decimal("0.875")
+  final_price = discounted.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+hints:
+  - Выведите `discounted` и результат `quantize` для 999 ₽.
+  - "По умолчанию `quantize` использует `ROUND_HALF_EVEN` — к чётному."
+  - "`rounding=ROUND_HALF_UP`"
+explanation: |
+  `874.125` при округлении «к чётному» становится `874.12` — последняя цифра 2 чётная.
+  Это банковское правило: оно по умолчанию и у `round`, и у `Decimal.quantize`.
+  В чеках обычно нужно «пять и больше — вверх», поэтому правило указывают явно: `ROUND_HALF_UP`.

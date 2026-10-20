@@ -1,0 +1,34 @@
+title: Доплата за экспресс
+type: exercise
+difficulty: 2
+pitfall: Переменная, заданная только в одной ветке, не существует, если ветка не выполнилась.
+statement: |
+  Стоимость доставки `delivery` = базовый тариф `base` + доплата 500 ₽ за экспресс.
+  Для обычной доставки страница заказа падает с ошибкой. Исправьте код.
+inputs: |
+  base = 199
+  is_express = False
+starter_code: |
+  # base и is_express — входные данные задачи
+  if is_express:
+      extra = 500
+  delivery = base + extra
+check:
+  type: tests
+  tests:
+    - code: assert run(base=199, is_express=False)["delivery"] == 199
+      fail: "Для обычной доставки код падает с `NameError`. Чему равна `extra`, если условие ложно?"
+    - code: assert run(base=199, is_express=True)["delivery"] == 699
+      fail: "Экспресс: 199 + 500 = 699."
+    - code: assert run(base=0, is_express=True)["delivery"] == 500
+      fail: "Бесплатная базовая доставка + экспресс = 500."
+solution: |
+  extra = 500 if is_express else 0
+  delivery = base + extra
+hints:
+  - "Если `is_express` ложно, строка `extra = 500` не выполняется — переменной `extra` просто нет."
+  - Задайте `extra` в обоих случаях.
+explanation: |
+  Присваивание внутри `if` выполняется, только если условие истинно. Иначе имени `extra` не существует,
+  и следующая строка падает с `NameError`. Значение нужно задать во всех ветках: через `else`,
+  через условное выражение или заранее до `if`.
