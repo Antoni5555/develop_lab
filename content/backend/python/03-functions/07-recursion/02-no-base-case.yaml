@@ -1,0 +1,40 @@
+title: Хлебные крошки для корня
+type: exercise
+difficulty: 2
+pitfall: Без базового случая рекурсия не останавливается.
+statement: |
+  `breadcrumbs(categories, category_id)` возвращает путь к категории вида
+  `"Электроника > Периферия > Мыши"`. `categories` — словарь `{id: {"name", "parent_id"}}`,
+  у корневой категории `parent_id` равен `None`. Функция падает на любой категории.
+  Исправьте её — решение должно оставаться рекурсивным.
+starter_code: |
+  def breadcrumbs(categories, category_id):
+      category = categories[category_id]
+      return breadcrumbs(categories, category["parent_id"]) + " > " + category["name"]
+check:
+  type: tests
+  tests:
+    - code: |
+        cats = {1: {"name": "Электроника", "parent_id": None}, 2: {"name": "Периферия", "parent_id": 1},
+                5: {"name": "Мыши", "parent_id": 2}}
+        assert breadcrumbs(cats, 5) == "Электроника > Периферия > Мыши"
+      fail: "Функция дошла до корня и попыталась найти категорию `None`. Где условие остановки?"
+    - code: |
+        cats = {1: {"name": "Электроника", "parent_id": None}}
+        assert breadcrumbs(cats, 1) == "Электроника"
+      fail: Путь к корневой категории — только её название.
+    - code: |
+        assert "breadcrumbs(" in source.split("return", 1)[1]
+      fail: Решение должно остаться рекурсивным.
+solution: |
+  def breadcrumbs(categories, category_id):
+      category = categories[category_id]
+      if category["parent_id"] is None:
+          return category["name"]
+      return breadcrumbs(categories, category["parent_id"]) + " > " + category["name"]
+hints:
+  - "Что должна вернуть функция для категории, у которой нет родителя?"
+explanation: |
+  Без базового случая функция всегда вызывает себя для родителя — даже у корня, где родитель `None`,
+  и `categories[None]` падает с `KeyError`. Базовый случай — корень: его путь известен сразу,
+  это просто название.

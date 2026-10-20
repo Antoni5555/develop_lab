@@ -1,0 +1,36 @@
+title: Порядок товаров в категории
+type: exercise
+difficulty: 3
+pitfall: Сортировка по нескольким полям — ключ-кортеж; обратный порядок поля — минус у числа.
+statement: |
+  Каталог показывает товары, сгруппированные по `category_id` (по возрастанию), а внутри
+  категории — **от дорогих к дешёвым**. Сейчас внутри категории порядок неправильный.
+  Исправьте `catalog_order(products)` — она возвращает новый отсортированный список.
+starter_code: |
+  def catalog_order(products):
+      return sorted(products, key=lambda p: (p["category_id"], p["price"]), reverse=True)
+check:
+  type: tests
+  tests:
+    - code: |
+        items = [
+            {"name": "Мышь", "price": 1499, "category_id": 3},
+            {"name": "Коврик", "price": 490, "category_id": 5},
+            {"name": "Клавиатура", "price": 5990, "category_id": 3},
+        ]
+        assert [p["name"] for p in catalog_order(items)] == ["Клавиатура", "Мышь", "Коврик"]
+      fail: "`reverse=True` разворачивает весь порядок — и категории тоже. Как развернуть только цену?"
+    - code: |
+        items = [{"name": "A", "price": 1, "category_id": 9}, {"name": "B", "price": 2, "category_id": 1}]
+        assert [p["name"] for p in catalog_order(items)] == ["B", "A"]
+      fail: Категории — по возрастанию `category_id`.
+solution: |
+  def catalog_order(products):
+      return sorted(products, key=lambda p: (p["category_id"], -p["price"]))
+hints:
+  - "`reverse=True` действует на ключ целиком."
+  - "Для числового поля обратный порядок даёт минус: `-p[\"price\"]`."
+explanation: |
+  Ключ-кортеж сравнивается поле за полем, а `reverse=True` разворачивает итоговый порядок полностью —
+  категории тоже идут по убыванию. Чтобы развернуть только цену, её берут с минусом:
+  `(p["category_id"], -p["price"])`.

@@ -1,0 +1,33 @@
+title: Аннотация не помогла
+type: exercise
+difficulty: 1
+pitfall: Аннотация типа ничего не преобразует — строку из формы нужно привести явно.
+statement: |
+  `line_total(price, qty)` считает стоимость позиции. `qty` приходит из формы и может быть
+  строкой (`"2"`) или уже числом (`2`). Аннотация `qty: int` есть, а в корзине вместо 2998 ₽
+  появляется строка из двоек. Исправьте функцию — она должна всегда возвращать `int`.
+starter_code: |
+  def line_total(price: int, qty: int) -> int:
+      return price * qty
+check:
+  type: tests
+  tests:
+    - code: |
+        assert line_total(1499, "2") == 2998
+      fail: "При `qty = \"2\"` вернулась строка. Проверяет ли Python аннотацию `qty: int`?"
+    - code: |
+        assert line_total(1499, 2) == 2998
+      fail: Число тоже должно работать.
+    - code: |
+        assert type(line_total(990, "3")) is int
+      fail: Результат — целое число.
+solution: |
+  def line_total(price: int, qty: int | str) -> int:
+      return price * int(qty)
+hints:
+  - "Аннотация — подсказка, а не преобразование."
+  - "`int()` принимает и строку, и число."
+explanation: |
+  Python не проверяет и не преобразует типы по аннотациям: `1499 * "2"` — повторение строки.
+  Данные снаружи приводят к нужному типу явно: `int(qty)`. Заодно стоит честно описать тип —
+  `qty: int | str`, раз строка тоже допустима.

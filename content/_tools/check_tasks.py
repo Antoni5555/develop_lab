@@ -75,7 +75,8 @@ def run_tests(code, task):
         env = {**ns, "source": code, "run": run}
         try:
             signal.alarm(TIMEOUT)
-            exec(test["code"], env)
+            with contextlib.redirect_stdout(io.StringIO()):   # print из функций ученика не мешает выводу проверки
+                exec(test["code"], env)
         except Timeout:
             failed.append("Программа не завершилась")
         except Exception:

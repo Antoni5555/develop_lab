@@ -120,4 +120,5 @@
 3. ✅ Формат утверждён: [docs/content-format.md](../../docs/content-format.md); проверка — `content/_tools/check_tasks.py`.
 4. ✅ Курс Python, раздел 1 «Первые шаги»: 9 уроков, 27 задач — `content/backend/python/01-first-steps`.
 5. ✅ Курс Python, раздел 2 «Коллекции»: 8 уроков, 23 задачи — `content/backend/python/02-collections`.
-6. ⏳ Курс Python, раздел 3 «Функции».
+6. ✅ Курс Python, раздел 3 «Функции»: 9 уроков, 22 задач — `content/backend/python/03-functions`.
+7. ⏳ Курс Python, раздел 4 «Исключения и отладка».

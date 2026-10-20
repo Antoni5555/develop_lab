@@ -1,0 +1,39 @@
+title: Экспресс-доставка по ошибке
+type: exercise
+difficulty: 3
+pitfall: Флаги, передаваемые позицией, легко перепутать — делайте их keyword-only.
+statement: |
+  `create_order(user_id, express=False, gift=False)` вызывают по всему проекту. После того как
+  кто-то поменял местами флаги в определении, часть заказов стала экспресс вместо подарочных:
+  вызовы вида `create_order(42, False, True)` молча поменяли смысл.
+  Сделайте так, чтобы `express` и `gift` можно было передать **только по имени** — тогда вызов
+  с флагами-позициями падает сразу. Возвращаемый словарь не меняйте.
+starter_code: |
+  def create_order(user_id, express=False, gift=False):
+      return {"user_id": user_id, "express": express, "gift": gift}
+check:
+  type: tests
+  tests:
+    - code: |
+        try:
+            create_order(42, False, True)
+        except TypeError:
+            pass
+        else:
+            raise AssertionError
+      fail: "Вызов с флагами позицией всё ещё работает. Что нужно поставить в списке параметров перед `express`?"
+    - code: |
+        assert create_order(42, gift=True) == {"user_id": 42, "express": False, "gift": True}
+      fail: Вызов по имени должен работать как раньше.
+    - code: |
+        assert create_order(7) == {"user_id": 7, "express": False, "gift": False}
+      fail: Флаги по-прежнему необязательны.
+solution: |
+  def create_order(user_id, *, express=False, gift=False):
+      return {"user_id": user_id, "express": express, "gift": gift}
+hints:
+  - Параметры после одиночной `*` передаются только по имени.
+explanation: |
+  `def create_order(user_id, *, express=False, gift=False)` — всё после `*` keyword-only. Вызов
+  `create_order(42, False, True)` теперь падает с `TypeError`, а `create_order(42, gift=True)` читается
+  однозначно и не зависит от порядка параметров в определении.

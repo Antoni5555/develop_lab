@@ -1,0 +1,63 @@
+title: Декоратор работает не со всеми функциями
+type: exercise
+difficulty: 2
+pitfall: Обёртка должна принимать любые аргументы и передавать их дальше.
+statement: |
+  Декоратор `count_calls` считает вызовы в атрибуте `calls`. Он написан под функцию без
+  параметров, а на `add_to_cart(cart, item)` падает. Исправьте декоратор так, чтобы он работал
+  с любыми функциями — с позиционными и именованными аргументами.
+starter_code: |
+  import functools
+
+
+  def count_calls(func):
+      @functools.wraps(func)
+      def wrapper():
+          wrapper.calls += 1
+          return func()
+      wrapper.calls = 0
+      return wrapper
+
+
+  @count_calls
+  def add_to_cart(cart, item):
+      return cart + [item]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert add_to_cart(["мышь"], "коврик") == ["мышь", "коврик"]
+      fail: "`TypeError: wrapper() takes 0 positional arguments`. Какие аргументы должна принимать обёртка?"
+    - code: |
+        add_to_cart([], item="кабель")
+        assert add_to_cart.calls >= 1
+      fail: Именованные аргументы тоже должны передаваться в функцию.
+    - code: |
+        @count_calls
+        def ping():
+            return "ok"
+        ping(); ping()
+        assert ping() == "ok" and ping.calls == 3
+      fail: Функции без параметров должны работать как раньше, счётчик — считать.
+solution: |
+  import functools
+
+
+  def count_calls(func):
+      @functools.wraps(func)
+      def wrapper(*args, **kwargs):
+          wrapper.calls += 1
+          return func(*args, **kwargs)
+      wrapper.calls = 0
+      return wrapper
+
+
+  @count_calls
+  def add_to_cart(cart, item):
+      return cart + [item]
+hints:
+  - "`def wrapper(*args, **kwargs):` и `func(*args, **kwargs)`."
+explanation: |
+  После декорирования вызов `add_to_cart(["мышь"], "коврик")` — это вызов `wrapper` с двумя
+  аргументами. `wrapper()` их не принимает. `*args, **kwargs` собирают любые аргументы, а
+  `func(*args, **kwargs)` передаёт их исходной функции без изменений.

@@ -1,0 +1,88 @@
+title: Все обработчики называются wrapper
+type: exercise
+difficulty: 2
+pitfall: Без functools.wraps декорированная функция теряет имя и docstring.
+statement: |
+  Обработчики событий регистрируются по имени функции: `HANDLERS[func.__name__] = func`.
+  После того как на них повесили `log_call`, в реестре остался один ключ `"wrapper"`,
+  и обработчики затирают друг друга. Исправьте декоратор `log_call` (реестр и регистрацию не меняйте).
+  Два декоратора над функцией применяются снизу вверх: сначала `log_call`, потом `register` —
+  то есть `on_paid = register(log_call(on_paid))`.
+starter_code: |
+  HANDLERS = {}
+
+
+  def log_call(func):
+      def wrapper(*args, **kwargs):
+          print(f"вызов {func.__name__}")
+          return func(*args, **kwargs)
+      return wrapper
+
+
+  def register(func):
+      HANDLERS[func.__name__] = func
+      return func
+
+
+  @register
+  @log_call
+  def on_paid(order_id):
+      """Письмо об оплате."""
+      return f"оплачен {order_id}"
+
+
+  @register
+  @log_call
+  def on_shipped(order_id):
+      """Письмо об отправке."""
+      return f"отправлен {order_id}"
+check:
+  type: tests
+  tests:
+    - code: |
+        assert sorted(HANDLERS) == ["on_paid", "on_shipped"]
+      fail: "В реестре не те имена. Как называется функция, которую вернул `log_call`?"
+    - code: |
+        assert HANDLERS["on_shipped"](1042) == "отправлен 1042"
+      fail: Обработчики должны работать и вызываться по своему имени.
+    - code: |
+        assert on_paid.__doc__ == "Письмо об оплате."
+      fail: Docstring исходной функции тоже должен сохраниться.
+solution: |
+  import functools
+
+  HANDLERS = {}
+
+
+  def log_call(func):
+      @functools.wraps(func)
+      def wrapper(*args, **kwargs):
+          print(f"вызов {func.__name__}")
+          return func(*args, **kwargs)
+      return wrapper
+
+
+  def register(func):
+      HANDLERS[func.__name__] = func
+      return func
+
+
+  @register
+  @log_call
+  def on_paid(order_id):
+      """Письмо об оплате."""
+      return f"оплачен {order_id}"
+
+
+  @register
+  @log_call
+  def on_shipped(order_id):
+      """Письмо об отправке."""
+      return f"отправлен {order_id}"
+hints:
+  - "`register` получает уже обёртку от `log_call` — у неё своё имя."
+  - "`functools.wraps(func)` над `wrapper`."
+explanation: |
+  Декораторы применяются снизу вверх: `register` получает функцию, которую вернул `log_call`, —
+  обёртку с именем `wrapper`. Оба обработчика регистрируются под одним ключом, второй затирает первый.
+  `@functools.wraps(func)` копирует в обёртку `__name__` и `__doc__` исходной функции.

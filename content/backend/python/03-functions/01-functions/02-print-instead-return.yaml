@@ -1,0 +1,34 @@
+title: Сумма видна, но не сохраняется
+type: exercise
+difficulty: 1
+pitfall: print выводит значение, но функция без return возвращает None.
+statement: |
+  Функция `calc_total(prices)` должна возвращать сумму цен корзины — по ней дальше считаются
+  доставка и скидка. Сумма печатается, а код, вызывающий функцию, получает `None`.
+  Исправьте функцию.
+starter_code: |
+  def calc_total(prices):
+      total = 0
+      for price in prices:
+          total += price
+      print(total)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert calc_total([1499, 490]) == 1989
+      fail: "`calc_total` вернула не сумму. Что функция возвращает, если в ней нет `return`?"
+    - code: |
+        assert calc_total([]) == 0
+      fail: Сумма пустой корзины — 0.
+solution: |
+  def calc_total(prices):
+      total = 0
+      for price in prices:
+          total += price
+      return total
+hints:
+  - "Выведите `calc_total([1499])` — что вернулось?"
+explanation: |
+  `print` показывает значение на экране, но вызывающий код его не получает — функция без `return`
+  возвращает `None`. Результат расчёта отдают через `return total`.

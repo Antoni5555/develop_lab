@@ -1,0 +1,37 @@
+title: Все акции со скидкой 30 %
+type: exercise
+difficulty: 2
+pitfall: Функции, созданные в цикле, видят последнее значение переменной цикла.
+statement: |
+  `make_promo_discounts(percents)` возвращает список функций-скидок — по одной на каждый процент
+  из `percents`, в том же порядке. Каждая функция принимает цену и возвращает цену со скидкой
+  (с округлением вниз до рубля). Сейчас все функции применяют последнюю скидку из списка.
+starter_code: |
+  def make_promo_discounts(percents):
+      discounts = []
+      for p in percents:
+          discounts.append(lambda price: price * (100 - p) // 100)
+      return discounts
+check:
+  type: tests
+  tests:
+    - code: |
+        funcs = make_promo_discounts([10, 20, 30])
+        assert [f(1000) for f in funcs] == [900, 800, 700]
+      fail: "Все функции дают 700. Какое значение `p` они видят в момент вызова?"
+    - code: |
+        assert make_promo_discounts([])  == []
+      fail: Нет процентов — пустой список функций.
+solution: |
+  def make_promo_discounts(percents):
+      discounts = []
+      for p in percents:
+          discounts.append(lambda price, p=p: price * (100 - p) // 100)
+      return discounts
+hints:
+  - "Замыкание запоминает переменную `p`, а не её значение на момент создания."
+  - "Значение параметра по умолчанию вычисляется при создании функции: `lambda price, p=p: ...`."
+explanation: |
+  Все lambda ссылаются на одну переменную цикла `p` и вызываются уже после цикла — в `p` лежит 30.
+  Параметр по умолчанию `p=p` фиксирует текущее значение в каждой функции. Другой вариант —
+  фабрика `make_discount(p)`, которая создаёт отдельное замыкание на каждый процент.

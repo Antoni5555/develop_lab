@@ -1,0 +1,47 @@
+title: Сумма из списка цен
+type: exercise
+difficulty: 2
+pitfall: Список, переданный в *args без распаковки, становится одним аргументом.
+statement: |
+  Есть готовая функция `sum_prices(*prices)` — её трогать нельзя. Напишите `order_total(prices)`,
+  которая принимает **список** цен и возвращает их сумму с помощью `sum_prices`.
+  Сейчас `order_total` падает.
+starter_code: |
+  def sum_prices(*prices):
+      total = 0
+      for price in prices:
+          total += price
+      return total
+
+
+  def order_total(prices):
+      return sum_prices(prices)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert order_total([1499, 490, 390]) == 2379
+      fail: "Внутри `sum_prices` в `prices` оказался кортеж из одного списка. Как разложить список по отдельным аргументам?"
+    - code: |
+        assert order_total([]) == 0
+      fail: Пустой список — сумма 0.
+    - code: |
+        assert sum_prices(1, 2) == 3
+      fail: Функцию `sum_prices` менять нельзя.
+solution: |
+  def sum_prices(*prices):
+      total = 0
+      for price in prices:
+          total += price
+      return total
+
+
+  def order_total(prices):
+      return sum_prices(*prices)
+hints:
+  - "Выведите `prices` внутри `sum_prices` при вызове `sum_prices([1, 2])`."
+  - "Звёздочка при вызове распаковывает список: `f(*items)`."
+explanation: |
+  `*prices` в определении собирает **все переданные аргументы** в кортеж. Передан один аргумент — список,
+  поэтому `prices == ([1499, 490, 390],)`, и `0 + [список]` падает с `TypeError`.
+  При вызове `sum_prices(*prices)` звёздочка раскладывает список на отдельные аргументы.

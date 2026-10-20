@@ -1,0 +1,54 @@
+title: Логирование сломало расчёт
+type: exercise
+difficulty: 1
+pitfall: Обёртка без return делает так, что декорированная функция возвращает None.
+statement: |
+  После того как к `calc_total` добавили декоратор `log_call`, сумма заказа стала `None`.
+  Исправьте декоратор: лог должен остаться, а функции — возвращать свой результат.
+starter_code: |
+  import functools
+
+
+  def log_call(func):
+      @functools.wraps(func)
+      def wrapper(*args, **kwargs):
+          print(f"вызов {func.__name__}")
+          func(*args, **kwargs)
+      return wrapper
+
+
+  @log_call
+  def calc_total(prices):
+      return sum(prices)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert calc_total([1499, 490]) == 1989
+      fail: "Вызов вернул `None`. Что возвращает `wrapper`?"
+    - code: |
+        @log_call
+        def double(x):
+            return x * 2
+        assert double(21) == 42
+      fail: Декоратор должен возвращать результат любой функции.
+solution: |
+  import functools
+
+
+  def log_call(func):
+      @functools.wraps(func)
+      def wrapper(*args, **kwargs):
+          print(f"вызов {func.__name__}")
+          return func(*args, **kwargs)
+      return wrapper
+
+
+  @log_call
+  def calc_total(prices):
+      return sum(prices)
+hints:
+  - "После `@log_call` имя `calc_total` — это `wrapper`. Что он возвращает?"
+explanation: |
+  Вызывающий код получает то, что вернула обёртка. Без `return` обёртка возвращает `None`,
+  хотя исходная функция и посчитала сумму. Обёртка должна вернуть результат `func(...)`.

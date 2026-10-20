@@ -1,0 +1,28 @@
+title: Самый дорогой товар — это число?
+type: exercise
+difficulty: 2
+pitfall: max по значениям возвращает значение; чтобы получить элемент, нужен key.
+statement: |
+  Для блока «Премиум» нужна функция `priciest(products)`, которая возвращает **товар** (словарь)
+  с самой высокой ценой. Сейчас она возвращает число, и шаблон не может вывести название.
+starter_code: |
+  def priciest(products):
+      return max(p["price"] for p in products)
+check:
+  type: tests
+  tests:
+    - code: |
+        items = [{"name": "Мышь", "price": 1499}, {"name": "Клавиатура", "price": 5990}]
+        assert priciest(items) == {"name": "Клавиатура", "price": 5990}
+      fail: "Вернулась цена, а нужен сам товар. Какой параметр `max` позволяет сравнивать по полю, а возвращать элемент?"
+    - code: |
+        assert priciest([{"name": "Коврик", "price": 490}])["name"] == "Коврик"
+      fail: Один товар — он и есть самый дорогой.
+solution: |
+  def priciest(products):
+      return max(products, key=lambda p: p["price"])
+hints:
+  - "`max(products, key=...)`"
+explanation: |
+  Генератор `p["price"] for p in products` превращает товары в числа ещё до `max` — информация о
+  товаре теряется. С `key` `max` сравнивает товары по цене, но возвращает сам товар.

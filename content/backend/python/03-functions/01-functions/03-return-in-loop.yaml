@@ -1,0 +1,33 @@
+title: Сумма из одной позиции
+type: exercise
+difficulty: 2
+pitfall: return внутри цикла завершает функцию на первой итерации.
+statement: |
+  `calc_total(prices)` считает только первую позицию корзины, сколько бы их ни было.
+  Исправьте функцию: она должна возвращать сумму всех цен.
+starter_code: |
+  def calc_total(prices):
+      total = 0
+      for price in prices:
+          total += price
+          return total
+check:
+  type: tests
+  tests:
+    - code: |
+        assert calc_total([1499, 490, 390]) == 2379
+      fail: "Вернулась только первая цена. Где стоит `return` и когда он срабатывает?"
+    - code: |
+        assert calc_total([]) == 0
+      fail: "Для пустой корзины функция вернула `None` вместо 0 — `return` не выполнился ни разу."
+solution: |
+  def calc_total(prices):
+      total = 0
+      for price in prices:
+          total += price
+      return total
+hints:
+  - "`return` с отступом тела цикла выполняется на первой же итерации."
+explanation: |
+  `return` сразу завершает функцию. С отступом тела цикла он срабатывает после первой цены.
+  Для пустого списка цикл не выполняется вовсе, и функция возвращает `None`. Итог возвращают после цикла.

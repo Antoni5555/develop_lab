@@ -263,8 +263,79 @@ def comprehension_anatomy():
     f.save(out(PY2 / "07-comprehensions" / "img" / "comprehension-anatomy.svg"))
 
 
+PY3 = ROOT / "python" / "03-functions"
+
+
+# ---------- Python 3.02: изменяемое значение по умолчанию ----------
+def mutable_default():
+    f = Figure(780, 270, "Изменяемое значение по умолчанию создаётся один раз и копит данные между вызовами")
+    f.box(20, 30, 330, 70, "", "box")
+    f.text(36, 60, "def add_to_cart(item, cart=[]):", "cs")
+    f.text(36, 84, "[] создаётся один раз — при выполнении def", "s")
+    f.box(440, 42, 320, 46, '["мышь", "коврик"]', "err", "c")
+    f.arrow("M350 65H436"); f.text(362, 56, "cart по умолчанию", "s")
+    f.text(20, 150, 'add_to_cart("мышь")', "c"); f.text(250, 150, '→ ["мышь"]', "c")
+    f.text(20, 180, 'add_to_cart("коврик")', "c"); f.text(250, 180, '→ ["мышь", "коврик"]  — ожидали ["коврик"]', "c")
+    f.text(440, 108, "один и тот же список для всех вызовов", "errt")
+    f.text(20, 230, "Исправление: cart=None, а внутри — if cart is None: cart = []", "t")
+    f.text(20, 252, "Тогда новый список создаётся при каждом вызове.", "s")
+    f.save(out(PY3 / "02-parameters" / "img" / "mutable-default.svg"))
+
+
+# ---------- Python 3.04: области видимости LEGB ----------
+def legb_scopes():
+    f = Figure(820, 330, "Области видимости LEGB: имя ищется от локальной области наружу")
+    f.box(20, 20, 660, 290, "", "box2"); f.text(36, 44, "Built-in — встроенные имена", "h"); f.text(36, 64, "print, len, sum, max …", "cs")
+    f.box(50, 80, 600, 220, "", "box"); f.text(66, 104, "Global — уровень модуля", "h"); f.text(66, 124, "TAX_RATE = 20", "cs")
+    f.box(80, 140, 540, 150, "", "box2"); f.text(96, 164, "Enclosing — внешняя функция", "h"); f.text(96, 184, "def make_order(): discount = 10", "cs")
+    f.raw('<rect x="110" y="200" width="480" height="80" rx="12" class="fig-m1"/>')
+    f.text(126, 224, "Local — текущая функция", "h"); f.text(126, 248, "def apply(price): result = price * …", "cs")
+    f.arrow("M700 290V30")
+    for y, label in ((248, "1  Local"), (184, "2  Enclosing"), (124, "3  Global"), (64, "4  Built-in")):
+        f.text(712, y, label, "t")
+    f.text(700, 318, "первое найденное имя побеждает", "s", "middle")
+    f.save(out(PY3 / "04-scope" / "img" / "legb-scopes.svg"))
+
+
+# ---------- Python 3.07: стек рекурсивных вызовов ----------
+def recursion_stack():
+    f = Figure(880, 280, "Рекурсия: вызовы спускаются до базового случая, результаты поднимаются обратно")
+    f.text(20, 24, "вызовы", "h"); f.text(520, 24, "возвраты", "h")
+    calls = [("path(5)  — Мыши", "parent_id = 2 → ждёт path(2)", "box"),
+             ("path(2)  — Периферия", "parent_id = 1 → ждёт path(1)", "box"),
+             ("path(1)  — Электроника", "parent_id = None → базовый случай", "ok")]
+    rets = ['"Электроника > Периферия > Мыши"', '"Электроника > Периферия"', '"Электроника"']
+    for i, (title, sub, cls) in enumerate(calls):
+        x, y = 20 + i * 40, 40 + i * 76
+        f.box(x, y, 380, 56, "", cls)
+        f.text(x + 14, y + 24, title, "c"); f.text(x + 14, y + 44, sub, "s")
+        f.text(520, y + 34, "← " + rets[i], "cs")
+        if i < 2:
+            f.arrow(f"M{x + 60} {y + 56}V{y + 74}")
+            f.arrow(f"M560 {y + 64}V{y + 46}", "lnd")
+    f.text(20, 268, "Без базового случая вызовы не остановятся: RecursionError после ~1000 уровней.", "s")
+    f.save(out(PY3 / "07-recursion" / "img" / "recursion-stack.svg"))
+
+
+# ---------- Python 3.08: декоратор оборачивает функцию ----------
+def decorator_wrap():
+    f = Figure(780, 300, "Декоратор: имя функции теперь указывает на обёртку, которая вызывает исходную функцию")
+    f.text(20, 26, "@log_call  ≡  add_to_cart = log_call(add_to_cart)", "c")
+    f.box(20, 120, 150, 40, "add_to_cart", "box", "c", rx=20)
+    f.arrow("M170 140H206")
+    f.box(210, 50, 540, 232, "", "box2"); f.text(226, 72, "wrapper — функция, которую вернул log_call", "h")
+    f.text(226, 100, "1. до вызова: print(\"вызов add_to_cart\", args)", "cs")
+    f.box(240, 116, 340, 56, "", "box"); f.text(256, 140, "2. result = func(*args, **kwargs)", "cs")
+    f.text(256, 160, "func — исходная add_to_cart", "s")
+    f.text(226, 200, "3. после вызова: print(\"результат\", result)", "cs")
+    f.text(226, 228, "4. return result", "cs")
+    f.text(226, 256, "забыли return — любой вызов вернёт None", "errt")
+    f.save(out(PY3 / "08-decorators" / "img" / "decorator-wrap.svg"))
+
+
 if __name__ == "__main__":
     for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
-                  sets_venn, nested_order, copy_modes, comprehension_anatomy, dict_lookup, lost_key):
+                  sets_venn, nested_order, copy_modes, comprehension_anatomy,
+                  mutable_default, legb_scopes, recursion_stack, decorator_wrap, dict_lookup, lost_key):
         build()
     print("ok")

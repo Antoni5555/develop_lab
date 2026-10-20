@@ -1,0 +1,41 @@
+title: Ограничение скидки
+type: exercise
+difficulty: 2
+pitfall: Присваивание имени где угодно в функции делает его локальным во всей функции.
+statement: |
+  Глобальная настройка `DISCOUNT` — скидка в процентах. Функция `discounted_price(price)` применяет
+  её, но не больше 50 %. Функция падает с `UnboundLocalError`. Исправьте её так, чтобы
+  глобальная `DISCOUNT` не менялась, а цена считалась с ограничением.
+starter_code: |
+  DISCOUNT = 70
+
+
+  def discounted_price(price):
+      if DISCOUNT > 50:
+          DISCOUNT = 50
+      return price * (100 - DISCOUNT) // 100
+check:
+  type: tests
+  tests:
+    - code: |
+        assert discounted_price(1000) == 500
+      fail: "Функция падает или считает неверно. Почему `DISCOUNT` в первой строке функции считается локальным?"
+    - code: |
+        discounted_price(1000)
+        assert DISCOUNT == 70
+      fail: Глобальная настройка меняться не должна.
+solution: |
+  DISCOUNT = 70
+
+
+  def discounted_price(price):
+      discount = min(DISCOUNT, 50)
+      return price * (100 - discount) // 100
+hints:
+  - "Из-за строки `DISCOUNT = 50` имя `DISCOUNT` локальное во всей функции — и в проверке `if` тоже."
+  - Заведите отдельное локальное имя для ограниченной скидки.
+explanation: |
+  Python видит присваивание `DISCOUNT = 50` и делает имя локальным во всей функции. Проверка
+  `if DISCOUNT > 50` читает локальное имя, у которого ещё нет значения, — `UnboundLocalError`.
+  Отдельное имя `discount` решает задачу и не трогает глобальную настройку. `global DISCOUNT`
+  «починил» бы ошибку, но испортил бы настройку для всего магазина.

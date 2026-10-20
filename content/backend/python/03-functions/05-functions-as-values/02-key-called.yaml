@@ -1,0 +1,37 @@
+title: Сортировка каталога упала
+type: exercise
+difficulty: 1
+pitfall: В key передают саму функцию, без скобок.
+statement: |
+  `cheap_first(products)` должна возвращать товары по возрастанию цены. Функция-ключ `get_price`
+  уже написана, но сортировка падает с `TypeError`. Исправьте `cheap_first`.
+starter_code: |
+  def get_price(product):
+      return product["price"]
+
+
+  def cheap_first(products):
+      return sorted(products, key=get_price())
+check:
+  type: tests
+  tests:
+    - code: |
+        items = [{"name": "Клавиатура", "price": 5990}, {"name": "Коврик", "price": 490}]
+        assert [p["name"] for p in cheap_first(items)] == ["Коврик", "Клавиатура"]
+      fail: "`get_price()` со скобками — это вызов функции без аргумента. Что `sorted` ждёт в `key`?"
+    - code: |
+        assert cheap_first([]) == []
+      fail: Пустой каталог — пустой список.
+solution: |
+  def get_price(product):
+      return product["price"]
+
+
+  def cheap_first(products):
+      return sorted(products, key=get_price)
+hints:
+  - "`sorted` сам вызывает функцию из `key` для каждого элемента."
+explanation: |
+  `key=get_price()` вызывает функцию сразу — ещё до сортировки и без товара, отсюда
+  `TypeError: get_price() missing 1 required positional argument`. `sorted` нужна сама функция:
+  `key=get_price`, и он вызовет её для каждого товара.

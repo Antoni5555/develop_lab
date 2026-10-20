@@ -1,0 +1,42 @@
+title: Название пропавшего товара
+type: exercise
+difficulty: 2
+pitfall: Результат с типом "X | None" нужно проверить на None до использования.
+statement: |
+  `find_product(catalog, product_id) -> dict | None` возвращает товар или `None`.
+  `product_title(catalog, product_id)` должна вернуть название товара, а если товара нет —
+  строку `"Товар не найден"`. Сейчас для отсутствующего товара страница падает.
+  `find_product` не меняйте.
+starter_code: |
+  def find_product(catalog: dict[int, dict], product_id: int) -> dict | None:
+      return catalog.get(product_id)
+
+
+  def product_title(catalog: dict[int, dict], product_id: int) -> str:
+      product = find_product(catalog, product_id)
+      return product["name"]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert product_title({42: {"name": "Мышь"}}, 7) == "Товар не найден"
+      fail: "Для отсутствующего товара — `TypeError: 'NoneType' object is not subscriptable`. Что обещает тип `dict | None`?"
+    - code: |
+        assert product_title({42: {"name": "Мышь"}}, 42) == "Мышь"
+      fail: Для найденного товара — его название.
+solution: |
+  def find_product(catalog: dict[int, dict], product_id: int) -> dict | None:
+      return catalog.get(product_id)
+
+
+  def product_title(catalog: dict[int, dict], product_id: int) -> str:
+      product = find_product(catalog, product_id)
+      if product is None:
+          return "Товар не найден"
+      return product["name"]
+hints:
+  - "`| None` в типе результата — это предупреждение: значение может отсутствовать."
+explanation: |
+  Тип `dict | None` говорит прямо: товар может не найтись. Вызывающий код обязан обработать `None`
+  до обращения к полям. mypy в проекте поймал бы эту ошибку до запуска: `product["name"]` при
+  возможном `None` — ошибка типов.

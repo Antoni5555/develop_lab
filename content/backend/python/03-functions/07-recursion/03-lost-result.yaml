@@ -1,0 +1,38 @@
+title: Товары подкатегорий не посчитались
+type: exercise
+difficulty: 2
+pitfall: Результат рекурсивного вызова нужно использовать — иначе он теряется.
+statement: |
+  `count_products(node)` считает товары в узле каталога и во всех его потомках.
+  Узел — словарь `{"name", "products", "children": [узлы]}`. Функция возвращает только
+  товары самого верхнего узла. Исправьте её.
+starter_code: |
+  def count_products(node):
+      total = node["products"]
+      for child in node["children"]:
+          count_products(child)
+      return total
+check:
+  type: tests
+  tests:
+    - code: |
+        tree = {"name": "Электроника", "products": 2, "children": [
+            {"name": "Периферия", "products": 3, "children": [
+                {"name": "Мыши", "products": 5, "children": []}]},
+            {"name": "Мониторы", "products": 4, "children": []}]}
+        assert count_products(tree) == 14
+      fail: "Подкатегории не учтены. Куда девается значение, которое вернул рекурсивный вызов?"
+    - code: |
+        assert count_products({"name": "Пусто", "products": 0, "children": []}) == 0
+      fail: Узел без товаров и детей — 0.
+solution: |
+  def count_products(node):
+      total = node["products"]
+      for child in node["children"]:
+          total += count_products(child)
+      return total
+hints:
+  - "`count_products(child)` возвращает число — его нужно прибавить к `total`."
+explanation: |
+  Рекурсивный вызов честно считает товары поддерева и возвращает число, но результат никуда
+  не сохраняется. `total += count_products(child)` собирает ответы детей в ответ узла.

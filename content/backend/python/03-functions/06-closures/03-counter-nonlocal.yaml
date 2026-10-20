@@ -1,0 +1,46 @@
+title: Нумератор заказов
+type: exercise
+difficulty: 2
+pitfall: Изменение переменной замыкания без nonlocal даёт UnboundLocalError.
+statement: |
+  `make_order_numbers(start)` возвращает функцию; каждый её вызов выдаёт следующий номер заказа:
+  `start + 1`, `start + 2`… У каждого нумератора — свой счёт. Сейчас первый же вызов падает.
+starter_code: |
+  def make_order_numbers(start):
+      current = start
+
+      def next_number():
+          current += 1
+          return current
+
+      return next_number
+check:
+  type: tests
+  tests:
+    - code: |
+        next_order = make_order_numbers(1041)
+        assert [next_order(), next_order()] == [1042, 1043]
+      fail: "`UnboundLocalError` при вызове. Что делает присваивание `current += 1` с именем `current` внутри `next_number`?"
+    - code: |
+        a = make_order_numbers(0)
+        b = make_order_numbers(100)
+        a(); a()
+        assert (a(), b()) == (3, 101)
+      fail: У каждого нумератора свой независимый счёт.
+solution: |
+  def make_order_numbers(start):
+      current = start
+
+      def next_number():
+          nonlocal current
+          current += 1
+          return current
+
+      return next_number
+hints:
+  - Вспомните `UnboundLocalError` из темы «Область видимости».
+  - "`nonlocal current`"
+explanation: |
+  `current += 1` — присваивание, поэтому Python считает `current` локальным именем `next_number`,
+  а у локального ещё нет значения. `nonlocal current` связывает имя с переменной внешней функции —
+  теперь каждый вызов меняет запомненное значение.

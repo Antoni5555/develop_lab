@@ -1,0 +1,37 @@
+title: Доставка за None рублей
+type: exercise
+difficulty: 2
+pitfall: Ветка без return возвращает None.
+statement: |
+  `delivery_cost(total)` возвращает стоимость доставки: от 3000 ₽ — 0, от 1000 ₽ — 199, дешевле — 399.
+  Для части заказов в чеке появляется «доставка: None ₽». Исправьте функцию.
+starter_code: |
+  def delivery_cost(total):
+      if total >= 3000:
+          return 0
+      elif total >= 1000:
+          return 199
+      elif total < 1000:
+          cost = 399
+check:
+  type: tests
+  tests:
+    - code: |
+        assert delivery_cost(500) == 399
+      fail: "Для заказа на 500 ₽ функция вернула не 399. Что она возвращает в последней ветке?"
+    - code: |
+        assert delivery_cost(1000) == 199 and delivery_cost(3000) == 0
+      fail: Пороги 1000 и 3000 — включительно.
+solution: |
+  def delivery_cost(total):
+      if total >= 3000:
+          return 0
+      elif total >= 1000:
+          return 199
+      return 399
+hints:
+  - "Присваивание `cost = 399` ничего не возвращает."
+explanation: |
+  В последней ветке значение кладётся в локальную переменную, но не возвращается — функция доходит
+  до конца и возвращает `None`. Каждая ветка, где функция даёт ответ, должна заканчиваться `return`.
+  Последнее условие `total < 1000` лишнее: если до него дошли, оно всегда истинно.

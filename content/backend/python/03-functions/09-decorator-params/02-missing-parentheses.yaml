@@ -1,0 +1,60 @@
+title: Изменение цены ничего не делает
+type: exercise
+difficulty: 2
+pitfall: Фабрику декораторов нужно вызвать — без скобок функция попадает в параметр.
+statement: |
+  Изменять цену может только менеджер. Декоратор `require_role` уже написан, но после его
+  подключения `change_price` перестала возвращать ответ: вместо словаря вызов возвращает функцию.
+  Исправьте применение декоратора (сам `require_role` не меняйте).
+starter_code: |
+  import functools
+
+
+  def require_role(role):
+      def decorator(func):
+          @functools.wraps(func)
+          def wrapper(user, *args, **kwargs):
+              if user["role"] != role:
+                  return {"status": 403}
+              return func(user, *args, **kwargs)
+          return wrapper
+      return decorator
+
+
+  @require_role
+  def change_price(user, product_id, price):
+      return {"status": 200, "product_id": product_id, "price": price}
+check:
+  type: tests
+  tests:
+    - code: |
+        assert change_price({"role": "manager"}, 42, 1599) == {"status": 200, "product_id": 42, "price": 1599}
+      fail: "Вызов вернул функцию, а не ответ. Что попало в параметр `role` при записи `@require_role`?"
+    - code: |
+        assert change_price({"role": "customer"}, 42, 1) == {"status": 403}
+      fail: Покупатель менять цену не может — нужен отказ 403.
+solution: |
+  import functools
+
+
+  def require_role(role):
+      def decorator(func):
+          @functools.wraps(func)
+          def wrapper(user, *args, **kwargs):
+              if user["role"] != role:
+                  return {"status": 403}
+              return func(user, *args, **kwargs)
+          return wrapper
+      return decorator
+
+
+  @require_role("manager")
+  def change_price(user, product_id, price):
+      return {"status": 200, "product_id": product_id, "price": price}
+hints:
+  - "`@require_role` без скобок — это `change_price = require_role(change_price)`."
+  - "Фабрика ждёт роль: `@require_role(\"manager\")`."
+explanation: |
+  Без скобок Python передаёт функцию в фабрику: `role` становится функцией, а `change_price` —
+  тем, что вернула фабрика, то есть декоратором. Его вызов с аргументами возвращает обёртку, а не ответ.
+  `@require_role("manager")` сначала создаёт декоратор с нужной ролью, а потом применяет его.
