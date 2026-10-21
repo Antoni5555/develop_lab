@@ -23,6 +23,7 @@
 import contextlib
 import importlib
 import io
+import linecache
 import logging
 import os
 import shutil
@@ -89,6 +90,11 @@ def execute(code, inputs='', override=None, guard=contextlib.nullcontext):
     """
     ns = {'__name__': '__main__'}
     reset_logging()
+    # Код выполняется из строки, а не из файла: кладём его текст в linecache, чтобы
+    # traceback (и logger.exception) показал строку кода и ^^^, как в терминале.
+    # mtime = None — linecache не будет проверять «файл» на диске и не сотрёт запись.
+    lines = code.splitlines(True)
+    linecache.cache[STUDENT_FILE] = (len(code), None, lines, STUDENT_FILE)
     exec(inputs or '', ns)
     ns.update(override or {})
     buffer = io.StringIO()

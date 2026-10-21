@@ -59,9 +59,12 @@ def test_failed_tests_return_fail_messages_in_order():
 def test_crash_is_reported_with_student_lines_only():
     result = runner.check_exercise('x = 1\nprint(undefined)\n', TASK)
 
+    # как в терминале: строка кода и указатель ^^^ (текст берётся из linecache)
     assert result['error'].splitlines() == [
         'Traceback (most recent call last):',
         '  File "main.py", line 2, in <module>',
+        '    print(undefined)',
+        '          ^^^^^^^^^',
         'NameError: name \'undefined\' is not defined',
     ]
     assert result['failed'][0] == 'Бесплатно от 2000.'
