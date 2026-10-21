@@ -384,10 +384,69 @@ def traceback_stack():
     f.text(20, 384, "Упало в parse_percent, а причина — в допущении «префикс промокода всегда из 4 букв».", "s")
     f.save(out(PY4 / "03-debugging" / "img" / "traceback-stack.svg"))
 
+PY6 = ROOT / "python" / "06-iterators-generators"
+
+
+# ---------- Python 6.01: что делает for ----------
+def for_protocol():
+    f = Figure(760, 330, "Цикл for: получить итератор, брать элементы через next до StopIteration")
+    f.box(240, 20, 280, 44, "for item in cart:", "box", "c")
+    f.arrow("M380 64V92")
+    f.box(240, 96, 280, 44, "it = iter(cart)", "box2", "c")
+    f.arrow("M380 140V168")
+    f.diamond(380, 206, 300, 70, "item = next(it)")
+    f.box(240, 268, 280, 44, "тело цикла", "box2")
+    f.arrow("M380 241V264"); f.text(390, 258, "элемент есть", "s")
+    f.arrow("M240 290H150V206H226"); f.text(40, 196, "следующий", "s"); f.text(40, 214, "элемент", "s")
+    f.box(580, 184, 160, 44, "выход из цикла", "ok")
+    f.arrow("M530 206H576"); f.text(540, 176, "StopIteration", "s")
+    f.save(out(PY6 / "01-iterators" / "img" / "for-protocol.svg"))
+
+
+# ---------- Python 6.02: генератор останавливается на yield ----------
+def generator_flow():
+    f = Figure(860, 360, "Генератор: тело выполняется до yield, замирает и продолжает с того же места при следующем next")
+    f.text(20, 24, "вызывающий код", "h"); f.text(470, 24, "функция-генератор order_numbers(1041)", "h")
+    rows = [("gen = order_numbers(1041)", "создан объект — тело ещё не выполнялось", "box2"),
+            ("next(gen)", "выполняется до yield → отдаёт 1042, замирает", "box"),
+            ("next(gen)", "продолжает после yield → отдаёт 1043, замирает", "box"),
+            ("next(gen) … после конца тела", "функция закончилась → StopIteration", "err")]
+    for i, (left, right, cls) in enumerate(rows):
+        y = 44 + i * 76
+        f.box(20, y, 330, 48, left, "box", "c")
+        f.box(470, y, 370, 48, "", cls)
+        f.text(486, y + 30, right, "s")
+        f.arrow(f"M350 {y + 18}H466")
+        if i in (1, 2):
+            f.arrow(f"M466 {y + 34}H354", "lnd")
+            f.text(372, y + 50, "1042" if i == 1 else "1043", "cs")
+    f.text(20, 350, "Локальные переменные генератора сохраняются между вызовами next — поэтому он помнит, на каком номере остановился.", "s")
+    f.save(out(PY6 / "02-generators" / "img" / "generator-flow.svg"))
+
+
+# ---------- Python 6.03: ленивый конвейер ----------
+def lazy_pipeline():
+    f = Figure(880, 220, "Ленивый конвейер: каждая строка проходит все шаги по одной, список целиком не создаётся")
+    steps = [("строки лога", "генератор"), ("разбор строки", "генератор"), ("только paid", "генератор"), ("sum(...)", "потребитель")]
+    for i, (title, kind) in enumerate(steps):
+        x = 20 + i * 220
+        f.box(x, 50, 180, 60, "", "box2" if i < 3 else "ok")
+        f.text(x + 90, 76, title, "c", "middle"); f.text(x + 90, 98, kind, "s", "middle")
+        if i < 3:
+            f.arrow(f"M{x + 180} 80H{x + 216}")
+    samples = ['"1042 paid 1499"', "(1042, 'paid', 1499)", "(1042, 'paid', 1499)"]
+    for i, sample in enumerate(samples):
+        f.text(20 + i * 220 + 90, 36, sample, "cs", "middle")
+    f.text(20, 150, "sum просит у фильтра элемент → фильтр просит у разбора → разбор просит у источника одну строку.", "t")
+    f.text(20, 176, "В памяти одновременно — одна строка, сколько бы строк ни было в логе.", "s")
+    f.save(out(PY6 / "03-lazy-pipelines" / "img" / "lazy-pipeline.svg"))
+
+
 if __name__ == "__main__":
     for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
                   sets_venn, nested_order, copy_modes, comprehension_anatomy,
                   mutable_default, legb_scopes, recursion_stack, decorator_wrap,
-                  try_flow, traceback_stack, dict_lookup, lost_key):
+                  try_flow, traceback_stack, for_protocol, generator_flow, lazy_pipeline,
+                  dict_lookup, lost_key):
         build()
     print("ok")

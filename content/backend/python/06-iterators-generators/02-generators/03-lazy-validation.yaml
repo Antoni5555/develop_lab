@@ -1,0 +1,52 @@
+title: Проверка размера страницы опаздывает
+type: exercise
+difficulty: 3
+pitfall: Код внутри генератора выполняется только при первом next — проверки опаздывают.
+statement: |
+  `paginate(items, page_size)` отдаёт страницы каталога и должна сразу отклонять неверный размер
+  страницы: при `page_size < 1` **вызов** `paginate(...)` должен выбросить `ValueError` —
+  ещё до перебора. Сейчас ошибка появляется только когда кто-то начинает перебирать страницы,
+  то есть в другом месте программы. Исправьте функцию так, чтобы она по-прежнему возвращала
+  генератор страниц.
+starter_code: |
+  def paginate(items, page_size):
+      if page_size < 1:
+          raise ValueError("размер страницы должен быть не меньше 1")
+      for start in range(0, len(items), page_size):
+          yield items[start:start + page_size]
+check:
+  type: tests
+  tests:
+    - code: |
+        try:
+            paginate(["a", "b"], 0)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: "Вызов с `page_size=0` не выбросил ошибку. Когда выполняется тело функции, в которой есть `yield`?"
+    - code: |
+        assert list(paginate(["a", "b", "c"], 2)) == [["a", "b"], ["c"]]
+      fail: Страницы должны выдаваться как раньше.
+    - code: |
+        import types
+        assert isinstance(paginate(["a"], 1), types.GeneratorType)
+      fail: "`paginate` должна возвращать генератор страниц."
+solution: |
+  def paginate(items, page_size):
+      if page_size < 1:
+          raise ValueError("размер страницы должен быть не меньше 1")
+      return _pages(items, page_size)
+
+
+  def _pages(items, page_size):
+      for start in range(0, len(items), page_size):
+          yield items[start:start + page_size]
+hints:
+  - "Если в функции есть `yield`, весь её код — включая проверку — откладывается до первого `next()`."
+  - Разделите на две функции — обычную с проверкой и внутренний генератор.
+explanation: |
+  Наличие `yield` превращает всю функцию в генератор: при вызове не выполняется ни одна строка,
+  в том числе проверка. Ошибка всплывёт там, где начнут перебирать страницы, — далеко от места
+  неверного вызова. Решение — обычная функция, которая проверяет аргументы сразу и возвращает
+  генератор из вспомогательной функции.

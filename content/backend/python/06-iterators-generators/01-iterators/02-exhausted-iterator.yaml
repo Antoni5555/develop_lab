@@ -1,0 +1,41 @@
+title: Среднее по пустоте
+type: exercise
+difficulty: 2
+pitfall: Итератор перебирается один раз — второй проход пуст без всякой ошибки.
+statement: |
+  `average_price(prices)` считает средний чек: сумма цен, делённая на их количество.
+  Цены приходят по-разному: иногда списком, иногда итератором — результатом `map` из API.
+  На итераторе функция падает с делением на ноль. Исправьте функцию так, чтобы она
+  работала с любым перебираемым объектом. Для пустых данных — `0`.
+starter_code: |
+  def average_price(prices):
+      total = sum(prices)
+      count = sum(1 for _ in prices)
+      if count == 0:
+          return 0
+      return total / count
+check:
+  type: tests
+  tests:
+    - code: |
+        assert average_price(map(int, ["1000", "2000"])) == 1500
+      fail: "Для `map` функция возвращает 0 или падает. Сколько элементов осталось в итераторе после `sum`?"
+    - code: |
+        assert average_price([1000, 2000, 3000]) == 2000
+      fail: Со списком функция должна работать как раньше.
+    - code: |
+        assert average_price(iter([])) == 0
+      fail: Пустые данные — 0.
+solution: |
+  def average_price(prices):
+      prices = list(prices)
+      if not prices:
+          return 0
+      return sum(prices) / len(prices)
+hints:
+  - "Выведите `list(prices)` после первого `sum` для итератора."
+  - Сохраните данные в список один раз в начале функции.
+explanation: |
+  Первый `sum` проходит итератор до конца, и второй проход ничего не находит — `count` равен 0.
+  Ошибки при этом нет, есть только неверный результат. `list(prices)` в начале функции
+  материализует данные, и дальше их можно перебирать сколько угодно.

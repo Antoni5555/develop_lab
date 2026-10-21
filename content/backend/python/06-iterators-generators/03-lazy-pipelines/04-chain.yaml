@@ -1,0 +1,35 @@
+title: Заказы из двух источников
+type: exercise
+difficulty: 2
+pitfall: Генераторы нельзя сложить через + — их объединяют через itertools.chain.
+statement: |
+  Заказы приходят двумя генераторами: с сайта и с маркетплейса. `all_orders(site, market)`
+  должна вернуть **ленивый** поток всех заказов: сначала сайта, потом маркетплейса.
+  Сейчас функция падает с `TypeError`. Исправьте её, не превращая потоки в списки.
+starter_code: |
+  def all_orders(site, market):
+      return site + market
+check:
+  type: tests
+  tests:
+    - code: |
+        site = (n for n in [1042, 1043])
+        market = (n for n in [9001])
+        assert list(all_orders(site, market)) == [1042, 1043, 9001]
+      fail: "`TypeError: unsupported operand type(s) for +: 'generator' and 'generator'`. Что из `itertools` склеивает потоки?"
+    - code: |
+        import types
+        result = all_orders((n for n in [1]), (n for n in [2]))
+        assert not isinstance(result, (list, tuple))
+      fail: Результат должен быть ленивым потоком, а не списком.
+solution: |
+  from itertools import chain
+
+
+  def all_orders(site, market):
+      return chain(site, market)
+hints:
+  - "`itertools.chain(a, b)`"
+explanation: |
+  `+` определён для списков и строк, но не для генераторов. `chain(site, market)` выдаёт сначала
+  все элементы первого потока, потом второго — лениво, без копирования в память.

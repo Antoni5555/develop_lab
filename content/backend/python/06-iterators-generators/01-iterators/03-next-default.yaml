@@ -1,0 +1,33 @@
+title: Первый оплаченный заказ
+type: exercise
+difficulty: 2
+pitfall: next() на пустом потоке выбрасывает StopIteration — нужно значение по умолчанию.
+statement: |
+  `first_paid(orders)` возвращает номер первого заказа со статусом `"paid"` или `None`,
+  если оплаченных нет. `orders` — список пар `(номер, статус)`. Для покупателя без
+  оплаченных заказов функция падает.
+starter_code: |
+  def first_paid(orders):
+      return next(order_id for order_id, status in orders if status == "paid")
+check:
+  type: tests
+  tests:
+    - code: |
+        assert first_paid([(1042, "new"), (1043, "cancelled")]) is None
+      fail: "Если оплаченных нет — `StopIteration`. Какой второй аргумент принимает `next()`?"
+    - code: |
+        assert first_paid([(1042, "new"), (1043, "paid"), (1044, "paid")]) == 1043
+      fail: Нужен первый оплаченный заказ.
+    - code: |
+        assert first_paid([]) is None
+      fail: Нет заказов — `None`.
+solution: |
+  def first_paid(orders):
+      return next((order_id for order_id, status in orders if status == "paid"), None)
+hints:
+  - "`next(поток, значение_по_умолчанию)`"
+  - Когда у функции два аргумента, генераторное выражение нужно взять в свои скобки.
+explanation: |
+  `next()` без значения по умолчанию на пустом потоке выбрасывает `StopIteration`. Второй аргумент
+  `next(gen, None)` возвращается, если элементов нет. Генераторное выражение при этом нужно взять
+  в собственные скобки — иначе Python не поймёт, где оно заканчивается.

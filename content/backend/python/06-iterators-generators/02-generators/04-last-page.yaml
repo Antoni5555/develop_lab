@@ -1,0 +1,34 @@
+title: Пропавшая последняя страница
+type: exercise
+difficulty: 2
+pitfall: Неверная граница range теряет неполную последнюю страницу.
+statement: |
+  `paginate(items, page_size)` — генератор страниц каталога. Последние товары, которые
+  не заполнили страницу целиком, пропадают из выдачи. Исправьте генератор: все товары
+  должны попасть на страницы, последняя может быть неполной.
+starter_code: |
+  def paginate(items, page_size):
+      for start in range(0, len(items) - page_size, page_size):
+          yield items[start:start + page_size]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert list(paginate(["a", "b", "c", "d", "e"], 2)) == [["a", "b"], ["c", "d"], ["e"]]
+      fail: "Последняя страница пропала. Какие начала страниц выдаёт `range` в заголовке цикла?"
+    - code: |
+        assert list(paginate(["a", "b", "c", "d"], 2)) == [["a", "b"], ["c", "d"]]
+      fail: Если товары делятся ровно — без пустой страницы в конце.
+    - code: |
+        assert list(paginate(["a"], 5)) == [["a"]]
+      fail: Товаров меньше размера страницы — одна неполная страница.
+solution: |
+  def paginate(items, page_size):
+      for start in range(0, len(items), page_size):
+          yield items[start:start + page_size]
+hints:
+  - "Выведите `list(range(0, len(items) - page_size, page_size))` для 5 товаров по 2."
+explanation: |
+  `range(0, 5 - 2, 2)` даёт `0, 2` — начала только двух страниц, и товар с индексом 4 не попадает
+  никуда. Начала страниц — `range(0, len(items), page_size)`: `0, 2, 4`. Срез за пределами списка
+  не падает, поэтому последняя страница просто получается неполной.

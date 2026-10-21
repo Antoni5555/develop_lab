@@ -1,0 +1,33 @@
+title: Сколько оплаченных заказов
+type: exercise
+difficulty: 1
+pitfall: У генератора нет длины — количество считают проходом.
+statement: |
+  `count_paid(orders)` возвращает количество оплаченных заказов. `orders` — поток пар
+  `(номер, статус)`: список или генератор. Функция падает с `TypeError`. Исправьте её,
+  не превращая поток в список.
+starter_code: |
+  def count_paid(orders):
+      paid = (order_id for order_id, status in orders if status == "paid")
+      return len(paid)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert count_paid([(1, "paid"), (2, "new"), (3, "paid")]) == 2
+      fail: "`TypeError: object of type 'generator' has no len()`. Как посчитать элементы, просто пройдя по ним?"
+    - code: |
+        assert count_paid(o for o in [(1, "new")]) == 0
+      fail: Нет оплаченных — 0, в том числе для генератора на входе.
+    - code: |
+        assert "list(" not in source
+      fail: Решите задачу без `list()` — выгрузка может не поместиться в память.
+solution: |
+  def count_paid(orders):
+      return sum(1 for order_id, status in orders if status == "paid")
+hints:
+  - "Каждый подходящий заказ — единица; сумма единиц — количество."
+explanation: |
+  Генератор не знает, сколько элементов выдаст, пока его не пройдут, поэтому `len()` у него нет.
+  `sum(1 for ... if ...)` проходит поток один раз и прибавляет единицу за каждый подходящий
+  заказ — без хранения всех заказов в памяти.

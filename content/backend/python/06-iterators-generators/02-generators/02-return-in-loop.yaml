@@ -1,0 +1,34 @@
+title: Выдача только первой страницы
+type: exercise
+difficulty: 1
+pitfall: return в цикле завершает функцию — генератору нужен yield.
+statement: |
+  `paginate(items, page_size)` должна быть генератором: отдавать страницы каталога —
+  срезы списка по `page_size` элементов — по одной. Сейчас она возвращает только первую страницу,
+  и `for page in paginate(...)` перебирает товары первой страницы вместо страниц.
+starter_code: |
+  def paginate(items, page_size):
+      for start in range(0, len(items), page_size):
+          return items[start:start + page_size]
+check:
+  type: tests
+  tests:
+    - code: |
+        assert list(paginate(["a", "b", "c", "d", "e"], 2)) == [["a", "b"], ["c", "d"], ["e"]]
+      fail: "Получена только первая страница (или её элементы). Чем `return` отличается от `yield`?"
+    - code: |
+        import types
+        assert isinstance(paginate([1], 1), types.GeneratorType)
+      fail: "`paginate` должна быть генератором."
+    - code: |
+        assert list(paginate([], 3)) == []
+      fail: Пустой каталог — ни одной страницы.
+solution: |
+  def paginate(items, page_size):
+      for start in range(0, len(items), page_size):
+          yield items[start:start + page_size]
+hints:
+  - "`return` завершает функцию на первой же итерации."
+explanation: |
+  `return` отдаёт первую страницу и завершает функцию. `yield` отдаёт страницу и приостанавливает
+  функцию — следующий запрос продолжит цикл со следующей страницы.

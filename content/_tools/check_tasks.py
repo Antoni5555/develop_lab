@@ -396,7 +396,7 @@ def check_lesson_code(text):
             continue
         exp_lines = expected.splitlines()
         markers = [n for n, l in enumerate(exp_lines) if l.startswith("Traceback") or l.startswith('  File "')]
-        looks_like_error = bool(re.match(r"^[\w.]+(Error|Exception)\b.*: ", exp_lines[-1]))
+        looks_like_error = bool(re.fullmatch(r"[\w.]+(Error|Exception|Iteration|Exit|Interrupt)(: .*)?", exp_lines[-1]))
         if markers or (error and looks_like_error):
             exp_out = "\n".join(exp_lines[:markers[0]] if markers else exp_lines[:-1])
             if error != exp_lines[-1]:

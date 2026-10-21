@@ -1,0 +1,49 @@
+title: Выручка по статусам разбилась
+type: exercise
+difficulty: 2
+pitfall: groupby объединяет только соседние элементы — сначала нужна сортировка.
+statement: |
+  `revenue_by_status(orders)` возвращает список пар `(статус, выручка)` — по одной паре
+  на статус, статусы по алфавиту. `orders` — список пар `(статус, сумма)`. Сейчас один и тот же
+  статус встречается в ответе несколько раз. Исправьте функцию, оставив `groupby`.
+starter_code: |
+  from itertools import groupby
+
+
+  def revenue_by_status(orders):
+      result = []
+      for status, group in groupby(orders, key=lambda order: order[0]):
+          result.append((status, sum(total for _, total in group)))
+      return result
+check:
+  type: tests
+  tests:
+    - code: |
+        orders = [("paid", 1499), ("new", 5990), ("paid", 490)]
+        assert revenue_by_status(orders) == [("new", 5990), ("paid", 1989)]
+      fail: "«paid» встретился двумя группами. Какие элементы `groupby` объединяет в одну группу?"
+    - code: |
+        assert revenue_by_status([]) == []
+      fail: Нет заказов — пустой список.
+    - code: |
+        assert "groupby" in source
+      fail: Оставьте `groupby` — задача про то, как правильно его использовать.
+solution: |
+  from itertools import groupby
+
+
+  def revenue_by_status(orders):
+      def status(order):
+          return order[0]
+
+      result = []
+      for key, group in groupby(sorted(orders, key=status), key=status):
+          result.append((key, sum(total for _, total in group)))
+      return result
+hints:
+  - "`groupby` группирует только подряд идущие элементы."
+  - "Отсортируйте заказы по тому же ключу, по которому группируете."
+explanation: |
+  `groupby` проходит поток один раз и открывает новую группу каждый раз, когда ключ меняется.
+  Разбросанные «paid» дают две группы. После `sorted(orders, key=...)` одинаковые статусы стоят
+  рядом — и попадают в одну группу; заодно статусы идут по алфавиту.
