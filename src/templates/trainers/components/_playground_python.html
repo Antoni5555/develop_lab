@@ -34,6 +34,6 @@ for name, quantity in counts.most_common():
   </div>
   {% if course %}
     {# В тренажёре программа курса — только разделы и темы, без задач #}
-    {% include 'common/_side_panel.html' with flat=True %}
+    {% include 'common/_side_panel.html' with flat=True note_open=True %}
   {% endif %}
 </div>

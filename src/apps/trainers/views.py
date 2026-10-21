@@ -7,6 +7,7 @@ from django.conf import settings
 from django.views.generic import TemplateView
 
 from apps.courses.services import selectors
+from apps.cheatsheets.services.notes import note_panel
 from apps.progress.services import progress
 from apps.courses.services.rendering import highlight
 
@@ -39,6 +40,10 @@ class ExerciseView(EngineMixin, TemplateView):
             if item.pk == exercise.pk
         )
         context['exercise_key'] = progress.exercise_key(exercise)
+        context['note'] = note_panel(
+            self.request.user, context['course'], context['topic'],
+            context['exercise_key'],
+        )
         spec = exercise.spec
         # Код на странице — с подсветкой, как в уроке
         if exercise.type == exercise.Type.PREDICT:
@@ -70,4 +75,7 @@ class PlaygroundView(EngineMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(selectors.playground('python'))
+        course = context['course']
+        if course:
+            context['note'] = note_panel(self.request.user, course, None, course.slug)
         return context

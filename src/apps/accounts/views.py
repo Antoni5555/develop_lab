@@ -2,6 +2,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
+from apps.cheatsheets.services import notes
 from apps.courses.services import selectors
 from apps.progress.services import progress
 
@@ -15,4 +16,6 @@ class ProfileView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         _, _, cards = selectors.catalog()
         context['summary'] = progress.profile_summary(self.request.user, cards)
+        context['recent_notes'] = notes.recent_notes(self.request.user)
+        context['notes_count'] = self.request.user.notes.count()
         return context

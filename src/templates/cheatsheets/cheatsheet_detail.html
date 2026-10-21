@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %}
+{% load static plural dates %}
+
+{% block title %}Шпаргалка: {{ course.title }} — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/cheatsheets.css' %}">{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'js/pages/cheatsheet.js' %}"></script>{% endblock %}
+
+{% block content %}
+<div class="container">
+  <nav class="breadcrumbs" aria-label="Навигация">
+    <a href="{% url 'cheatsheets:list' %}">Шпаргалки</a><span>/</span><span aria-current="page">{{ course.title }}</span>
+  </nav>
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Шпаргалка: {{ course.title }}</h1>
+      <p class="muted">{% if count %}{{ count|plural:"заметка,заметки,заметок" }} в {{ groups|length|plural:"теме,темах,темах" }} · обновлено {{ updated|ago }}{% else %}Заметок пока нет — пишите их в плашке «Заметка» справа от урока или задачи.{% endif %}</p>
+    </div>
+    <a href="{{ course.get_absolute_url }}" class="btn btn--ghost">Курс {{ course.title }} →</a>
+  </div>
+  {% include 'cheatsheets/components/_sheet_topics.html' %}
+</div>
+
+{# Редактор для правки заметки на месте (копию вставляет js/pages/cheatsheet.js) #}
+<template id="note-editor-template">{% include 'common/_note_editor.html' with note=None %}</template>
+{% endblock %}

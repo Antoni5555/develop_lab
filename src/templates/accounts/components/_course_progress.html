@@ -1,19 +1,41 @@
-{# Курсы, где есть активность. Вкладка «Последние заметки» появится вместе с заметками (шаг 3.3) #}
-<section class="panel">
-  <h2 class="section-title section-title--sm">Мои курсы</h2>
-  {% if summary.courses %}
-  <ul class="progress-list">
-    {% for item in summary.courses %}
-    <li>
-      <div class="progress-list__head">
-        <a href="{{ item.course.get_absolute_url }}">{{ item.course.title }}</a>
-        {% if item.is_done %}<span class="badge badge--done">✓ Пройден</span>{% else %}<span class="muted">{{ item.solved }} / {{ item.total }}</span>{% endif %}
-      </div>
-      <div class="progress"><div class="progress__bar" style="--value: {{ item.percent }}%"></div></div>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p class="muted">Вы ещё не начали ни одного курса. <a href="{% url 'courses:list' %}">Выбрать курс →</a></p>
-  {% endif %}
+{% load dates %}
+{# Вкладки профиля: курсы с активностью / последние заметки (все — во вкладке «Шпаргалки») #}
+<section class="panel" data-tabs>
+  <div class="tabs tabs--flush" role="tablist">
+    <button type="button" class="tab" role="tab" data-tab="courses">Мои курсы</button>
+    <button type="button" class="tab" role="tab" data-tab="notes">Последние заметки</button>
+  </div>
+
+  <div data-panel="courses" role="tabpanel">
+    {% if summary.courses %}
+    <ul class="progress-list">
+      {% for item in summary.courses %}
+      <li>
+        <div class="progress-list__head">
+          <a href="{{ item.course.get_absolute_url }}">{{ item.course.title }}</a>
+          {% if item.is_done %}<span class="badge badge--done">✓ Пройден</span>{% else %}<span class="muted">{{ item.solved }} / {{ item.total }}</span>{% endif %}
+        </div>
+        <div class="progress"><div class="progress__bar" style="--value: {{ item.percent }}%"></div></div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">Вы ещё не начали ни одного курса. <a href="{% url 'courses:list' %}">Выбрать курс →</a></p>
+    {% endif %}
+  </div>
+
+  <div data-panel="notes" role="tabpanel" hidden>
+    <ul class="notes">
+      {% for note in recent_notes %}
+      <li class="note-card">
+        <a href="{% url 'cheatsheets:detail' note.course.slug %}" class="note-card__src">{{ note.course.title }} → {% if note.topic %}{{ note.topic.title }}{% else %}Из тренажёра{% endif %}</a>
+        <p><b>{{ note.title }}</b></p>
+        <span class="muted small">{{ note.updated_at|ago }}</span>
+      </li>
+      {% empty %}
+      <li class="muted">Заметок пока нет — пишите их справа от урока или задачи.</li>
+      {% endfor %}
+      <li><a href="{% url 'cheatsheets:list' %}" class="side-card__link">Все шпаргалки →</a></li>
+    </ul>
+  </div>
 </section>

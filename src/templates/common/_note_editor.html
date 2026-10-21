@@ -1,0 +1,30 @@
+{% comment %} Редактор заметки (js/note-editor.js): заголовок + текст с форматированием.
+   Новая заметка — data-source (где написана); правка в шпаргалке — data-note-id.
+   Текст очищается на сервере (nh3) — остаются только теги форматирования.
+{% endcomment %}
+<div class="note-editor" data-note-editor data-api="{% url 'notes:list' %}"{% if note.source %} data-source="{{ note.source }}"{% endif %}>
+  <div class="note-editor__meta">
+    <label class="note-editor__label">Тема заметки
+      <input class="note-editor__title" type="text" maxlength="200" required placeholder="О чём заметка? Например: срез строки [::-1]">
+    </label>
+  </div>
+  <div class="note-editor__toolbar" role="toolbar" aria-label="Форматирование">
+    <button type="button" data-cmd="heading" title="Заголовок">H</button>
+    <button type="button" data-cmd="bold" title="Жирный"><b>B</b></button>
+    <button type="button" data-cmd="italic" title="Курсив"><i>I</i></button>
+    <button type="button" data-cmd="underline" title="Подчёркнутый"><u>U</u></button>
+    <button type="button" data-cmd="strikeThrough" title="Зачёркнутый"><s>S</s></button>
+    <span class="note-editor__sep" aria-hidden="true"></span>
+    <button type="button" data-cmd="insertUnorderedList" title="Список">•≡</button>
+    <button type="button" data-cmd="insertOrderedList" title="Нумерованный список">1≡</button>
+    <button type="button" data-cmd="code" title="Код">&lt;/&gt;</button>
+  </div>
+  <div class="note-editor__area" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Текст заметки"></div>
+  <div class="note-editor__foot">
+    <span class="muted small" data-note-status>{% if note.target %}→ {{ note.target|cut:"Шпаргалки → " }}{% endif %}</span>
+    <span class="tags">
+      <button type="button" class="btn btn--ghost btn--sm" data-note-cancel hidden>Отмена</button>
+      <button type="button" class="btn btn--accent btn--sm" data-note-save>Сохранить</button>
+    </span>
+  </div>
+</div>

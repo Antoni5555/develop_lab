@@ -1,0 +1,18 @@
+{% load dates %}
+<details class="sheet-note" data-note-id="{{ note.pk }}">
+  <summary class="sheet-note__head">
+    <span class="sheet-note__title" data-note-title>{{ note.title }}</span>
+    <span class="sheet-note__date">{{ note.updated_at|ago }}</span>
+  </summary>
+  {# body_html очищен на сервере (nh3): только теги форматирования #}
+  <div class="sheet-note__body" data-note-body>{{ note.body_html|safe }}</div>
+  <footer class="sheet-note__foot">
+    {% if note.exercise %}<a href="{{ note.exercise.get_absolute_url }}">из задачи «{{ note.exercise.title }}»</a>
+    {% elif note.topic %}<a href="{{ note.topic.get_absolute_url }}">из урока «{{ note.topic.title }}»</a>
+    {% else %}<a href="{% url 'trainers:playground' %}">из тренажёра</a>{% endif %}
+    <span class="sheet-note__actions">
+      <button type="button" title="Редактировать" aria-label="Редактировать" data-note-edit>✎</button>
+      <button type="button" title="Удалить" aria-label="Удалить" data-note-delete>✕</button>
+    </span>
+  </footer>
+</details>

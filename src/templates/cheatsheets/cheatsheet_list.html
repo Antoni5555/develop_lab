@@ -5,8 +5,22 @@
 {% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/cheatsheets.css' %}">{% endblock %}
 
 {% block content %}
-<div class="container stack-lg">
+<div class="container">
   {% include 'common/_page_head.html' with title='Шпаргалки' lead='Ваши заметки, собранные по курсам и темам.' %}
-  {% include 'common/_coming_soon.html' with stage=3 %}
+  {% include 'cheatsheets/components/_how_it_works.html' %}
+  {% if user.is_authenticated %}
+    {% include 'cheatsheets/components/_sheet_grid.html' %}
+  {% else %}
+    <div class="cta">
+      <div>
+        <h2 class="cta__title">Шпаргалки — с аккаунтом</h2>
+        <p class="cta__text">Заметки хранятся на сервере и видны с любого устройства.</p>
+      </div>
+      <div class="cta__actions">
+        <a href="{% url 'account_login' %}?next={{ request.path|urlencode }}" class="btn btn--accent btn--lg">Войти</a>
+        <a href="{% url 'account_signup' %}" class="btn btn--on-ink btn--lg">Создать аккаунт</a>
+      </div>
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

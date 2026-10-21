@@ -2,6 +2,7 @@
 и apps/progress/services/progress.py (статусы пользователя)."""
 from django.views.generic import TemplateView
 
+from apps.cheatsheets.services.notes import note_panel
 from apps.progress.services import progress
 
 from .services import selectors
@@ -52,4 +53,8 @@ class LessonView(TemplateView):
         if self.request.user.is_authenticated:
             progress.mark_viewed(self.request.user, context['lesson'])
         progress.apply_to_outline(context['sections'], self.request.user)
+        context['note'] = note_panel(
+            self.request.user, context['course'], context['topic'],
+            progress.lesson_key(context['topic']),
+        )
         return context

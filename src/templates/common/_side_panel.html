@@ -1,16 +1,36 @@
-{% load plural %}
-{% comment %} Правая панель урока, задачи и тренажёра: плашки-аккордеон (<details name> — открыта одна).
-   Сейчас одна плашка «Программа курса»; «Заметка» появится на этапе 3.
-   Параметры: course, sections, current_topic.
+{% load plural static %}
+{% comment %} Правая панель урока, задачи и тренажёра: две плашки-аккордеон (<details name> — открыта одна).
+   1) «Заметка» — попадёт в шпаргалку курса (тема или «Из тренажёра»); 2) «Программа курса».
+   Параметры: course, sections, current_topic, current_exercise, flat, note (notes.note_panel),
+   note_open — открыть «Заметку», а не программу (так в тренажёре).
 {% endcomment %}
 <aside class="side-panel">
-  <details class="side-card" name="side-panel" open>
+  {% if note %}
+  <details class="side-card" name="side-panel"{% if note_open %} open{% endif %}>
+    <summary class="side-card__head">
+      <span class="side-card__title">Заметка</span>
+      <span class="side-card__meta">попадёт в «{{ note.target }}»</span>
+    </summary>
+    <div class="side-card__body">
+      {% if user.is_authenticated %}
+        <script type="module" src="{% static 'js/note-editor.js' %}"></script>
+        {% include 'common/_note_editor.html' %}
+        <a href="{% url 'cheatsheets:detail' course.slug %}" class="side-card__link" data-note-link{% if not note.count %} hidden{% endif %}>В шпаргалке по этой теме уже <span data-note-count>{{ note.count }}</span> →</a>
+      {% else %}
+        <p class="muted small">Заметки собираются в шпаргалку курса по темам — их видно с любого устройства.</p>
+        <a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn--accent btn--block">Войти, чтобы писать заметки</a>
+      {% endif %}
+    </div>
+  </details>
+  {% endif %}
+  <details class="side-card" name="side-panel"{% if not note_open %} open{% endif %}>
     <summary class="side-card__head">
       <span class="side-card__title">Программа курса</span>
       <span class="side-card__meta">{{ course.title }} · {{ sections|length|plural:"раздел,раздела,разделов" }}</span>
     </summary>
     <div class="side-card__body">
       {% include 'common/_topics_sidebar.html' %}
+      {% if flat and user.is_authenticated %}<a href="{% url 'cheatsheets:detail' course.slug %}" class="side-card__link">Шпаргалка: {{ course.title }} →</a>{% endif %}
     </div>
   </details>
 </aside>

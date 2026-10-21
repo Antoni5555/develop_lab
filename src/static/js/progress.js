@@ -5,6 +5,8 @@
 //          остался прогресс гостя (вошёл после решения задач) — один раз переносим его.
 // Ключ задачи: «python/first-steps/strings/sku-parts», урока: «python/first-steps/strings».
 
+import { apiRequest } from './api.js';
+
 const body = document.body;
 const isAuthenticated = body.dataset.auth === '1';
 const STORE_KEY = 'progress:v1';
@@ -27,15 +29,7 @@ function save(data) {
 }
 
 function post(url, payload) {
-  return fetch(url, {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
-    },
-    body: JSON.stringify(payload),
-  });
+  return apiRequest('POST', url, payload);
 }
 
 function remember(list, key) {

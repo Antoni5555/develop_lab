@@ -20,4 +20,5 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls')),   # профиль
     path('accounts/', include('allauth.urls')),         # вход, регистрация, пароль
     path('api/progress/', include('apps.progress.urls')),
+    path('api/notes/', include('apps.cheatsheets.api_urls')),
 ]

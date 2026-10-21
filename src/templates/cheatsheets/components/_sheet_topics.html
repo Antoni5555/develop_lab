@@ -1,0 +1,16 @@
+{% comment %} Карточка = тема курса (заголовок — ссылка на теорию); «Тренажёр» — заметки из песочницы.
+   Внутри — заметки: виден заголовок, по клику разворачивается. {% endcomment %}
+<div class="sheet-sections">
+  {% for group in groups %}
+  <section class="sheet-section" data-sheet-group>
+    <span class="sheet-section__label">{{ group.label }}</span>
+    <h2 class="sheet-section__title">
+      {% if group.topic %}<a href="{{ group.topic.get_absolute_url }}" title="Открыть теорию">{{ group.topic.title }} <span aria-hidden="true">↗</span></a>{% else %}Из тренажёра{% endif %}
+      <span class="badge" data-group-count>{{ group.notes|length }}</span>
+    </h2>
+    {% for note in group.notes %}
+      {% include 'cheatsheets/components/_sheet_note.html' %}
+    {% endfor %}
+  </section>
+  {% endfor %}
+</div>
