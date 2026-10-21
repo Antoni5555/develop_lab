@@ -368,11 +368,27 @@ def fenced_blocks(text):
     return blocks
 
 
+FILE_CAPTION = re.compile(r"Файл `([\w./-]+)`")
+
+
 def check_lesson_code(text):
-    """Выполнить блоки ```python по порядку и сверить с блоками «Результат:»."""
-    problems, ns = [], {}
+    """Выполнить блоки ```python по порядку, как одну программу ученика, и сверить
+    с блоками «Результат:». Правила — как у runner.py: пустая рабочая папка,
+    __name__ == "__main__", вывод = stdout + stderr, сброшенный logging.
+    Блок с подписью «Файл `имя`:» не выполняется, а записывается в этот файл."""
+    with runner.workdir():
+        runner.reset_logging()
+        return _check_lesson_code(text)
+
+
+def _check_lesson_code(text):
+    problems, ns = [], {"__name__": "__main__"}
     blocks = fenced_blocks(text)
-    for k, (lang, code, _) in enumerate(blocks):
+    for k, (lang, code, caption) in enumerate(blocks):
+        if (m := FILE_CAPTION.search(caption)) and lang in ("python", "text", "csv", "json", "ini", ""):
+            Path(m.group(1)).parent.mkdir(parents=True, exist_ok=True)
+            Path(m.group(1)).write_text(code + "\n", encoding="utf-8")
+            continue
         if lang != "python":
             continue
         expected = None
@@ -382,7 +398,7 @@ def check_lesson_code(text):
         error = None
         signal.alarm(TIMEOUT)
         try:
-            with contextlib.redirect_stdout(buf):
+            with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
                 exec(compile(code, "main.py", "exec"), ns)
         except BaseException as e:  # noqa: BLE001
             error = traceback.format_exception(e)[-1].rstrip("\n")
