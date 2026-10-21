@@ -50,6 +50,17 @@ function toJs(proxy) {
   return value;
 }
 
+// База часовых поясов для zoneinfo (~200 КБ) — грузим, только если код её использует
+let tzdataLoaded = false;
+
+async function loadExtraPackages(data) {
+  const text = [data.code, data.inputs, JSON.stringify(data.task || '')].join('\n');
+  if (!tzdataLoaded && text.includes('zoneinfo')) {
+    await self.pyodide.loadPackage('tzdata');
+    tzdataLoaded = true;
+  }
+}
+
 const actions = {
   run: ({ code, inputs }) => toJs(runner.run_program(code, inputs || '')),
   check: ({ code, task }) => {
@@ -71,6 +82,7 @@ const ready = boot().then(
 self.onmessage = async ({ data }) => {
   await ready;
   try {
+    await loadExtraPackages(data);
     self.postMessage({ id: data.id, ok: true, result: actions[data.action](data) });
   } catch (error) {
     self.postMessage({ id: data.id, ok: false, error: String(error) });

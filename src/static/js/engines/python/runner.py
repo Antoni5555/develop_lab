@@ -7,13 +7,27 @@
 
 Правила — docs/content-format.md, раздел «Как выполняются тесты»:
 1. выполняется inputs (входные данные), затем код ученика в том же пространстве имён;
-2. тестам доступны переменные ученика, output (вывод), source (код), run(**значения).
+   код ученика выполняется как главный модуль: __name__ == "__main__";
+2. тестам доступны переменные ученика, output (вывод), source (код), run(**значения);
+3. output — всё, что программа вывела в stdout и stderr (как в терминале): так видны
+   и print, и сообщения logging;
+4. каждый запуск — в новой пустой рабочей папке (она же в sys.path): файлы из inputs
+   и созданные программой не переходят в следующий запуск, свои модули импортируются.
+   Тесты задачи выполняются в папке основного запуска — им видны файлы программы;
+5. настройки logging прошлого запуска сбрасываются: в браузере интерпретатор
+   один на все запуски.
 
 Тайм-аут здесь не реализован: в браузере зависшую программу останавливает
 главная страница (перезапуском Web Worker), в check_tasks.py — signal.alarm через guard.
 """
 import contextlib
+import importlib
 import io
+import logging
+import os
+import shutil
+import sys
+import tempfile
 import traceback
 
 
@@ -21,18 +35,66 @@ STUDENT_FILE = 'main.py'
 TIMEOUT_MESSAGE = 'Программа не завершилась'
 
 
+@contextlib.contextmanager
+def workdir():
+    """Новая пустая рабочая папка на один запуск; после — удаляется.
+
+    Папка становится текущей и первой в sys.path (импорт своих модулей из inputs).
+    Модули, загруженные из неё, выгружаются — иначе следующий запуск получил бы
+    старую версию модуля из кэша sys.modules.
+    """
+    old_cwd = os.getcwd()
+    path = tempfile.mkdtemp(prefix='run-')
+    modules_before = set(sys.modules)
+    os.chdir(path)
+    sys.path.insert(0, path)
+    importlib.invalidate_caches()
+    try:
+        yield path
+    finally:
+        os.chdir(old_cwd)
+        if path in sys.path:
+            sys.path.remove(path)
+        for name in set(sys.modules) - modules_before:
+            module_file = getattr(sys.modules[name], '__file__', None) or ''
+            if module_file.startswith(path):
+                del sys.modules[name]
+        shutil.rmtree(path, ignore_errors=True)
+
+
+def reset_logging():
+    """Сбросить настройки logging: обработчики и уровни, оставшиеся от прошлого запуска.
+
+    Иначе повторный logging.basicConfig() ничего не делает (корневой логгер уже
+    настроен), а старый обработчик пишет в вывод прошлого запуска.
+    """
+    root = logging.getLogger()
+    for handler in root.handlers[:]:
+        root.removeHandler(handler)
+    root.setLevel(logging.WARNING)
+    for logger in logging.Logger.manager.loggerDict.values():
+        if isinstance(logger, logging.Logger):
+            logger.handlers.clear()
+            logger.setLevel(logging.NOTSET)
+            logger.propagate = True
+            logger.disabled = False
+
+
 def execute(code, inputs='', override=None, guard=contextlib.nullcontext):
     """Выполняет inputs, подменяет значения из override, затем код ученика.
 
     Возвращает (пространство имён, ошибка или None). Вывод — в ns['output'].
+    Выполняет в текущей папке: пустую папку даёт workdir() (run_program, run_tests…).
     guard — контекст-менеджер вокруг выполнения (в check_tasks.py — тайм-аут).
     """
-    ns = {}
+    ns = {'__name__': '__main__'}
+    reset_logging()
     exec(inputs or '', ns)
     ns.update(override or {})
     buffer = io.StringIO()
     try:
-        with guard(), contextlib.redirect_stdout(buffer):
+        with guard(), contextlib.redirect_stdout(buffer), \
+                contextlib.redirect_stderr(buffer):
             exec(compile(code, STUDENT_FILE, 'exec'), ns)
         error = None
     except BaseException as exc:  # нужна любая ошибка ученика, даже SystemExit
@@ -62,22 +124,25 @@ def run_tests(code, task, guard=contextlib.nullcontext):
     ошибку кода ученика и список сообщений fail непройденных тестов.
     """
     inputs = task.get('inputs') or ''
-    ns, error = execute(code, inputs, guard=guard)
 
     def run(**override):
-        result, _ = execute(code, inputs, override, guard=guard)
+        # повторный запуск — в своей пустой папке: файлы основного запуска не мешают
+        with workdir():
+            result, _ = execute(code, inputs, override, guard=guard)
         return result
 
     failed = []
-    for test in task['check']['tests']:
-        env = {**ns, 'source': code, 'run': run}
-        try:
-            with guard():
-                exec(test['code'], env)
-        except TimeoutError:
-            failed.append(TIMEOUT_MESSAGE)
-        except Exception:
-            failed.append(test['fail'])
+    with workdir():
+        ns, error = execute(code, inputs, guard=guard)
+        for test in task['check']['tests']:
+            env = {**ns, 'source': code, 'run': run}
+            try:
+                with guard():
+                    exec(test['code'], env)
+            except TimeoutError:
+                failed.append(TIMEOUT_MESSAGE)
+            except Exception:
+                failed.append(test['fail'])
     if error is not None and not failed:
         failed.append(f'код упал: {type(error).__name__}: {error}')
     return ns, error, failed
@@ -85,7 +150,8 @@ def run_tests(code, task, guard=contextlib.nullcontext):
 
 def run_program(code, inputs=''):
     """Запуск в песочнице и кнопка «Запустить»: вывод и текст ошибки."""
-    ns, error = execute(code, inputs)
+    with workdir():
+        ns, error = execute(code, inputs)
     return {
         'output': ns['output'],
         'error': format_error(error) if error is not None else '',
@@ -113,7 +179,8 @@ def normalize_output(text):
 
 def check_predict(code, answer):
     """Задача predict: запускает код и сравнивает его вывод с ответом ученика."""
-    ns, error = execute(code)
+    with workdir():
+        ns, error = execute(code)
     actual = ns['output']
     if error is not None:
         actual += format_error(error) + '\n'

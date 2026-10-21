@@ -125,3 +125,62 @@ def test_content_task_works_in_runner(task):
     else:
         result = runner.check_predict(task['code'], task['answer'])
         assert result['correct'], f'вывод: {result["actual"]!r}'
+
+
+# --- запуск как настоящей программы: __main__, stderr, файлы, модули, logging ---
+
+def test_student_code_is_main_module():
+    result = runner.run_program('if __name__ == "__main__":\n    print("main")\n')
+
+    assert result['output'] == 'main\n'
+
+
+def test_logging_goes_to_output_and_resets_between_runs():
+    code = ('import logging\n'
+            'logging.basicConfig(level=logging.INFO,\n'
+            '                    format="%(levelname)s:%(message)s")\n'
+            'logging.info("заказ принят")\n')
+
+    first = runner.run_program(code)
+    second = runner.run_program(code)        # basicConfig снова работает
+
+    assert first['output'] == second['output'] == 'INFO:заказ принят\n'
+
+
+def test_each_run_has_empty_workdir():
+    code = ('from pathlib import Path\n'
+            'with open("log.txt", "a") as f:\n    f.write("x")\n'
+            'print(Path("log.txt").read_text())\n')
+
+    assert runner.run_program(code)['output'] == 'x\n'
+    assert runner.run_program(code)['output'] == 'x\n'   # файл не «накопился»
+
+
+def test_tests_see_files_of_main_run_and_run_gets_own_dir():
+    task = {
+        'inputs': ('from pathlib import Path\n'
+                   'Path("orders.csv").write_text("1\\n2\\n")\n'),
+        'check': {'tests': [
+            {'code': 'assert Path("report.txt").read_text() == "2"', 'fail': 'файл'},
+            {'code': 'assert run()["output"] == "2\\n"', 'fail': 'повтор'},
+        ]},
+    }
+    code = ('lines = Path("orders.csv").read_text().split()\n'
+            'Path("report.txt").write_text(str(len(lines)))\n'
+            'print(len(lines))\n')
+
+    _, error, failed = runner.run_tests(code, task)
+
+    assert error is None and failed == []
+
+
+def test_import_own_module_created_in_inputs():
+    inputs = ('from pathlib import Path\n'
+              'Path("prices.py").write_text("VAT = {vat}\\n")\n')
+    code = 'import prices\nprint(prices.VAT)\n'
+
+    first = runner.run_program(code, inputs.replace('{vat}', '20'))
+    second = runner.run_program(code, inputs.replace('{vat}', '10'))
+
+    assert first['output'] == '20\n'
+    assert second['output'] == '10\n'      # модуль не взят из кэша прошлого запуска
