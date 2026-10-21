@@ -16,6 +16,11 @@
   --fw-regular: 400;
   --fw-bold: 600;
 
+  /* Крупные заголовки (hero, блоки главной, заголовки страниц) */
+  --font-display: 'Unbounded', var(--font-main);   /* как в портфолио */
+  --fw-display: 600;
+  --ls-display: -0.02em;
+
   --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
   --fs-md: 1rem;
@@ -171,6 +176,48 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
 
 .stack-lg { display: grid; gap: var(--space-6); }
 .stack-xl { display: grid; gap: var(--space-8); }
+/* Главная: разделам нужно больше воздуха, чем внутренним страницам */
+.stack-home { display: grid; gap: clamp(72px, 8vw, 112px); }
+.stack-home .section-head { align-items: flex-end; margin-bottom: var(--space-6); }
+.stack-home .section-title {
+  width: fit-content;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  font-weight: var(--fw-display);
+  letter-spacing: var(--ls-display);
+  line-height: 1.1;
+}
+
+/* Подпись над заголовком блока: лаймовая метка + слово — сразу видно начало нового блока */
+.section-head__titles { display: grid; gap: var(--space-2); }
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-code);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+
+.kicker::before {
+  content: '';
+  width: 28px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+}
+
+/* Появление блоков при прокрутке: класс .reveal ставит JS, .is-visible — когда блок на экране.
+   Без JS классов нет — блоки просто видны. */
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.js-reveal .reveal.is-visible { opacity: 1; transform: none; }
 
 .visually-hidden {
   position: absolute;
@@ -733,7 +780,7 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 
 .page-head .muted { margin-top: var(--space-2); }
 
-.page-title { font-size: var(--fs-xl); font-weight: var(--fw-bold); letter-spacing: -0.02em; line-height: 1.15; }
+.page-title { font-family: var(--font-display); font-size: var(--fs-xl); font-weight: var(--fw-display); letter-spacing: var(--ls-display); line-height: 1.15; }
 .page-title--xl { font-size: var(--fs-2xl); max-width: 18ch; }
 
 .section-head {
@@ -1025,10 +1072,12 @@ body:has(#about:target) .nav-link[href="#about"] {
 
 .hero__title {
   max-width: 14ch;
-  font-size: var(--fs-2xl);
-  font-weight: var(--fw-bold);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 4.2vw, 3.2rem);   /* Unbounded широкий — чуть меньше обычного */
+  font-weight: var(--fw-display);
+  line-height: 1.1;
+  letter-spacing: var(--ls-display);
+  hyphens: auto;   /* длинные слова широких шрифтов не вылезают за край на телефоне */
 }
 
 .hero__lead { max-width: 48ch; opacity: 0.7; }
@@ -1065,34 +1114,358 @@ body:has(#about:target) .nav-link[href="#about"] {
 .step--link:hover { border-color: var(--text); transform: translateY(-2px); }
 .step__more { margin-top: auto; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
 
-.bento {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
+/* Первый экран главной: текст + иллюстрация */
+.hero--home {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-6);
 }
 
-.bento__item {
+/* Цифры под кнопками — строкой, без карточек */
+.hero-numbers { display: flex; flex-wrap: wrap; gap: var(--space-5); margin: var(--space-2) 0 0; }
+.hero-numbers div { display: grid; gap: 2px; padding-left: var(--space-5); border-left: 1px solid color-mix(in srgb, var(--on-ink) 22%, transparent); }
+.hero-numbers div:first-child { padding-left: 0; border-left: 0; }
+.hero-numbers dt { font-size: var(--fs-xl); font-weight: var(--fw-bold); line-height: 1; letter-spacing: -0.02em; }
+.hero-numbers dd { font-size: var(--fs-xs); opacity: 0.6; }
+
+/* --- Иллюстрации главной (inline SVG): цвета только из переменных темы --- */
+.hero-art { width: 100%; max-width: 440px; justify-self: center; color: var(--on-ink); }
+.hero-art__svg,
+.showcase__art svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* --- Картинка первого экрана: «полный цикл» ---
+   --on: 0/1 — элемент «зажёгся»; переключается в keyframes, цвета считаются через color-mix. */
+@property --on { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+/* Фон за стопкой: сдвинут чуть вправо-вниз и повёрнут по часовой (сама стопка стоит ровно) */
+.stk-bg { transform: translate(24px, 28px) rotate(4deg); transform-box: view-box; transform-origin: 50% 50%; }
+.stk-glow__in { stop-color: var(--accent); stop-opacity: 0.16; }
+.stk-glow__out { stop-color: var(--accent); stop-opacity: 0; }
+.stk-grid line { stroke: currentColor; stroke-width: 1; opacity: 0.12; }
+.stk-ring { fill: none; stroke: currentColor; stroke-width: 1.5; opacity: 0.3; }
+.stk-spark { fill: var(--accent); opacity: 0.8; }
+
+/* Слои */
+.stk-top { fill: color-mix(in srgb, var(--accent) calc(var(--on) * 100%), var(--surface)); }
+.stk-left { fill: color-mix(in srgb, color-mix(in srgb, var(--accent) 72%, #000) calc(var(--on) * 100%), var(--surface-2)); }
+.stk-right { fill: color-mix(in srgb, color-mix(in srgb, var(--accent) 52%, #000) calc(var(--on) * 100%), var(--border)); }
+.stk--code { --on: 1; }
+/* «Зажжённая» подпись: лаймовая на чёрном блоке (светлая тема), чёрная на светлом блоке (тёмная тема) */
+.hero-art { --stk-on-text: light-dark(var(--gl-color-accent), var(--gl-color-black)); }
+.stk-label { font-family: var(--font-display); font-size: 15px; fill: color-mix(in srgb, var(--stk-on-text) calc(var(--on) * 100%), currentColor); opacity: calc(0.45 + var(--on) * 0.55); }
+.stk-bullet { fill: color-mix(in srgb, var(--accent) calc(var(--on) * 100%), transparent); stroke: color-mix(in srgb, var(--accent) calc(var(--on) * 100%), currentColor); stroke-width: 1.5; }
+.stk-code-label { font-family: var(--font-code); font-size: 16px; font-weight: 700; text-anchor: middle; fill: var(--on-accent); }
+
+/* Стек: позиции по фазам. Элемент e (код = -1, слои 0..4) едет в фазах k > e. */
+@keyframes stk-move-code {
+  0.00% { transform: translateY(0px); }
+  0.00% { transform: translateY(0px); }
+  6.88% { transform: translateY(34px); }
+  12.50% { transform: translateY(34px); }
+  19.38% { transform: translateY(68px); }
+  25.00% { transform: translateY(68px); }
+  31.87% { transform: translateY(102px); }
+  37.50% { transform: translateY(102px); }
+  44.38% { transform: translateY(136px); }
+  50.00% { transform: translateY(136px); }
+  56.88% { transform: translateY(170px); }
+  87.50% { transform: translateY(170px); }
+  100.00% { transform: translateY(0px); }
+}
+.stk--code { animation: stk-move-code 8.0s ease-in-out infinite; }
+@keyframes stk-move-0 {
+  0.00% { transform: translateY(0px); }
+  12.50% { transform: translateY(0px); }
+  19.38% { transform: translateY(34px); }
+  25.00% { transform: translateY(34px); }
+  31.87% { transform: translateY(68px); }
+  37.50% { transform: translateY(68px); }
+  44.38% { transform: translateY(102px); }
+  50.00% { transform: translateY(102px); }
+  56.88% { transform: translateY(136px); }
+  87.50% { transform: translateY(136px); }
+  100.00% { transform: translateY(0px); }
+}
+.stk--0 { animation: stk-move-0 8.0s ease-in-out infinite; }
+@keyframes stk-on-0 {
+  0%, 6.75% { --on: 0; }
+  6.88%, 87.50% { --on: 1; }
+  100% { --on: 0; }
+}
+.stk--0 { animation: stk-move-0 8.0s ease-in-out infinite, stk-on-0 8.0s step-end infinite; }
+.stk-tag--0 { animation: stk-on-0 8.0s step-end infinite; }
+@keyframes stk-move-1 {
+  0.00% { transform: translateY(0px); }
+  25.00% { transform: translateY(0px); }
+  31.87% { transform: translateY(34px); }
+  37.50% { transform: translateY(34px); }
+  44.38% { transform: translateY(68px); }
+  50.00% { transform: translateY(68px); }
+  56.88% { transform: translateY(102px); }
+  87.50% { transform: translateY(102px); }
+  100.00% { transform: translateY(0px); }
+}
+.stk--1 { animation: stk-move-1 8.0s ease-in-out infinite; }
+@keyframes stk-on-1 {
+  0%, 19.25% { --on: 0; }
+  19.38%, 87.50% { --on: 1; }
+  100% { --on: 0; }
+}
+.stk--1 { animation: stk-move-1 8.0s ease-in-out infinite, stk-on-1 8.0s step-end infinite; }
+.stk-tag--1 { animation: stk-on-1 8.0s step-end infinite; }
+@keyframes stk-move-2 {
+  0.00% { transform: translateY(0px); }
+  37.50% { transform: translateY(0px); }
+  44.38% { transform: translateY(34px); }
+  50.00% { transform: translateY(34px); }
+  56.88% { transform: translateY(68px); }
+  87.50% { transform: translateY(68px); }
+  100.00% { transform: translateY(0px); }
+}
+.stk--2 { animation: stk-move-2 8.0s ease-in-out infinite; }
+@keyframes stk-on-2 {
+  0%, 31.75% { --on: 0; }
+  31.87%, 87.50% { --on: 1; }
+  100% { --on: 0; }
+}
+.stk--2 { animation: stk-move-2 8.0s ease-in-out infinite, stk-on-2 8.0s step-end infinite; }
+.stk-tag--2 { animation: stk-on-2 8.0s step-end infinite; }
+@keyframes stk-move-3 {
+  0.00% { transform: translateY(0px); }
+  50.00% { transform: translateY(0px); }
+  56.88% { transform: translateY(34px); }
+  87.50% { transform: translateY(34px); }
+  100.00% { transform: translateY(0px); }
+}
+.stk--3 { animation: stk-move-3 8.0s ease-in-out infinite; }
+@keyframes stk-on-3 {
+  0%, 44.25% { --on: 0; }
+  44.38%, 87.50% { --on: 1; }
+  100% { --on: 0; }
+}
+.stk--3 { animation: stk-move-3 8.0s ease-in-out infinite, stk-on-3 8.0s step-end infinite; }
+.stk-tag--3 { animation: stk-on-3 8.0s step-end infinite; }
+@keyframes stk-move-4 {
+  0.00% { transform: translateY(0px); }
+  87.50% { transform: translateY(0px); }
+  100.00% { transform: translateY(0px); }
+}
+.stk--4 { animation: stk-move-4 8.0s ease-in-out infinite; }
+@keyframes stk-on-4 {
+  0%, 56.75% { --on: 0; }
+  56.88%, 87.50% { --on: 1; }
+  100% { --on: 0; }
+}
+.stk--4 { animation: stk-move-4 8.0s ease-in-out infinite, stk-on-4 8.0s step-end infinite; }
+.stk-tag--4 { animation: stk-on-4 8.0s step-end infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .stk, .stk-tag { animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metro__stop--current .metro__dot { animation: none; }
+}
+
+/* --- Как это работает: путь из шагов на одной линии --- */
+.journey {
+  position: relative;
   display: grid;
-  align-content: start;
-  gap: var(--space-3);
-  padding: var(--space-5);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Пунктир, соединяющий иконки шагов */
+.journey::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 28px;
+  right: 28px;
+  border-top: 2px dashed var(--border);
+}
+
+.journey__step { position: relative; display: grid; align-content: start; gap: var(--space-2); }
+
+.journey__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--space-2);
+  color: var(--text);
   background: var(--surface);
   border: 1px solid var(--border);
+  border-radius: 50%;
+}
+
+.journey__icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.journey__step--accent .journey__icon { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.journey__num { font-family: var(--font-code); font-size: var(--fs-xs); color: var(--muted); }
+.journey__title { font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+.journey__step p { font-size: var(--fs-sm); }
+
+/* --- Что внутри: ряды «текст + рисунок», через один зеркально --- */
+.showcase { display: block; }
+.showcase__row + .showcase__row { margin-top: clamp(64px, 8vw, 112px); }
+
+.showcase__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.showcase__row--reverse .showcase__text { order: 2; }
+.showcase__text { display: grid; justify-items: start; gap: var(--space-3); }
+.showcase__title { font-size: clamp(1.4rem, 2.2vw, 1.85rem); font-weight: var(--fw-bold); letter-spacing: -0.02em; line-height: 1.15; }  /* меньше заголовка блока */
+.showcase__text p { max-width: 48ch; }
+
+/* Подложка рисунка: лаймовая с бликом и точечной текстурой. Внутри — всегда светлая схема:
+   карточки белые, как скриншоты интерфейса, одинаково в светлой и тёмной теме. */
+.showcase__art {
+  width: 100%;
+  max-width: 460px;
+  justify-self: center;
+  padding: var(--space-5) var(--space-4);
+  color-scheme: light;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 18% 0%, rgb(255 255 255 / 0.55), transparent 55%),
+    radial-gradient(rgb(0 0 0 / 0.07) 1px, transparent 1.5px) 0 0 / 14px 14px,
+    var(--gl-color-accent);
   border-radius: var(--radius-lg);
 }
 
-.bento__item--wide { grid-column: span 2; }
-.bento__item--ink { color: var(--on-ink); background: var(--ink); border-color: var(--ink); }
-/* Витрины на главной всегда в светлой схеме: в тёмной теме таблица остаётся белой,
-   а карточка с кодом — чёрной. light-dark() внутри этих блоков берёт светлое значение. */
-.bento__item--ink,
-.bento__item--wide .db-table { color-scheme: light; }
-.bento__item--wide .db-table { color: var(--text); }              /* цвет текста тоже берём из светлой схемы */
-.bento__item--ink { border-color: var(--gl-color-black-line); }   /* чтобы чёрная карточка не сливалась с тёмным фоном */
-.bento__item--ink .snippet { padding: 0; font-size: var(--fs-xs); }
-.bento__item--accent { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
-.bento__title { font-size: var(--fs-lg); font-weight: var(--fw-bold); }
-.bento__icon { font-size: 1.5rem; line-height: 1; }
+/* Детали рисунков «Что внутри» (классы sc-*) */
+.sc-card { fill: var(--surface); }
+.sc-card-shadow { filter: drop-shadow(0 10px 18px rgb(20 30 0 / 0.18)) drop-shadow(0 2px 4px rgb(20 30 0 / 0.1)); }
+.sc-ink { fill: var(--ink); }
+.sc-accent { fill: var(--accent); }
+.sc-head { fill: var(--surface-2); }
+.sc-track { fill: var(--surface-2); }
+.sc-grid { fill: none; stroke: var(--border); stroke-width: 1; }
+.sc-added { fill: var(--success-bg); }
+.sc-added-mark { fill: var(--success); }
+.sc-ok { fill: var(--success); }
+.sc-ok-bg { fill: var(--success-bg); }
+.sc-field { fill: var(--surface); stroke: var(--border); stroke-width: 1; }
+.sc-field--new { stroke: var(--ink); stroke-width: 1.5; }
+.sc-code { fill: var(--code-bg); stroke: var(--border); stroke-width: 1; }
+.sc-check { fill: none; stroke: var(--on-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sc-check--w { stroke: #fff; }
+.sc-arrow { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.sc-t { font-family: var(--font-main); font-size: 13px; fill: var(--text); }
+.sc-t--mono { font-family: var(--font-code); font-size: 12px; }
+.sc-t--sm { font-size: 11.5px; }
+.sc-t--xs { font-size: 10.5px; }
+.sc-t--b { font-weight: 600; }
+.sc-t--i { font-style: italic; }
+.sc-t--u { text-decoration: underline; }
+.sc-t--c { text-anchor: middle; }
+.sc-t--r { text-anchor: end; }
+.sc-t--muted { fill: var(--muted); }
+.sc-t--onink { fill: var(--on-ink); }
+.sc-t--accent { fill: var(--accent); }
+.sc-t--ok { fill: var(--success); font-weight: 600; }
+.sc-t--title { font-family: var(--font-display); font-size: 17px; }
+.sc-t--sm-title { font-size: 14px; }
+
+.eyebrow--dark { color: var(--muted); opacity: 1; }
+
+.checks { display: grid; gap: var(--space-2); margin: var(--space-1) 0 var(--space-2); padding: 0; list-style: none; font-size: var(--fs-sm); }
+.checks li { display: flex; align-items: center; gap: var(--space-2); }
+
+.checks li::before {
+  content: '✓';
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  font-weight: var(--fw-bold);
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* --- Путь обучения: курсы направления как схема метро --- */
+.metro {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) 0 var(--space-2);
+  list-style: none;
+}
+
+.metro__stop { position: relative; }
+
+/* Отрезок линии к станции; цвет — по статусу станции */
+.metro__stop::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border);
+}
+
+.metro__stop:first-child::before { display: none; }
+.metro__stop--done::before,
+.metro__stop--current::before { top: 21px; height: 4px; background: var(--accent); }
+.metro__stop--soon::before { background: repeating-linear-gradient(90deg, var(--border) 0 8px, transparent 8px 14px); }
+
+.metro__stop {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+.metro__stop a { display: grid; justify-items: center; gap: 4px; text-decoration: none; }
+
+.metro__dot {
+  position: relative;
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  margin-bottom: var(--space-3);
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+
+.metro__stop--done .metro__dot { background: var(--success); border-color: var(--success); }
+.metro__stop--done .metro__dot::after { content: '✓'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 18px; font-weight: var(--fw-bold); color: #fff; }
+.metro__stop--current .metro__dot { background: var(--accent); border-color: var(--ink); animation: metro-pulse 2s ease-out infinite; }
+.metro__stop--soon .metro__dot { border: 2px dashed var(--muted); }
+
+@keyframes metro-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); }
+  100% { box-shadow: 0 0 0 16px transparent; }
+}
+
+.metro__step { font-family: var(--font-code); font-size: var(--fs-sm); color: var(--muted); }
+.metro__name { font-size: var(--fs-lg); font-weight: var(--fw-bold); line-height: 1.2; letter-spacing: -0.01em; }
+.metro__meta { font-size: var(--fs-sm); color: var(--muted); }
+.metro__stop--current .metro__meta { padding: 1px 8px; color: var(--on-accent); background: var(--accent); border-radius: var(--radius-pill); }
+.metro__stop--soon .metro__name { color: var(--muted); }
+.metro__stop a:hover .metro__name { text-decoration: underline; }
+
+.metro-legend { display: flex; flex-wrap: wrap; gap: var(--space-5); font-size: var(--fs-sm); color: var(--muted); }
+.metro-legend span { display: inline-flex; align-items: center; gap: var(--space-2); }
+.metro-legend__dot { width: 14px; height: 14px; background: var(--surface); border: 1.5px solid var(--ink); border-radius: 50%; }
+.metro-legend__dot--done { background: var(--success); border-color: var(--success); }
+.metro-legend__dot--current { background: var(--accent); }
+.metro-legend__dot--soon { border: 1.5px dashed var(--muted); }
 
 /* --- Курс --- */
 .course-hero {
@@ -1108,7 +1481,7 @@ body:has(#about:target) .nav-link[href="#about"] {
 }
 
 .course-hero__text { display: grid; gap: var(--space-4); max-width: 60ch; }
-.course-hero__title { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -0.03em; line-height: 1; }
+.course-hero__title { font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: var(--fw-display); letter-spacing: var(--ls-display); line-height: 1; }
 .course-hero__side { display: grid; gap: var(--space-3); justify-items: start; min-width: 260px; }
 .course-hero__progress { display: grid; gap: var(--space-2); width: 100%; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
 .course-hero__progress .progress { background: rgb(0 0 0 / 0.12); }
@@ -1138,7 +1511,7 @@ body:has(#about:target) .nav-link[href="#about"] {
 }
 
 .article__meta { display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-sm); }
-.article__title { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -0.03em; line-height: 1.05; }
+.article__title { font-family: var(--font-display); font-size: var(--fs-2xl); font-weight: var(--fw-display); letter-spacing: var(--ls-display); line-height: 1.05; }
 .article__lead { font-size: var(--fs-lg); color: var(--muted); }
 .article h2 { margin-top: var(--space-4); font-size: var(--fs-lg); font-weight: var(--fw-bold); }
 .article p,
@@ -2023,4 +2396,3 @@ body:has(#about:target) .nav-link[href="#about"] {
 }
 
 .sheet-note__actions button:hover { color: var(--text); background: var(--surface-2); }
-

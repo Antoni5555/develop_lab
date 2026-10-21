@@ -14,17 +14,43 @@
   .sidebar,
   .side-panel { position: static; max-height: none; }
   .side-card__body { max-height: none; }
-  .bento { grid-template-columns: 1fr 1fr; }
+  .hero--home { grid-template-columns: 1fr; }
+  .hero-art { max-width: 320px; }
+  .showcase__row { grid-template-columns: 1fr; gap: var(--space-5); }
+  .showcase__art { justify-self: start; }
+  .showcase__row--reverse .showcase__text { order: 0; }
+  .journey { grid-template-columns: 1fr 1fr; row-gap: var(--space-6); }
+  .journey::before { display: none; }
   .course-hero { grid-template-columns: 1fr; }
   .footer__inner { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 720px) {
+  /* Карта пути — вертикально: кружок слева, подписи справа; станции одной высоты,
+     поэтому отрезок линии к станции = высота станции минус кружок */
+  .metro { grid-template-columns: 1fr; padding: var(--space-5); }
+  .metro__stop { display: block; justify-items: stretch; height: 96px; padding: 0; text-align: left; }
+  .metro__stop > a,
+  .metro__stop:not(:has(> a)) {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    grid-template-rows: auto auto auto;
+    justify-items: start;
+    column-gap: var(--space-3);
+    row-gap: 0;
+  }
+  .metro__dot { grid-row: 1 / span 3; margin: 0; }
+  .metro__stop::before { top: -50px; left: 22px; right: auto; width: 2px; height: 50px; }
+  .metro__stop--done::before,
+  .metro__stop--current::before { top: -50px; left: 21px; width: 4px; height: 50px; }
+  .metro__stop--soon::before { background: repeating-linear-gradient(180deg, var(--border) 0 8px, transparent 8px 14px); }
   .stack-xl { gap: var(--space-7); }
+  .stack-home { gap: var(--space-7); }
+  .hero-numbers { gap: var(--space-3); }
+  .hero-numbers div { padding-left: var(--space-3); }
   .hero,
   .cta { padding: var(--space-5); }
-  .bento { grid-template-columns: 1fr; }
-  .bento__item--wide { grid-column: auto; }
+  .journey { grid-template-columns: 1fr; }
   .profile-grid { grid-template-columns: 1fr; }
   .search { flex-direction: column; }
   .toolbar__right { margin-left: 0; }
