@@ -1,0 +1,64 @@
+/* Юридические документы: политика конфиденциальности, согласие на обработку данных.
+   Строгая колонка текста; от сайта — номера разделов-«таблетки» и карточка реквизитов. */
+
+.legal {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 760px;
+}
+
+.legal__head { display: grid; gap: var(--space-2); }
+.legal__head .chips { margin-top: var(--space-2); }
+.legal__head .chip { text-decoration: none; }
+
+.legal__body { display: grid; gap: var(--space-5); }
+.legal__body section { display: grid; gap: var(--space-2); }
+.legal__body p,
+.legal__body li { line-height: 1.65; }
+.legal__body ul { display: grid; gap: var(--space-1); margin: 0; padding-left: var(--space-5); }
+
+.legal__body h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+}
+
+/* Номер раздела — моноширинная таблетка, как номера шагов на сайте */
+.legal__num {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  font-family: var(--font-code);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-regular);
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+}
+
+.legal__operator {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.legal__operator-label { font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+
+.legal__requisites {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-1) var(--space-5);
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+
+.legal__requisites dt { color: var(--muted); }
+.legal__requisites dd { margin: 0; overflow-wrap: anywhere; }
+.legal__requisites .mono { font-family: var(--font-code); }

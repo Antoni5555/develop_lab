@@ -24,6 +24,10 @@
   </div>
   <div class="container footer__bottom">
     <span class="muted">© {% now 'Y' %} {{ SITE_NAME }} · открытый код</span>
+    <nav class="footer__legal">
+      <a href="{% url 'pages:privacy' %}">Политика конфиденциальности</a>
+      <a href="{% url 'pages:consent' %}">Согласие на обработку данных</a>
+    </nav>
     {# Ссылки GitHub / Telegram из макета добавим, когда появится репозиторий #}
   </div>
 </footer>

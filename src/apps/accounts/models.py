@@ -28,10 +28,15 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    """Пользователь: вход по email. Имя (first_name, last_name) — по желанию."""
+    """Пользователь: вход по email; имя и фамилия обязательны при регистрации."""
 
     username = None
     email = models.EmailField('email', unique=True)
+    # Когда пользователь дал согласие на обработку персональных данных (152-ФЗ):
+    # отметка в форме регистрации. NULL — создан не через регистрацию (админ).
+    privacy_consent_at = models.DateTimeField(
+        'согласие на обработку данных', null=True, blank=True,
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -57,3 +62,8 @@ class User(AbstractUser):
         if parts:
             return ''.join(part[0] for part in parts[:2]).upper()
         return self.email[:1].upper()
+
+
+def user_display(user):
+    """Как allauth называет пользователя в сообщениях (ACCOUNT_USER_DISPLAY)."""
+    return user.display_name

@@ -1,0 +1,11 @@
+{% extends "account/base_entrance.html" %}
+{% comment %} После регистрации (и при входе без подтверждённой почты): письмо отправлено {% endcomment %}
+{% block head_title %}Подтвердите почту{% endblock %}
+
+{% block content %}
+  <span class="auth__icon" aria-hidden="true">@</span>
+  <h1 class="auth__title">Подтвердите почту</h1>
+  <p>Мы отправили письмо со ссылкой. Откройте его и нажмите «Подтвердить почту» — после этого аккаунт заработает.</p>
+  <p class="muted small">Ссылка действует 3 дня. Письма нет несколько минут — проверьте папку «Спам». Чтобы получить новое письмо, просто войдите с email и паролем.</p>
+  <a href="{% url 'account_login' %}" class="btn btn--ghost btn--block">Ко входу</a>
+{% endblock %}

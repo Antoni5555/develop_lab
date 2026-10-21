@@ -7,4 +7,5 @@ app_name = 'accounts'
 
 urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
+    path('settings/', views.SettingsView.as_view(), name='settings'),
 ]

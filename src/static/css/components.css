@@ -315,6 +315,7 @@
 
 .field__input:focus { outline: none; border-color: var(--text); }
 .field__input--error { border-color: var(--error); }
+.field__input:disabled { color: var(--muted); cursor: not-allowed; }
 .field__error { font-size: var(--fs-xs); color: var(--error); }
 .field__hint { font-size: var(--fs-xs); color: var(--muted); }
 
@@ -876,6 +877,9 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 }
 
 .footer__links { display: flex; gap: var(--space-2); }
+.footer__legal { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.footer__legal a { color: var(--muted); text-decoration: none; }
+.footer__legal a:hover { color: var(--text); }
 
 /* --- Сайдбар: раздел → темы --- */
 .module-nav { border-top: 1px solid var(--border); padding-top: var(--space-3); }

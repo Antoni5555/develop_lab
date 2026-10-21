@@ -8,7 +8,14 @@
   {% if field.is_hidden %}
     {{ field }}
   {% elif field.widget_type == 'checkbox' %}
-    <label class="auth__check">{{ field }} <span>{{ field.label }}</span></label>
+    <div class="field">
+      <label class="auth__check">
+        {{ field }}
+        {# у согласия — подпись со ссылками на документы #}
+        <span>{% if field.name == 'privacy_consent' %}{% include 'account/_consent_label.html' %}{% else %}{{ field.label }}{% endif %}</span>
+      </label>
+      {% for error in field.errors %}<span class="field__error">{{ error }}</span>{% endfor %}
+    </div>
   {% else %}
     <label class="field">
       <span class="field__label">{{ field.label }}</span>

@@ -5,7 +5,7 @@
     <p class="muted">С нами с {{ user.date_joined|date:"E Y" }} · {{ user.email }}</p>
   </div>
   <div class="profile-head__action tags">
-    <a href="{% url 'account_change_password' %}" class="btn btn--ghost">Сменить пароль</a>
+    <a href="{% url 'accounts:settings' %}" class="btn btn--ghost">Настройки</a>
     <form method="post" action="{% url 'account_logout' %}">
       {% csrf_token %}
       <button type="submit" class="btn btn--ghost">Выйти</button>

@@ -1,0 +1,26 @@
+{% extends "account/base_entrance.html" %}
+{% comment %}
+  Ссылка из письма. Обычно подтверждение проходит сразу (ACCOUNT_CONFIRM_EMAIL_ON_GET),
+  и эта страница видна, только если ссылка устарела или почта занята другим аккаунтом.
+{% endcomment %}
+{% block head_title %}Подтверждение почты{% endblock %}
+
+{% block content %}
+  {% if confirmation and can_confirm %}
+    <h1 class="auth__title">Подтверждение почты</h1>
+    <p>Подтвердите, что <strong>{{ confirmation.email_address.email }}</strong> — ваша почта.</p>
+    <form class="auth__form" method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+      {% csrf_token %}
+      {{ redirect_field }}
+      <button type="submit" class="btn btn--accent btn--block">Подтвердить почту</button>
+    </form>
+  {% elif confirmation %}
+    <h1 class="auth__title">Почта уже занята</h1>
+    <p class="muted">Адрес {{ confirmation.email_address.email }} уже подтверждён другим аккаунтом.</p>
+    <a href="{% url 'account_login' %}" class="btn btn--ghost btn--block">Ко входу</a>
+  {% else %}
+    <h1 class="auth__title">Ссылка устарела</h1>
+    <p class="muted">Ссылка из письма уже использована или её срок (3 дня) истёк. Войдите с email и паролем — мы отправим новое письмо.</p>
+    <a href="{% url 'account_login' %}" class="btn btn--accent btn--block">Войти</a>
+  {% endif %}
+{% endblock %}

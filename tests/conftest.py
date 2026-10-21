@@ -3,11 +3,19 @@ import shutil
 from pathlib import Path
 
 import pytest
+from django.core.cache import cache
 
 from apps.courses.services.content_loader import ContentLoader
 
 
 FIXTURE_CONTENT = Path(__file__).parent / 'fixtures' / 'content'
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    """Чистый кэш в каждом тесте: в нём, например, счётчики allauth
+    «не чаще одного письма в 3 минуты» — иначе тесты влияют друг на друга."""
+    cache.clear()
 
 
 @pytest.fixture

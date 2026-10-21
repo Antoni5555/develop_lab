@@ -1,5 +1,6 @@
 """Фабрики тестовых данных (factory-boy): создают записи с разумными значениями."""
 import factory
+from allauth.account.models import EmailAddress
 
 from apps.courses.models import Course, Exercise, Lesson, Section, Topic, Track
 
@@ -86,3 +87,15 @@ class UserFactory(factory.django.DjangoModelFactory):
     def save_password(obj, create, extracted, **kwargs):
         if create:
             obj.save()
+
+    @factory.post_generation
+    def verified_email(obj, create, extracted, **kwargs):
+        """Почта подтверждена, как у пользователя, прошедшего регистрацию.
+
+        UserFactory(verified_email=False) — не подтвердил письмо.
+        """
+        if create:
+            EmailAddress.objects.create(
+                user=obj, email=obj.email, primary=True,
+                verified=extracted if extracted is not None else True,
+            )

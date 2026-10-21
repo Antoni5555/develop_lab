@@ -1,0 +1,21 @@
+{% extends 'allauth/layouts/base.html' %}
+{% load allauth %}
+{% comment %} Настройки профиля — в карточке, как вход и регистрация {% endcomment %}
+{% block head_title %}Настройки{% endblock %}
+
+{% block content %}
+  <h1 class="auth__title">Настройки</h1>
+  <p class="muted">Имя видно в профиле и в шапке сайта.</p>
+  <form class="auth__form" method="post">
+    {% csrf_token %}
+    {% element fields form=form %}{% endelement %}
+    <label class="field">
+      <span class="field__label">Email</span>
+      <input class="field__input" type="email" value="{{ user.email }}" disabled>
+      <span class="field__hint">Вход — по этому адресу</span>
+    </label>
+    <button type="submit" class="btn btn--accent btn--block">Сохранить</button>
+  </form>
+  <a href="{% url 'account_change_password' %}" class="btn btn--ghost btn--block">Сменить пароль</a>
+  <p class="muted auth__foot"><a href="{% url 'accounts:profile' %}">← В профиль</a></p>
+{% endblock %}

@@ -143,14 +143,35 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*']   # без повтора пароля и username
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-# Письмо с подтверждением уходит, но войти можно сразу — подтверждение не обязательно
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
+# + имя, фамилия и согласие на обработку данных
+ACCOUNT_FORMS = {'signup': 'apps.accounts.forms.SignupForm'}
+ACCOUNT_ADAPTER = 'apps.accounts.adapter.AccountAdapter'
+# В сообщениях allauth («Вы вошли как …») — имя, а не email
+ACCOUNT_USER_DISPLAY = 'apps.accounts.models.user_display'
+# Войти можно только после подтверждения почты: ссылка в письме подтверждает
+# сразу при открытии (без второй кнопки) и, в том же браузере, сразу входит
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+# Название сайта — в теме письма (шаблон *_subject.txt), префикс «[сайт]» не нужен
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = 'accounts:profile'
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@localhost')
+
+# Оператор персональных данных — для страниц «Политика конфиденциальности»
+# и «Согласие на обработку данных». В .env, а не в коде: репозиторий публичный,
+# а данные зависят от того, кто и где запускает сайт
+OPERATOR = {
+    'name': os.getenv('OPERATOR_NAME', ''),
+    'inn': os.getenv('OPERATOR_INN', ''),
+    'city': os.getenv('OPERATOR_CITY', ''),
+    'email': os.getenv('OPERATOR_EMAIL', ''),
+}
 
 
 # --- API (DRF): его вызывает JS страниц, вход — обычной сессией сайта (с CSRF) ---

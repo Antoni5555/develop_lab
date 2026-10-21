@@ -24,6 +24,13 @@ services:
       timeout: 5s
       retries: 5
 
+  # Локальный почтовый ящик: письма сайта (подтверждение почты, сброс пароля)
+  # не уходят наружу, а видны в браузере — http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.31
+    ports:
+      - "127.0.0.1:8025:8025"
+
   web:
     build: .
     env_file: .env
@@ -33,6 +40,8 @@ services:
       DB_HOST: db
       REDIS_URL: redis://redis:6379/0
       CONTENT_DIR: /content
+      EMAIL_HOST: mailpit
+      EMAIL_PORT: "1025"
     # Код подключён папкой: правки видны сразу, runserver перезапускается сам.
     # Миграции при старте — только в разработке; на сервере это отдельный шаг деплоя.
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
@@ -47,6 +56,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      mailpit:
+        condition: service_started
 
 volumes:
   postgres_data:

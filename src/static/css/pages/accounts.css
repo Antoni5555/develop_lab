@@ -37,4 +37,21 @@
 /* --- Формы allauth (в макете были статичные поля) --- */
 .auth__form { display: grid; gap: var(--space-4); }
 .auth__check { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); }
+/* Подпись в несколько строк (согласие): галочка — у первой строки */
+.auth__check:has(> span > a) { align-items: flex-start; line-height: 1.45; }
+.auth__check:has(> span > a) input { margin-top: 3px; }
+.auth__check input { flex-shrink: 0; accent-color: var(--accent); }
 .auth__card .alert { margin: 0; }
+
+/* Значок на странице «Подтвердите почту» */
+.auth__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  font-family: var(--font-code);
+  font-size: var(--fs-lg);
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: 50%;
+}

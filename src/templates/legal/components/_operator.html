@@ -1,0 +1,15 @@
+{# Реквизиты оператора персональных данных — из OPERATOR_* в .env #}
+<section class="legal__operator" aria-label="Оператор персональных данных">
+  <span class="legal__operator-label">Оператор персональных данных</span>
+  {% if operator.name %}
+    <dl class="legal__requisites">
+      <dt>Оператор</dt><dd>{{ operator.name }}</dd>
+      {% if operator.inn %}<dt>ИНН</dt><dd class="mono">{{ operator.inn }}</dd>{% endif %}
+      {% if operator.city %}<dt>Адрес</dt><dd>{{ operator.city }}</dd>{% endif %}
+      {% if operator.email %}<dt>Email</dt><dd><a href="mailto:{{ operator.email }}">{{ operator.email }}</a></dd>{% endif %}
+      <dt>Сайт</dt><dd>{{ request.get_host }}</dd>
+    </dl>
+  {% else %}
+    <p class="muted small">Реквизиты оператора не заданы: OPERATOR_NAME, OPERATOR_INN, OPERATOR_CITY, OPERATOR_EMAIL в .env.</p>
+  {% endif %}
+</section>

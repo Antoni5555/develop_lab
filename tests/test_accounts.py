@@ -1,5 +1,8 @@
 """Аккаунты: регистрация и вход по email (django-allauth), профиль, шапка."""
+import re
+
 import pytest
+from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.urls import reverse
@@ -34,23 +37,86 @@ def test_create_superuser():
     assert admin.is_staff and admin.is_superuser
 
 
-def test_signup_with_email_and_password(client):
-    response = client.post(reverse('account_signup'), {
-        'email': 'new@example.com', 'password1': 'Long-enough-pass-1',
-    })
+SIGNUP = {
+    'first_name': 'Анна', 'last_name': 'Смирнова', 'email': 'new@example.com',
+    'password1': 'Long-enough-pass-1', 'privacy_consent': 'on',
+}
+
+
+def test_signup_sends_confirmation_and_waits_for_it(client, settings):
+    """Регистрация: имя и согласие сохранены, письмо ушло, вход — после ссылки."""
+    settings.SITE_NAME = 'Тестовый сайт'
+
+    response = client.post(reverse('account_signup'), SIGNUP)
+
+    assert response.status_code == 302
+    assert response.url == reverse('account_email_verification_sent')
+    assert '_auth_user_id' not in client.session
+    user = User.objects.get(email='new@example.com')
+    assert (user.first_name, user.last_name) == ('Анна', 'Смирнова')
+    assert user.privacy_consent_at is not None
+
+    letter = mail.outbox[0]
+    assert letter.to == ['new@example.com']
+    assert letter.subject == 'Подтвердите почту — Тестовый сайт'
+    assert 'Здравствуйте, Анна!' in letter.body
+    html, mimetype = letter.alternatives[0]
+    assert mimetype == 'text/html' and 'Подтвердить почту' in html
+
+
+def test_confirmation_link_verifies_and_logs_in(client):
+    """Ссылка из письма подтверждает почту сразу (без второй кнопки) и входит."""
+    client.post(reverse('account_signup'), SIGNUP)
+    link = re.search(r'https?://\S+/confirm-email/\S+/', mail.outbox[0].body).group()
+
+    response = client.get(link)
 
     assert response.status_code == 302
     assert response.url == reverse('accounts:profile')
     user = User.objects.get(email='new@example.com')
     assert client.session['_auth_user_id'] == str(user.pk)
-    # письмо с подтверждением ушло, но вход не ждёт подтверждения
-    assert len(mail.outbox) == 1 and 'new@example.com' in mail.outbox[0].to
+    assert EmailAddress.objects.get(user=user).verified
+
+
+def test_invalid_confirmation_link(client):
+    response = client.get(reverse('account_confirm_email', args=['wrong-key']))
+
+    assert 'Ссылка устарела' in response.content.decode()
+
+
+def test_login_without_confirmation_resends_letter(client):
+    UserFactory(email='anna@example.com', verified_email=False)
+
+    response = client.post(reverse('account_login'), {
+        'login': 'anna@example.com', 'password': 'secret-pass-123',
+    })
+
+    assert response.url == reverse('account_email_verification_sent')
+    assert '_auth_user_id' not in client.session
+    assert mail.outbox[0].to == ['anna@example.com']
+
+
+def test_signup_requires_name_and_consent(client):
+    data = {**SIGNUP, 'first_name': '', 'last_name': ' '}
+    del data['privacy_consent']
+
+    response = client.post(reverse('account_signup'), data)
+
+    html = response.content.decode()
+    assert html.count('field__error') == 3
+    assert 'Без согласия зарегистрироваться нельзя.' in html
+    assert not User.objects.filter(email='new@example.com').exists()
+
+
+def test_signup_form_links_to_legal_documents(client):
+    html = client.get(reverse('account_signup')).content.decode()
+
+    assert f'href="{reverse("pages:privacy")}"' in html
+    assert f'href="{reverse("pages:consent")}"' in html
 
 
 def test_signup_rejects_short_password(client):
-    response = client.post(reverse('account_signup'), {
-        'email': 'new@example.com', 'password1': '123',
-    })
+    response = client.post(reverse('account_signup'), {**SIGNUP, 'password1': '123'})
 
     assert response.status_code == 200
     assert 'field__error' in response.content.decode()
@@ -63,7 +129,7 @@ def test_login_and_logout(client):
     response = client.post(reverse('account_login'), {
         'login': 'anna@example.com', 'password': 'secret-pass-123',
     })
-    assert response.status_code == 302
+    assert response.url == reverse('accounts:profile')
 
     response = client.post(reverse('account_logout'))
     assert response.status_code == 302
@@ -115,3 +181,64 @@ def test_messages_shown_on_regular_pages(client):
     response = client.post(reverse('account_logout'), follow=True)
 
     assert 'class="container stack-messages"' in response.content.decode()
+
+
+def test_settings_change_name(client):
+    user = UserFactory(first_name='Иван', last_name='Петров')
+    client.force_login(user)
+
+    response = client.post(reverse('accounts:settings'), {
+        'first_name': 'Пётр', 'last_name': 'Иванов',
+    })
+
+    assert response.url == reverse('accounts:profile')
+    user.refresh_from_db()
+    assert user.display_name == 'Пётр Иванов'
+
+
+def test_settings_name_is_required(client):
+    user = UserFactory(first_name='Иван', last_name='Петров')
+    client.force_login(user)
+
+    response = client.post(
+        reverse('accounts:settings'), {'first_name': '', 'last_name': ''},
+    )
+
+    assert response.content.decode().count('field__error') == 2
+    user.refresh_from_db()
+    assert user.first_name == 'Иван'
+
+
+def test_settings_requires_login(client):
+    response = client.get(reverse('accounts:settings'))
+
+    assert response.url.startswith(reverse('account_login'))
+
+
+@pytest.mark.parametrize('name', ['pages:privacy', 'pages:consent'])
+def test_legal_pages_show_operator_from_settings(client, settings, name):
+    settings.OPERATOR = {
+        'name': 'Иванов Иван Иванович', 'inn': '123456789012',
+        'city': 'г. Москва', 'email': 'pd@example.com',
+    }
+
+    html = client.get(reverse(name)).content.decode()
+
+    assert 'Иванов Иван Иванович' in html and '123456789012' in html
+    assert 'href="mailto:pd@example.com"' in html
+    assert 'chip--active' in html
+
+
+def test_legal_page_without_operator_says_what_to_set(client, settings):
+    settings.OPERATOR = {'name': '', 'inn': '', 'city': '', 'email': ''}
+
+    html = client.get(reverse('pages:privacy')).content.decode()
+
+    assert 'OPERATOR_NAME' in html
+
+
+def test_footer_links_to_legal_pages(client):
+    html = client.get(reverse('pages:home')).content.decode()
+
+    assert f'href="{reverse("pages:privacy")}"' in html
+    assert f'href="{reverse("pages:consent")}"' in html
