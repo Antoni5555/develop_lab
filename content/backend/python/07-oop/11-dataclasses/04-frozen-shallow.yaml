@@ -1,0 +1,68 @@
+title: Снимок заказа, который меняется
+type: exercise
+difficulty: 3
+pitfall: "`frozen=True` запрещает переприсваивать поля, но список внутри поля остаётся изменяемым."
+statement: |
+  При оплате сохраняется снимок заказа `OrderSnapshot` — для чека и споров с покупателем.
+  Класс заморожен (`frozen=True`), но позиции в снимке всё равно меняются, когда покупатель
+  продолжает наполнять корзину. Через снимок их тоже можно поменять: `snapshot.items.append(...)`.
+  Исправьте `make_snapshot(order_id, cart_items)` и аннотацию поля так, чтобы снимок
+  не зависел от корзины и не позволял менять позиции.
+starter_code: |
+  from dataclasses import dataclass
+
+
+  @dataclass(frozen=True)
+  class OrderSnapshot:
+      order_id: int
+      items: list
+
+
+  def make_snapshot(order_id, cart_items):
+      return OrderSnapshot(order_id, cart_items)
+
+
+  cart = [(1, 2), (5, 1)]
+  snapshot = make_snapshot(1042, cart)
+  cart.append((7, 3))
+  print(snapshot)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert list(snapshot.items) == [(1, 2), (5, 1)]
+      fail: "Позиция, добавленная в корзину после оплаты, попала в снимок. Это тот же список, что в корзине?"
+    - code: |
+        s = make_snapshot(1, [(1, 1)])
+        assert not hasattr(s.items, "append")
+      fail: "Позиции снимка можно изменить через `append`. `frozen` замораживает поле, но не объект внутри него."
+    - code: |
+        s = make_snapshot(1, [(1, 1)])
+        assert s == make_snapshot(1, [(1, 1)]) and len({s}) == 1
+      fail: Снимки с одинаковыми данными равны и хешируемы.
+solution: |
+  from dataclasses import dataclass
+
+
+  @dataclass(frozen=True)
+  class OrderSnapshot:
+      order_id: int
+      items: tuple
+
+
+  def make_snapshot(order_id, cart_items):
+      return OrderSnapshot(order_id, tuple(cart_items))
+
+
+  cart = [(1, 2), (5, 1)]
+  snapshot = make_snapshot(1042, cart)
+  cart.append((7, 3))
+  print(snapshot)
+hints:
+  - "Попробуйте `snapshot.items.append((9, 9))` — сработает ли `frozen`?"
+  - "Храните позиции в кортеже: `tuple(cart_items)`."
+explanation: |
+  `frozen=True` запрещает только присваивание полям (`snapshot.items = ...`). Сам список остаётся
+  изменяемым и к тому же общим с корзиной. Кортеж решает обе проблемы: `tuple(...)` создаёт
+  отдельную копию, а изменить её нельзя. Позиции — кортежи чисел, поэтому снимок целиком
+  неизменяем и хешируем. Со списком внутри `hash(snapshot)` упал бы с `TypeError`.

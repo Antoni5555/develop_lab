@@ -1,0 +1,68 @@
+title: Пустой отчёт об оплатах
+type: exercise
+difficulty: 1
+pitfall: Член обычного `Enum` не равен своему значению — сравнение со строкой всегда ложно, без ошибки.
+statement: |
+  Статусы заказов перевели на перечисление `OrderStatus`. После этого отчёт
+  `paid_ids(orders)` — номера оплаченных заказов — всегда пустой. Исправьте функцию.
+starter_code: |
+  from enum import Enum
+
+
+  class OrderStatus(Enum):
+      NEW = "new"
+      PAID = "paid"
+      CANCELLED = "cancelled"
+
+
+  class Order:
+      def __init__(self, id, status):
+          self.id = id
+          self.status = status
+
+
+  def paid_ids(orders):
+      return [order.id for order in orders if order.status == "paid"]
+
+
+  orders = [Order(1042, OrderStatus.PAID), Order(1043, OrderStatus.NEW), Order(1044, OrderStatus.PAID)]
+  print(paid_ids(orders))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert paid_ids(orders) == [1042, 1044]
+      fail: "Отчёт пустой. Чему равно `OrderStatus.PAID == \"paid\"`?"
+    - code: |
+        assert paid_ids([Order(1, OrderStatus.CANCELLED)]) == [] and paid_ids([]) == []
+      fail: Неоплаченные заказы в отчёт не попадают.
+solution: |
+  from enum import Enum
+
+
+  class OrderStatus(Enum):
+      NEW = "new"
+      PAID = "paid"
+      CANCELLED = "cancelled"
+
+
+  class Order:
+      def __init__(self, id, status):
+          self.id = id
+          self.status = status
+
+
+  def paid_ids(orders):
+      return [order.id for order in orders if order.status == OrderStatus.PAID]
+
+
+  orders = [Order(1042, OrderStatus.PAID), Order(1043, OrderStatus.NEW), Order(1044, OrderStatus.PAID)]
+  print(paid_ids(orders))
+hints:
+  - "Выведите `OrderStatus.PAID == \"paid\"`."
+  - "Сравнивайте с членом перечисления: `order.status == OrderStatus.PAID`. Другой путь — сделать `OrderStatus` наследником `StrEnum`."
+explanation: |
+  Член обычного `Enum` — отдельный объект, и с объектами других типов он не равен, даже со своим
+  значением. Ошибки нет, просто условие всегда ложно. Сравнение с `OrderStatus.PAID` работает
+  и не зависит от того, какой строкой статус хранится. `StrEnum` сделал бы членов строками —
+  тогда сработало бы и старое сравнение.

@@ -1,0 +1,58 @@
+title: Возвраты пропали из списка статусов
+type: exercise
+difficulty: 2
+pitfall: Два члена `Enum` с одинаковым значением — не два статуса, а один статус и его псевдоним.
+statement: |
+  Добавили статус «возврат оформлен». Разработчик дал ему то же значение, что у отмены:
+  «деньги всё равно возвращаются». Теперь фильтр статусов на сайте (`list(OrderStatus)`)
+  не показывает `REFUNDED`, а возвраты в отчётах считаются отменами.
+  Сделайте `REFUNDED` отдельным статусом со значением `"refunded"` и защитите перечисление
+  от повторения: при одинаковых значениях класс не должен даже создаваться.
+starter_code: |
+  from enum import StrEnum
+
+
+  class OrderStatus(StrEnum):
+      NEW = "new"
+      PAID = "paid"
+      CANCELLED = "cancelled"
+      REFUNDED = "cancelled"
+
+
+  print([s.name for s in OrderStatus])
+  print(OrderStatus.REFUNDED is OrderStatus.CANCELLED)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert [s.name for s in OrderStatus] == ["NEW", "PAID", "CANCELLED", "REFUNDED"]
+      fail: "`REFUNDED` нет в списке статусов. Что делает `Enum` с членом, у которого значение уже занято?"
+    - code: |
+        assert OrderStatus.REFUNDED is not OrderStatus.CANCELLED and OrderStatus("refunded") is OrderStatus.REFUNDED
+      fail: "`REFUNDED` — отдельный статус со значением `\"refunded\"`."
+    - code: |
+        assert "unique" in source
+      fail: "Защитите перечисление от повторяющихся значений декоратором `@unique` из модуля `enum`."
+solution: |
+  from enum import StrEnum, unique
+
+
+  @unique
+  class OrderStatus(StrEnum):
+      NEW = "new"
+      PAID = "paid"
+      CANCELLED = "cancelled"
+      REFUNDED = "refunded"
+
+
+  print([s.name for s in OrderStatus])
+  print(OrderStatus.REFUNDED is OrderStatus.CANCELLED)
+hints:
+  - "Выведите `OrderStatus.REFUNDED.name`."
+  - "Дайте значение `\"refunded\"` и добавьте над классом `@unique` (`from enum import StrEnum, unique`)."
+explanation: |
+  Если значение уже занято, `Enum` делает новое имя псевдонимом существующего члена:
+  `OrderStatus.REFUNDED` — это тот же объект, что `CANCELLED`, и при переборе псевдонимы
+  не выдаются. Ошибки нет, статус просто исчезает. Отдельное значение делает его настоящим членом,
+  а `@unique` превращает повтор значений в `ValueError` при объявлении класса — такую ошибку
+  не пропустить.

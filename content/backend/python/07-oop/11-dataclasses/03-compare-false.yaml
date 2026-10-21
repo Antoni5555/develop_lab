@@ -1,0 +1,71 @@
+title: Одинаковые позиции не совпадают
+type: exercise
+difficulty: 2
+pitfall: Сгенерированный `__eq__` сравнивает все поля — в том числе служебные, вроде времени добавления.
+statement: |
+  Перед оформлением сайт проверяет, не изменилась ли корзина с прошлого раза:
+  `cart_changed(old, new)` сравнивает два списка позиций. Позиция хранит время,
+  когда её добавили (`added_at`), и при каждой загрузке корзины оно обновляется.
+  Из-за этого корзина «меняется» всегда. Сделайте так, чтобы позиции сравнивались
+  только по товару и количеству, а `added_at` остался в объекте и в `repr`.
+starter_code: |
+  from dataclasses import dataclass, field
+  from datetime import datetime
+
+
+  @dataclass
+  class CartItem:
+      product_id: int
+      quantity: int
+      added_at: datetime
+
+
+  def cart_changed(old, new):
+      return old != new
+
+
+  old = [CartItem(1, 2, datetime(2026, 10, 20, 9, 0))]
+  new = [CartItem(1, 2, datetime(2026, 10, 21, 18, 30))]
+  print(cart_changed(old, new))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert cart_changed(old, new) is False
+      fail: "Корзина считается изменённой, хотя товары те же. Какие поля сравнивает `__eq__` dataclass?"
+    - code: |
+        t = datetime(2026, 1, 1)
+        assert cart_changed([CartItem(1, 2, t)], [CartItem(1, 3, t)]) is True
+        assert cart_changed([CartItem(1, 2, t)], [CartItem(5, 2, t)]) is True
+      fail: Другой товар или другое количество — корзина изменилась.
+    - code: |
+        item = CartItem(1, 2, datetime(2026, 10, 20, 9, 0))
+        assert item.added_at == datetime(2026, 10, 20, 9, 0) and "added_at=" in repr(item)
+      fail: "`added_at` должен остаться в объекте и в `repr`."
+solution: |
+  from dataclasses import dataclass, field
+  from datetime import datetime
+
+
+  @dataclass
+  class CartItem:
+      product_id: int
+      quantity: int
+      added_at: datetime = field(compare=False)
+
+
+  def cart_changed(old, new):
+      return old != new
+
+
+  old = [CartItem(1, 2, datetime(2026, 10, 20, 9, 0))]
+  new = [CartItem(1, 2, datetime(2026, 10, 21, 18, 30))]
+  print(cart_changed(old, new))
+hints:
+  - "Сгенерированный `__eq__` сравнивает кортежи всех полей по порядку."
+  - "У `field` есть параметр `compare`: `added_at: datetime = field(compare=False)`."
+explanation: |
+  `@dataclass` строит `__eq__` по всем полям. Время добавления различается, и позиции не равны,
+  хотя для покупателя это одно и то же. `field(compare=False)` исключает поле из `__eq__`
+  (и из хеша, если он есть), но оставляет его в `__init__` и `__repr__`. Значения по умолчанию
+  у поля нет, поэтому порядок полей не меняется и вызов `CartItem(1, 2, t)` работает как раньше.

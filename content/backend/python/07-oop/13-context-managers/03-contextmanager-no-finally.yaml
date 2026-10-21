@@ -1,0 +1,96 @@
+title: Корзина заблокирована навсегда
+type: exercise
+difficulty: 2
+pitfall: В `@contextmanager` код после `yield` не выполнится при ошибке в блоке, если он не в `finally`.
+statement: |
+  Чтобы два запроса одного покупателя не меняли корзину одновременно, её блокируют
+  на время изменения: `with locked_cart(cart_id): ...`. Если внутри блока случилась ошибка,
+  корзина остаётся заблокированной, и все следующие запросы получают «корзина заблокирована».
+  Исправьте `locked_cart` так, чтобы блокировка снималась при любом исходе,
+  а ошибка из блока по-прежнему доходила до вызывающего кода.
+starter_code: |
+  from contextlib import contextmanager
+
+  LOCKED = set()
+
+
+  @contextmanager
+  def locked_cart(cart_id):
+      if cart_id in LOCKED:
+          raise RuntimeError(f"корзина {cart_id} заблокирована")
+      LOCKED.add(cart_id)
+      yield
+      LOCKED.discard(cart_id)
+
+
+  try:
+      with locked_cart(7):
+          int("два")
+  except ValueError:
+      pass
+  with locked_cart(7):
+      print("второй запрос прошёл")
+check:
+  type: tests
+  tests:
+    - code: |
+        try:
+            with locked_cart(8):
+                raise KeyError(1)
+        except KeyError:
+            pass
+        assert 8 not in LOCKED
+      fail: "После ошибки в блоке корзина осталась заблокированной. Выполняется ли код после `yield`, если блок упал?"
+    - code: |
+        try:
+            with locked_cart(9):
+                raise ValueError("x")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: Ошибка из блока должна доходить до вызывающего кода.
+    - code: |
+        with locked_cart(10):
+            assert 10 in LOCKED
+            try:
+                with locked_cart(10):
+                    pass
+            except RuntimeError:
+                pass
+            else:
+                raise AssertionError
+        assert 10 not in LOCKED
+      fail: Внутри блока корзина заблокирована, после успешного блока — разблокирована.
+solution: |
+  from contextlib import contextmanager
+
+  LOCKED = set()
+
+
+  @contextmanager
+  def locked_cart(cart_id):
+      if cart_id in LOCKED:
+          raise RuntimeError(f"корзина {cart_id} заблокирована")
+      LOCKED.add(cart_id)
+      try:
+          yield
+      finally:
+          LOCKED.discard(cart_id)
+
+
+  try:
+      with locked_cart(7):
+          int("два")
+  except ValueError:
+      pass
+  with locked_cart(7):
+      print("второй запрос прошёл")
+hints:
+  - "Ошибка блока `with` выбрасывается внутри генератора — в строке `yield`."
+  - "Оберните `yield` в `try/finally` и снимайте блокировку в `finally`."
+explanation: |
+  `@contextmanager` выполняет генератор до `yield`, а ошибку блока выбрасывает в генераторе
+  ровно в строке `yield`. Код после `yield` выполняется только при успехе. `finally`
+  срабатывает при любом исходе: блокировку снимаем всегда, а ошибка после `finally` летит
+  дальше сама. Здесь нужен именно `finally`, а не `except`: разблокировать надо и после успеха.

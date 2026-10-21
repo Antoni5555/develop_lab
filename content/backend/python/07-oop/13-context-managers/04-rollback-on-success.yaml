@@ -1,0 +1,72 @@
+title: Изменения корзины не сохраняются
+type: exercise
+difficulty: 2
+pitfall: "`__exit__` вызывается и при успехе — действия «только при ошибке» нужно ставить под проверку `exc_type`."
+statement: |
+  `CartTransaction` должна откатывать изменения корзины, если в блоке случилась ошибка.
+  Но откатываются и удачные изменения: после блока корзина всегда такая, как до него.
+  Исправьте `CartTransaction`.
+starter_code: |
+  class CartTransaction:
+      def __init__(self, cart):
+          self.cart = cart
+
+      def __enter__(self):
+          self.snapshot = dict(self.cart)
+          return self.cart
+
+      def __exit__(self, exc_type, exc, tb):
+          self.cart.clear()
+          self.cart.update(self.snapshot)
+
+
+  cart = {1: 2}
+  with CartTransaction(cart) as c:
+      c[5] = 1
+  print(cart)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert cart == {1: 2, 5: 1}
+      fail: "Удачные изменения пропали. Когда вызывается `__exit__` — только при ошибке или всегда?"
+    - code: |
+        c = {1: 2}
+        try:
+            with CartTransaction(c) as t:
+                t[7] = 3
+                t[1] = 0
+                raise ValueError("ошибка оплаты")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("ошибка должна дойти до вызывающего кода")
+        assert c == {1: 2}
+      fail: При ошибке корзина возвращается к исходному составу, а ошибка летит дальше.
+solution: |
+  class CartTransaction:
+      def __init__(self, cart):
+          self.cart = cart
+
+      def __enter__(self):
+          self.snapshot = dict(self.cart)
+          return self.cart
+
+      def __exit__(self, exc_type, exc, tb):
+          if exc_type is not None:
+              self.cart.clear()
+              self.cart.update(self.snapshot)
+
+
+  cart = {1: 2}
+  with CartTransaction(cart) as c:
+      c[5] = 1
+  print(cart)
+hints:
+  - "Выведите `exc_type` в `__exit__` после успешного блока."
+  - "Откатывайте только под `if exc_type is not None:`."
+explanation: |
+  `__exit__` вызывается при любом выходе из блока: при успехе с тремя `None`, при ошибке —
+  с данными исключения. Без проверки откат выполняется всегда, и удачная транзакция стирает
+  сама себя. `exc_type is not None` отличает ошибку от успеха. Так устроены транзакции
+  в базах данных: при успехе — фиксация, при ошибке — откат.

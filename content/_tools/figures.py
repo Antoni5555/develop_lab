@@ -563,6 +563,28 @@ def is_a_has_a():
     f.save(out(PY7 / "10-composition" / "img" / "is-a-has-a.svg"))
 
 
+# ---------- Python 7.13: как работает with ----------
+def with_flow():
+    f = Figure(860, 404, "with вызывает __enter__, выполняет блок и всегда вызывает __exit__; при ошибке истинный результат __exit__ подавляет исключение")
+    f.box(350, 16, 260, 44, "with Reservation(1, 2) as r:", "box", "cs")
+    f.arrow("M480 60V84")
+    f.box(350, 88, 260, 44, "r = __enter__()", "box2", "c")
+    f.arrow("M480 132V156")
+    f.diamond(480, 196, 260, 76, "блок завершился с ошибкой?")
+    f.arrow("M350 196H264"); f.text(307, 186, "нет", "s", "middle")
+    f.box(20, 174, 240, 44, "__exit__(None, None, None)", "ok", "cs")
+    f.arrow("M140 218V300")
+    f.box(20, 304, 240, 44, "код после with", "box")
+    f.arrow("M480 234V262"); f.text(492, 254, "да", "s")
+    f.box(350, 266, 260, 44, "__exit__(type, exc, tb)", "box2", "cs")
+    f.arrow("M610 288H648")
+    f.diamond(720, 288, 144, 70, "вернул True?")
+    f.box(640, 344, 160, 40, "ошибка летит дальше", "err", "errt")
+    f.arrow("M720 323V340"); f.text(732, 336, "нет", "s")
+    f.arrow("M792 288H836V394H140V352"); f.text(844, 280, "да", "s", "end")
+    f.text(300, 388, "да — ошибка подавлена, выполнение идёт дальше", "s")
+    f.save(out(PY7 / "13-context-managers" / "img" / "with-flow.svg"))
+
 if __name__ == "__main__":
     for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
                   sets_venn, nested_order, copy_modes, comprehension_anatomy,
@@ -570,6 +592,6 @@ if __name__ == "__main__":
                   try_flow, traceback_stack, for_protocol, generator_flow, lazy_pipeline,
                   dict_lookup, lost_key, objects_and_class,
                   attribute_lookup, inheritance_mro, shop_errors,
-                  is_a_has_a):
+                  is_a_has_a, with_flow):
         build()
     print("ok")

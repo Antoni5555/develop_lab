@@ -1,0 +1,64 @@
+title: Статус из API не распознаётся
+type: exercise
+difficulty: 1
+pitfall: "`Enum[...]` ищет член по имени, а `Enum(...)` — по значению; строки из API — это значения."
+statement: |
+  Менеджер меняет статус заказа через API, присылая `{"status": "paid"}`.
+  `parse_status(raw)` должна вернуть член `OrderStatus`, а на неизвестную строку —
+  выбросить `ValueError`. Сейчас на любой правильный статус она падает с `KeyError`.
+  Исправьте функцию.
+starter_code: |
+  from enum import StrEnum
+
+
+  class OrderStatus(StrEnum):
+      NEW = "new"
+      PAID = "paid"
+      SHIPPED = "shipped"
+      CANCELLED = "cancelled"
+
+
+  def parse_status(raw):
+      return OrderStatus[raw]
+
+
+  print(parse_status("paid"))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert parse_status("paid") is OrderStatus.PAID and parse_status("cancelled") is OrderStatus.CANCELLED
+      fail: "`KeyError: 'paid'`. По чему ищут квадратные скобки — по имени `PAID` или по значению `\"paid\"`?"
+    - code: |
+        for raw in ("payed", "PAID"):
+            try:
+                parse_status(raw)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError(raw)
+      fail: "Неизвестная строка — `ValueError`. Имя члена (`\"PAID\"`) статусом из API не считается."
+solution: |
+  from enum import StrEnum
+
+
+  class OrderStatus(StrEnum):
+      NEW = "new"
+      PAID = "paid"
+      SHIPPED = "shipped"
+      CANCELLED = "cancelled"
+
+
+  def parse_status(raw):
+      return OrderStatus(raw)
+
+
+  print(parse_status("paid"))
+hints:
+  - "Сравните `OrderStatus[\"PAID\"]` и `OrderStatus(\"paid\")`."
+  - "Значение из API превращают круглыми скобками: `OrderStatus(raw)`."
+explanation: |
+  `OrderStatus[raw]` ищет член по имени — `PAID`, `NEW`. Строка `"paid"` — значение, по имени
+  такого члена нет, отсюда `KeyError`. И наоборот: имя `"PAID"` с квадратными скобками прошло бы,
+  хотя такого статуса в API нет. `OrderStatus(raw)` ищет по значению и на неизвестную строку
+  выбрасывает именно `ValueError`.

@@ -1,0 +1,108 @@
+title: Оплата упала, а заказ оформлен
+type: exercise
+difficulty: 2
+pitfall: Истинный результат `__exit__` подавляет любое исключение блока — вызывающий код не узнаёт об ошибке.
+statement: |
+  `Reservation` резервирует товар и снимает резерв, если оплата не прошла. Но когда платёжный
+  сервис падает, `checkout` всё равно отвечает «заказ оформлен». Исправьте `Reservation`:
+  при ошибке резерв снимается, а исключение доходит до вызывающего кода.
+starter_code: |
+  STOCK = {1: 5}
+
+
+  class Reservation:
+      def __init__(self, product_id, quantity):
+          self.product_id = product_id
+          self.quantity = quantity
+
+      def __enter__(self):
+          STOCK[self.product_id] -= self.quantity
+          return self
+
+      def __exit__(self, exc_type, exc, tb):
+          if exc_type is not None:
+              STOCK[self.product_id] += self.quantity
+          return True
+
+
+  def charge(card):
+      if card == "0000":
+          raise ConnectionError("платёжный сервис недоступен")
+
+
+  def checkout(product_id, quantity, card):
+      with Reservation(product_id, quantity):
+          charge(card)
+      return "заказ оформлен"
+
+
+  try:
+      print(checkout(1, 2, "0000"))
+  except ConnectionError as e:
+      print("ошибка:", e)
+  print("на складе:", STOCK[1])
+check:
+  type: tests
+  tests:
+    - code: |
+        try:
+            checkout(1, 2, "0000")
+        except ConnectionError:
+            pass
+        else:
+            raise AssertionError
+      fail: "Ошибка оплаты не дошла до `checkout`. Что делает `return True` в `__exit__`?"
+    - code: |
+        before = STOCK[1]
+        try:
+            checkout(1, 2, "0000")
+        except ConnectionError:
+            pass
+        assert STOCK[1] == before
+      fail: При ошибке оплаты резерв должен сниматься.
+    - code: |
+        before = STOCK[1]
+        assert checkout(1, 2, "4242") == "заказ оформлен" and STOCK[1] == before - 2
+      fail: При успешной оплате товар остаётся зарезервированным.
+solution: |
+  STOCK = {1: 5}
+
+
+  class Reservation:
+      def __init__(self, product_id, quantity):
+          self.product_id = product_id
+          self.quantity = quantity
+
+      def __enter__(self):
+          STOCK[self.product_id] -= self.quantity
+          return self
+
+      def __exit__(self, exc_type, exc, tb):
+          if exc_type is not None:
+              STOCK[self.product_id] += self.quantity
+
+
+  def charge(card):
+      if card == "0000":
+          raise ConnectionError("платёжный сервис недоступен")
+
+
+  def checkout(product_id, quantity, card):
+      with Reservation(product_id, quantity):
+          charge(card)
+      return "заказ оформлен"
+
+
+  try:
+      print(checkout(1, 2, "0000"))
+  except ConnectionError as e:
+      print("ошибка:", e)
+  print("на складе:", STOCK[1])
+hints:
+  - "Что `with` делает с исключением, если `__exit__` вернул `True`?"
+  - "Уберите `return True` — `__exit__` вернёт `None`, и ошибка полетит дальше после отката."
+explanation: |
+  `with` смотрит на результат `__exit__`: истинное значение означает «исключение обработано»,
+  и оно исчезает. Выполнение продолжается после блока, и `checkout` сообщает об успехе.
+  Без `return` `__exit__` возвращает `None`: откат выполнен, а исключение летит дальше
+  к обработчику запроса. Он и должен решить, что ответить покупателю.

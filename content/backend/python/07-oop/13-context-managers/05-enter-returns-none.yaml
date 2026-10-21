@@ -1,0 +1,65 @@
+title: as получает None
+type: exercise
+difficulty: 1
+pitfall: В переменную после `as` попадает результат `__enter__` — без `return` это `None`.
+statement: |
+  `OrderTimer` замеряет, сколько длилось оформление заказа, и записывает результат в `self.events`.
+  Внутри блока к таймеру обращаются через `as`, чтобы отметить этапы: `timer.mark("оплата")`.
+  Сейчас блок падает с `AttributeError: 'NoneType' object has no attribute 'mark'`. Исправьте класс.
+starter_code: |
+  class OrderTimer:
+      def __init__(self, order_id):
+          self.order_id = order_id
+          self.events = []
+
+      def __enter__(self):
+          self.events.append("начало")
+
+      def mark(self, stage):
+          self.events.append(stage)
+
+      def __exit__(self, exc_type, exc, tb):
+          self.events.append("конец")
+
+
+  with OrderTimer(1042) as timer:
+      timer.mark("оплата")
+  print(timer.events)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert timer.events == ["начало", "оплата", "конец"]
+      fail: "`timer` внутри блока — `None`. Что возвращает `__enter__`?"
+    - code: |
+        with OrderTimer(1) as t:
+            assert isinstance(t, OrderTimer) and t.order_id == 1
+      fail: "В `as` должен попадать сам таймер."
+solution: |
+  class OrderTimer:
+      def __init__(self, order_id):
+          self.order_id = order_id
+          self.events = []
+
+      def __enter__(self):
+          self.events.append("начало")
+          return self
+
+      def mark(self, stage):
+          self.events.append(stage)
+
+      def __exit__(self, exc_type, exc, tb):
+          self.events.append("конец")
+
+
+  with OrderTimer(1042) as timer:
+      timer.mark("оплата")
+  print(timer.events)
+hints:
+  - "`with X() as t` кладёт в `t` не `X()`, а результат `X().__enter__()`."
+  - "Добавьте `return self` в конец `__enter__`."
+explanation: |
+  `with` создаёт объект, вызывает его `__enter__` и связывает с именем после `as` именно
+  **результат** этого вызова. Функция без `return` возвращает `None`. `return self` отдаёт
+  в блок сам менеджер. Так делает и `open`: файл и есть менеджер, его `__enter__` возвращает
+  сам файл.
