@@ -1,0 +1,62 @@
+title: Заказ из JSON не создаётся
+type: exercise
+difficulty: 1
+pitfall: Без `@classmethod` метод ждёт объект — при вызове через класс аргументы сдвигаются.
+statement: |
+  Заказы приходят из API словарём. `Order.from_dict(data)` должен создать заказ:
+  цены позиций приходят строками и превращаются в `Decimal`, а статус по умолчанию — `"new"`.
+  Сейчас вызов падает с `TypeError`. Исправьте класс.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Order:
+      def __init__(self, id, items, status="new"):
+          self.id = id
+          self.items = items
+          self.status = status
+
+      def from_dict(cls, data):
+          items = [(i["product_id"], i["quantity"], Decimal(i["price"])) for i in data["items"]]
+          return cls(data["id"], items, data.get("status", "new"))
+
+
+  order = Order.from_dict({"id": 1042, "items": [{"product_id": 1, "quantity": 2, "price": "1499.00"}]})
+  print(order.id, order.items, order.status)
+check:
+  type: tests
+  tests:
+    - code: |
+        o = Order.from_dict({"id": 1, "items": [], "status": "paid"})
+        assert isinstance(o, Order) and o.id == 1 and o.status == "paid"
+      fail: "`Order.from_dict(data)` должен вернуть объект `Order`. Что Python передаёт в `cls`, если метод вызван через класс без декоратора?"
+    - code: |
+        o = Order.from_dict({"id": 2, "items": [{"product_id": 5, "quantity": 1, "price": "490.00"}]})
+        assert o.items == [(5, 1, Decimal("490.00"))] and o.status == "new"
+      fail: Цены — `Decimal`, статус по умолчанию — `"new"`.
+solution: |
+  from decimal import Decimal
+
+
+  class Order:
+      def __init__(self, id, items, status="new"):
+          self.id = id
+          self.items = items
+          self.status = status
+
+      @classmethod
+      def from_dict(cls, data):
+          items = [(i["product_id"], i["quantity"], Decimal(i["price"])) for i in data["items"]]
+          return cls(data["id"], items, data.get("status", "new"))
+
+
+  order = Order.from_dict({"id": 1042, "items": [{"product_id": 1, "quantity": 2, "price": "1499.00"}]})
+  print(order.id, order.items, order.status)
+hints:
+  - "Прочитайте ошибку: какого аргумента не хватает и куда попал словарь?"
+  - "Метод, который получает класс, помечают декоратором `@classmethod`."
+explanation: |
+  Без декоратора `from_dict` — обычная функция в классе. При вызове через класс Python ничего
+  не подставляет сам: словарь попадает в первый параметр `cls`, а `data` остаётся без значения.
+  `@classmethod` заставляет Python передавать первым аргументом класс — и через класс,
+  и через объект.

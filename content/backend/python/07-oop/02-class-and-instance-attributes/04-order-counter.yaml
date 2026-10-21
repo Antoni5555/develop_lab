@@ -1,0 +1,58 @@
+title: Все заказы под номером 1001
+type: exercise
+difficulty: 2
+pitfall: "`self.x += 1` читает атрибут класса, а записывает результат в объект — счётчик класса не растёт."
+statement: |
+  Каждый новый заказ должен получать следующий номер: 1001, 1002, 1003…
+  Счётчик хранится в атрибуте класса `next_number`. Сейчас все заказы получают номер 1001.
+  Исправьте `__init__`.
+starter_code: |
+  class Order:
+      next_number = 1001
+
+      def __init__(self, user_id):
+          self.user_id = user_id
+          self.number = self.next_number
+          self.next_number += 1
+
+
+  orders = [Order(user_id=7), Order(user_id=8), Order(user_id=7)]
+  print([order.number for order in orders])
+check:
+  type: tests
+  tests:
+    - code: |
+        assert [order.number for order in orders] == [1001, 1002, 1003]
+      fail: "Заказы программы получили номера не 1001, 1002, 1003. Куда записывает результат `self.next_number += 1` — в класс или в объект?"
+    - code: |
+        Order = run()["Order"]
+        start = Order(1).number
+        assert [Order(1).number for _ in range(2)] == [start + 1, start + 2]
+      fail: Каждый следующий заказ получает номер на 1 больше предыдущего.
+    - code: |
+        Order = run()["Order"]
+        start = Order.next_number
+        Order(1)
+        Order(2)
+        assert Order.next_number == start + 2
+      fail: После двух новых заказов счётчик класса должен вырасти на 2.
+solution: |
+  class Order:
+      next_number = 1001
+
+      def __init__(self, user_id):
+          self.user_id = user_id
+          self.number = Order.next_number
+          Order.next_number += 1
+
+
+  orders = [Order(user_id=7), Order(user_id=8), Order(user_id=7)]
+  print([order.number for order in orders])
+hints:
+  - "Распишите `self.next_number += 1` как `self.next_number = self.next_number + 1`. Откуда читается значение и куда записывается?"
+  - "Счётчик меняйте через класс: `Order.next_number += 1`."
+explanation: |
+  `self.next_number += 1` — это `self.next_number = self.next_number + 1`. Справа значение
+  читается из класса (у объекта его ещё нет), а результат слева записывается **в объект**.
+  Счётчик класса остаётся 1001, и следующий заказ снова получает этот номер.
+  `Order.next_number += 1` читает и записывает атрибут класса.

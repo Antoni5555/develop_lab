@@ -1,0 +1,88 @@
+title: Цена уходит в бесконечность
+type: exercise
+difficulty: 2
+pitfall: Сеттер, который присваивает самому свойству, вызывает сам себя — бесконечная рекурсия.
+statement: |
+  Тимлид добавил товару проверку цены через `property`. Теперь ни один товар
+  не создаётся: программа падает с `RecursionError`. Исправьте класс так, чтобы проверка
+  осталась: отрицательная цена — `ValueError`.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+      @property
+      def price(self):
+          return self.price
+
+      @price.setter
+      def price(self, value):
+          if value < 0:
+              raise ValueError(f"цена не может быть отрицательной: {value}")
+          self.price = value
+
+
+  mouse = Product("Мышь", Decimal("1499.00"))
+  mouse.price = Decimal("1299.00")
+  print(mouse.price)
+check:
+  type: tests
+  tests:
+    - code: |
+        p = Product("Мышь", Decimal("1499.00"))
+        p.price = Decimal("1299.00")
+        assert p.price == Decimal("1299.00")
+      fail: "Товар не создаётся или цена не меняется. Что вызывает `self.price = value` внутри сеттера `price`?"
+    - code: |
+        p = Product("Мышь", Decimal("1499.00"))
+        try:
+            p.price = Decimal("-1")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+        assert p.price == Decimal("1499.00")
+      fail: Отрицательная цена должна давать `ValueError`, а старая цена — сохраняться.
+    - code: |
+        try:
+            Product("Коврик", Decimal("-5"))
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: Проверка должна срабатывать и при создании товара.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+      @property
+      def price(self):
+          return self._price
+
+      @price.setter
+      def price(self, value):
+          if value < 0:
+              raise ValueError(f"цена не может быть отрицательной: {value}")
+          self._price = value
+
+
+  mouse = Product("Мышь", Decimal("1499.00"))
+  mouse.price = Decimal("1299.00")
+  print(mouse.price)
+hints:
+  - "`self.price = value` — это снова присваивание свойству `price`. Какой метод оно вызовет?"
+  - "Храните значение в другом атрибуте, например `self._price`, — и в сеттере, и в геттере."
+explanation: |
+  Пока у класса есть свойство `price`, любое `self.price = ...` вызывает его сеттер — в том числе
+  изнутри самого сеттера. Метод вызывает сам себя, пока не кончится глубина рекурсии.
+  То же с геттером: `return self.price` снова читает свойство. Свойство — это «вход», а значение
+  хранится в отдельном атрибуте `_price`, к которому свойство обращается напрямую.

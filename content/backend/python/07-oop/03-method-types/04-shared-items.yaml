@@ -1,0 +1,62 @@
+title: Заказ меняется сам собой
+type: exercise
+difficulty: 2
+pitfall: Конструктор, сохранивший ссылку на чужой список, связывает объект с данными снаружи.
+statement: |
+  Обработчик API берёт словарь корзины, создаёт из него заказ `Order.from_cart(cart)`,
+  а потом очищает корзину: `cart["items"].clear()`. После этого заказ оказывается пустым.
+  Исправьте `from_cart` так, чтобы заказ не зависел от дальнейших изменений корзины.
+starter_code: |
+  class Order:
+      def __init__(self, user_id, items):
+          self.user_id = user_id
+          self.items = items
+
+      @classmethod
+      def from_cart(cls, cart):
+          return cls(cart["user_id"], cart["items"])
+
+
+  cart = {"user_id": 7, "items": [(1, 2), (5, 1)]}
+  order = Order.from_cart(cart)
+  cart["items"].clear()
+  print(order.items)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert order.items == [(1, 2), (5, 1)]
+      fail: "После очистки корзины заказ опустел. Это тот же список или копия?"
+    - code: |
+        c = {"user_id": 8, "items": [(3, 1)]}
+        o = Order.from_cart(c)
+        c["items"].append((4, 4))
+        assert o.items == [(3, 1)]
+      fail: Товары, добавленные в корзину после оформления, не должны попадать в заказ.
+    - code: |
+        o = Order.from_cart({"user_id": 9, "items": [(1, 1)]})
+        assert isinstance(o, Order) and o.user_id == 9 and o.items == [(1, 1)]
+      fail: "`from_cart` должен вернуть заказ с `user_id` и позициями корзины."
+solution: |
+  class Order:
+      def __init__(self, user_id, items):
+          self.user_id = user_id
+          self.items = items
+
+      @classmethod
+      def from_cart(cls, cart):
+          return cls(cart["user_id"], list(cart["items"]))
+
+
+  cart = {"user_id": 7, "items": [(1, 2), (5, 1)]}
+  order = Order.from_cart(cart)
+  cart["items"].clear()
+  print(order.items)
+hints:
+  - "Проверьте `order.items is cart[\"items\"]`."
+  - "Передайте в конструктор копию: `list(cart[\"items\"])`."
+explanation: |
+  `cls(cart["user_id"], cart["items"])` передаёт в заказ ссылку на тот же список, что лежит
+  в корзине. `clear()` очищает этот единственный список — и в корзине, и в заказе.
+  `list(...)` создаёт новый список с теми же позициями. Позиции — кортежи, они неизменяемы,
+  поэтому поверхностной копии достаточно.

@@ -1,0 +1,62 @@
+title: Промокод не создаётся
+type: exercise
+difficulty: 2
+pitfall: Имена из тела класса не видны внутри методов — статический метод вызывают через `self.` или имя класса.
+statement: |
+  Покупатели вводят промокоды как попало: `" spring10 "`, `"Spring10"`.
+  `PromoCode` хранит код в едином виде: без пробелов по краям и заглавными буквами.
+  Приведением занимается статический метод `normalize`. Любое создание промокода падает
+  с `NameError`. Исправьте класс.
+starter_code: |
+  class PromoCode:
+      def __init__(self, code, discount_percent):
+          self.code = normalize(code)
+          self.discount_percent = discount_percent
+
+      @staticmethod
+      def normalize(code):
+          return code.strip().upper()
+
+      def matches(self, entered):
+          return normalize(entered) == self.code
+
+
+  promo = PromoCode(" spring10 ", 10)
+  print(promo.code, promo.matches("Spring10"))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert PromoCode(" spring10 ", 10).code == "SPRING10"
+      fail: "Промокод не создаётся или код не приведён. Где Python ищет голое имя `normalize` внутри `__init__`?"
+    - code: |
+        p = PromoCode("SPRING10", 10)
+        assert p.matches("  spring10") and not p.matches("summer5")
+      fail: "`matches` должна приводить введённый код так же и сравнивать с сохранённым."
+    - code: |
+        assert PromoCode.normalize(" a1 ") == "A1"
+      fail: "`normalize` должна остаться статическим методом: `PromoCode.normalize(...)` работает без объекта."
+solution: |
+  class PromoCode:
+      def __init__(self, code, discount_percent):
+          self.code = self.normalize(code)
+          self.discount_percent = discount_percent
+
+      @staticmethod
+      def normalize(code):
+          return code.strip().upper()
+
+      def matches(self, entered):
+          return self.normalize(entered) == self.code
+
+
+  promo = PromoCode(" spring10 ", 10)
+  print(promo.code, promo.matches("Spring10"))
+hints:
+  - "`normalize` объявлена в теле класса. Видно ли тело класса из функций внутри него?"
+  - "Вызывайте через объект или класс: `self.normalize(code)` или `PromoCode.normalize(code)`."
+explanation: |
+  Голое имя внутри метода ищется в локальной области, во внешних функциях, в модуле
+  и среди встроенных имён. Тело класса в этот список не входит, поэтому `normalize` не находится.
+  Статический метод — атрибут класса, и брать его нужно как атрибут: `self.normalize(...)`
+  или `PromoCode.normalize(...)`. Исправить нужно оба места — `__init__` и `matches`.

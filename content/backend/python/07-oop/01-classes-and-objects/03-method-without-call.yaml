@@ -1,0 +1,74 @@
+title: Все товары «в наличии»
+type: exercise
+difficulty: 1
+pitfall: Метод без скобок — это сам метод, а не его результат, и в условии он всегда истинен.
+statement: |
+  `available_names(products)` должна вернуть список названий товаров, которые есть на складе.
+  Сейчас в список попадают все товары, даже с нулевым остатком. Исправьте функцию.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price, stock):
+          self.name = name
+          self.price = price
+          self.stock = stock
+
+      def is_available(self):
+          return self.stock > 0
+
+
+  def available_names(products):
+      return [p.name for p in products if p.is_available]
+
+
+  catalog = [
+      Product("Беспроводная мышь", Decimal("1499.00"), 12),
+      Product("Коврик для мыши", Decimal("490.00"), 0),
+      Product("Клавиатура", Decimal("2990.00"), 3),
+  ]
+  print(available_names(catalog))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert available_names(catalog) == ["Беспроводная мышь", "Клавиатура"]
+      fail: "В список попал товар с нулевым остатком. Что возвращает `p.is_available` без скобок?"
+    - code: |
+        assert available_names([Product("Коврик", Decimal("490"), 0)]) == []
+      fail: Если товаров на складе нет — пустой список.
+    - code: |
+        assert available_names([]) == []
+      fail: Пустой каталог — пустой список.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price, stock):
+          self.name = name
+          self.price = price
+          self.stock = stock
+
+      def is_available(self):
+          return self.stock > 0
+
+
+  def available_names(products):
+      return [p.name for p in products if p.is_available()]
+
+
+  catalog = [
+      Product("Беспроводная мышь", Decimal("1499.00"), 12),
+      Product("Коврик для мыши", Decimal("490.00"), 0),
+      Product("Клавиатура", Decimal("2990.00"), 3),
+  ]
+  print(available_names(catalog))
+hints:
+  - "Выведите `bool(catalog[1].is_available)` и `catalog[1].is_available()`."
+  - Метод нужно вызвать — со скобками.
+explanation: |
+  `p.is_available` — объект-метод, привязанный к товару. Как любой объект без особой логики,
+  он истинен, поэтому условие пропускает все товары. Результат проверки даёт только вызов
+  `p.is_available()`.

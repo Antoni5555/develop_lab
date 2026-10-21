@@ -1,0 +1,73 @@
+title: Товар уже в корзине?
+type: exercise
+difficulty: 2
+pitfall: По умолчанию `==` и `in` сравнивают объекты по тождеству — два объекта с одинаковыми данными не равны.
+statement: |
+  Корзина — список объектов `Product`. Перед добавлением товара сайт проверяет,
+  нет ли его уже в корзине. Товар каждый раз загружается из каталога заново — это новый объект
+  с теми же данными. Из-за этого `in_cart` всегда возвращает `False`, и товар дублируется.
+  Исправьте `in_cart(cart, product)`: товар уже в корзине, если там есть товар с тем же `id`.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, id, name, price):
+          self.id = id
+          self.name = name
+          self.price = price
+
+
+  def load_product(id):
+      names = {1: "Беспроводная мышь", 2: "Коврик для мыши"}
+      return Product(id, names[id], Decimal("1499.00"))
+
+
+  def in_cart(cart, product):
+      return product in cart
+
+
+  cart = [load_product(1)]
+  print(in_cart(cart, load_product(1)))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert in_cart([load_product(1)], load_product(1)) is True
+      fail: "Тот же товар, загруженный заново, не найден. Что сравнивает `in` для объектов без своего `==`?"
+    - code: |
+        assert in_cart([load_product(1)], load_product(2)) is False
+      fail: Другого товара в корзине нет — должно быть False.
+    - code: |
+        assert in_cart([], load_product(1)) is False
+      fail: В пустой корзине товара нет.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, id, name, price):
+          self.id = id
+          self.name = name
+          self.price = price
+
+
+  def load_product(id):
+      names = {1: "Беспроводная мышь", 2: "Коврик для мыши"}
+      return Product(id, names[id], Decimal("1499.00"))
+
+
+  def in_cart(cart, product):
+      return any(item.id == product.id for item in cart)
+
+
+  cart = [load_product(1)]
+  print(in_cart(cart, load_product(1)))
+hints:
+  - "Выведите `load_product(1) == load_product(1)`."
+  - "Сравнивайте не объекты, а их `id`: `any(... for item in cart)`."
+explanation: |
+  `in` проверяет каждый элемент через `==`, а для своих классов `==` по умолчанию означает
+  «это тот же самый объект». `load_product` каждый раз создаёт новый объект, поэтому совпадения
+  нет. Сравнение по полю `id` отвечает на вопрос «тот же товар?» независимо от того,
+  сколько раз его загрузили. Научить класс сравнивать себя — тема «Магические методы».

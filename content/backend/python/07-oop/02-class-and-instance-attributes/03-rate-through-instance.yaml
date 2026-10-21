@@ -1,0 +1,80 @@
+title: Курс сменился только у одного товара
+type: exercise
+difficulty: 2
+pitfall: Присваивание через `self` создаёт атрибут объекта и не меняет атрибут класса.
+statement: |
+  Курс доллара хранится в атрибуте класса `Product.usd_rate`. Когда банк присылает новый курс,
+  вызывается `set_rate(rate)` у любого товара. Курс должен смениться для **всего** каталога,
+  включая товары, созданные позже. Сейчас пересчитывается только один товар. Исправьте метод `set_rate`.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      usd_rate = Decimal("90.00")
+
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+      def price_usd(self):
+          return (self.price / self.usd_rate).quantize(Decimal("0.01"))
+
+      def set_rate(self, rate):
+          self.usd_rate = rate
+
+
+  mouse = Product("Мышь", Decimal("1499.00"))
+  pad = Product("Коврик", Decimal("490.00"))
+  mouse.set_rate(Decimal("100.00"))
+  print(mouse.price_usd(), pad.price_usd())
+check:
+  type: tests
+  tests:
+    - code: |
+        Product = run()["Product"]
+        a, b = Product("Мышь", Decimal("1499.00")), Product("Коврик", Decimal("490.00"))
+        a.set_rate(Decimal("100.00"))
+        assert b.price_usd() == Decimal("4.90")
+      fail: "Курс сменился у одного товара, а у другого остался старым. Куда записывает `self.usd_rate = rate`?"
+    - code: |
+        Product = run()["Product"]
+        Product("Мышь", Decimal("1499.00")).set_rate(Decimal("100.00"))
+        assert Product("Клавиатура", Decimal("2990.00")).price_usd() == Decimal("29.90")
+      fail: Товары, созданные после смены курса, тоже должны считаться по новому курсу.
+    - code: |
+        Product = run()["Product"]
+        a, b = Product("Мышь", Decimal("1499.00")), Product("Коврик", Decimal("490.00"))
+        a.set_rate(Decimal("100.00"))
+        b.set_rate(Decimal("98.00"))
+        assert a.price_usd() == Decimal("15.30") and Product.usd_rate == Decimal("98.00")
+      fail: Действует последний установленный курс — у всех товаров, кто бы его ни установил.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      usd_rate = Decimal("90.00")
+
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+      def price_usd(self):
+          return (self.price / self.usd_rate).quantize(Decimal("0.01"))
+
+      def set_rate(self, rate):
+          Product.usd_rate = rate
+
+
+  mouse = Product("Мышь", Decimal("1499.00"))
+  pad = Product("Коврик", Decimal("490.00"))
+  mouse.set_rate(Decimal("100.00"))
+  print(mouse.price_usd(), pad.price_usd())
+hints:
+  - "После `mouse.set_rate(...)` выведите `mouse.__dict__` и `Product.usd_rate`."
+  - "Общее значение меняют через класс: `Product.usd_rate = rate`."
+explanation: |
+  `self.usd_rate = rate` — присваивание через объект: у `mouse` появляется свой атрибут `usd_rate`,
+  а класс не меняется. Остальные товары по-прежнему находят старый курс в классе. Запись
+  `Product.usd_rate = rate` меняет само общее значение — его видят все объекты, и старые, и новые.

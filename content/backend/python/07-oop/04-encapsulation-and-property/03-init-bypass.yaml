@@ -1,0 +1,96 @@
+title: Товар с отрицательной ценой в каталоге
+type: exercise
+difficulty: 2
+pitfall: "`__init__`, записывающий во внутренний атрибут, обходит проверку сеттера."
+statement: |
+  В каталоге нашёлся товар с ценой `-490.00`, хотя у `Product` есть проверка цены.
+  Его создали при импорте прайс-листа. Исправьте класс так, чтобы товар с отрицательной ценой
+  нельзя было ни создать, ни получить изменением цены (`ValueError`).
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self._price = price
+
+      @property
+      def price(self):
+          return self._price
+
+      @price.setter
+      def price(self, value):
+          if value < 0:
+              raise ValueError(f"цена не может быть отрицательной: {value}")
+          self._price = value
+
+
+  rows = [("Мышь", "1499.00"), ("Коврик", "-490.00")]
+  catalog = []
+  for name, price in rows:
+      try:
+          catalog.append(Product(name, Decimal(price)))
+      except ValueError as e:
+          print("пропущен:", name, e)
+  print([p.name for p in catalog])
+check:
+  type: tests
+  tests:
+    - code: |
+        assert [p.name for p in catalog] == ["Мышь"]
+      fail: "Товар с отрицательной ценой попал в каталог. Через что `__init__` записывает цену — через свойство или мимо него?"
+    - code: |
+        try:
+            Product("Коврик", Decimal("-0.01"))
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: "`Product(..., отрицательная цена)` должен давать `ValueError`."
+    - code: |
+        p = Product("Мышь", Decimal("0"))
+        p.price = Decimal("10")
+        assert p.price == Decimal("10")
+        try:
+            p.price = Decimal("-1")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: Нулевая цена допустима; изменение цены тоже проверяется.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+      @property
+      def price(self):
+          return self._price
+
+      @price.setter
+      def price(self, value):
+          if value < 0:
+              raise ValueError(f"цена не может быть отрицательной: {value}")
+          self._price = value
+
+
+  rows = [("Мышь", "1499.00"), ("Коврик", "-490.00")]
+  catalog = []
+  for name, price in rows:
+      try:
+          catalog.append(Product(name, Decimal(price)))
+      except ValueError as e:
+          print("пропущен:", name, e)
+  print([p.name for p in catalog])
+hints:
+  - "Проверка живёт в сеттере. Вызывается ли он при `self._price = price`?"
+  - "В `__init__` присваивайте через свойство: `self.price = price`."
+explanation: |
+  Сеттер срабатывает только при присваивании свойству `price`. `self._price = price` в `__init__`
+  пишет прямо во внутренний атрибут, и проверка не выполняется. `self.price = price` направляет
+  и создание, и изменение через одну точку проверки — правило нельзя обойти.

@@ -1,0 +1,75 @@
+title: Списание, которое ничего не списывает
+type: exercise
+difficulty: 2
+pitfall: Снаружи класса `obj.__x = ...` создаёт новый атрибут — «частный» атрибут класса не меняется.
+statement: |
+  Бракованные товары списывают: остаток должен стать `0`. Остаток хранится в `__stock`
+  и читается через свойство `stock`. Функция `write_off(products)` «списывает»,
+  но остатки не меняются. Добавьте в класс метод `write_off()`, который обнуляет остаток,
+  и используйте его в функции.
+starter_code: |
+  class Product:
+      def __init__(self, name, stock):
+          self.name = name
+          self.__stock = stock
+
+      @property
+      def stock(self):
+          return self.__stock
+
+
+  def write_off(products):
+      for product in products:
+          product.__stock = 0
+
+
+  defective = [Product("Мышь", 3), Product("Коврик", 12)]
+  write_off(defective)
+  print([p.stock for p in defective])
+check:
+  type: tests
+  tests:
+    - code: |
+        assert [p.stock for p in defective] == [0, 0]
+      fail: "Остатки не обнулились. Как называется настоящий атрибут остатка и что создаёт `product.__stock = 0` снаружи класса?"
+    - code: |
+        p = Product("Клавиатура", 5)
+        p.write_off()
+        assert p.stock == 0
+      fail: "У товара должен быть метод `write_off()`, который обнуляет остаток."
+    - code: |
+        a, b = Product("Мышь", 3), Product("Коврик", 4)
+        write_off([a])
+        assert b.stock == 4 and "__stock" not in vars(a)
+      fail: "`write_off` должна менять только переданные товары и не создавать лишних атрибутов `__stock`."
+solution: |
+  class Product:
+      def __init__(self, name, stock):
+          self.name = name
+          self.__stock = stock
+
+      @property
+      def stock(self):
+          return self.__stock
+
+      def write_off(self):
+          self.__stock = 0
+
+
+  def write_off(products):
+      for product in products:
+          product.write_off()
+
+
+  defective = [Product("Мышь", 3), Product("Коврик", 12)]
+  write_off(defective)
+  print([p.stock for p in defective])
+hints:
+  - "Выведите `vars(defective[0])` после списания."
+  - "Внутри класса `self.__stock` превращается в `self._Product__stock`. Меняйте остаток методом класса."
+explanation: |
+  Искажение имени работает только в коде внутри класса: там `self.__stock` — это
+  `self._Product__stock`. В функции вне класса `product.__stock` ничего не искажает и просто
+  создаёт новый атрибут с именем `__stock`. Свойство `stock` читает старый атрибут, ошибки нет.
+  Изменения «частного» состояния — задача методов класса: `write_off()` внутри класса
+  меняет правильный атрибут.

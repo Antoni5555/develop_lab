@@ -442,11 +442,65 @@ def lazy_pipeline():
     f.save(out(PY6 / "03-lazy-pipelines" / "img" / "lazy-pipeline.svg"))
 
 
+PY7 = ROOT / "python" / "07-oop"
+
+
+# ---------- Python 7.01: объекты и класс ----------
+def objects_and_class():
+    f = Figure(860, 340, "Два объекта класса Product: атрибуты у каждого свои, методы общие и лежат в классе")
+    f.text(20, 24, "объекты — свои атрибуты", "h"); f.text(560, 24, "класс — общие методы", "h")
+    for i, (var, rows) in enumerate((("mouse", ("id = 1", 'name = "Беспроводная мышь"', 'price = Decimal("1499.00")', "stock = 12")),
+                                     ("pad", ("id = 2", 'name = "Коврик для мыши"', 'price = Decimal("490.00")', "stock = 0")))):
+        y = 40 + i * 130
+        f.box(20, y, 360, 112, "", "box")
+        f.text(36, y + 22, var, "c")
+        for k, row in enumerate(rows):
+            f.text(56, y + 44 + k * 19, row, "cs")
+        f.arrow(f"M380 {y + 56}H556", "lnd")
+    f.text(400, 88, "type(mouse)", "s"); f.text(400, 218, "type(pad)", "s")
+    f.box(560, 40, 280, 242, "", "box2")
+    f.text(576, 64, "class Product", "c")
+    for k, m in enumerate(("__init__(self, id, name, …)", "is_available(self)", "total(self, quantity)", "reserve(self, quantity)")):
+        f.raw(f'<rect x="576" y="{80 + k * 48}" width="248" height="38" rx="10" class="fig-{"acc" if k == 3 else "box"}"/>')
+        f.text(590, 104 + k * 48, m, "onacc" if k == 3 else "cs")
+    f.text(20, 312, "mouse.reserve(2)", "c"); f.arrow("M170 307H226")
+    f.text(236, 312, "Product.reserve(mouse, 2)", "c"); f.text(470, 312, "— внутри метода self это mouse", "s")
+    f.save(out(PY7 / "01-classes-and-objects" / "img" / "objects-and-class.svg"))
+
+
+# ---------- Python 7.02: поиск атрибута ----------
+def attribute_lookup():
+    f = Figure(880, 400, "Поиск mouse.usd_rate: сначала атрибуты объекта, потом класса; присваивание через объект заслоняет атрибут класса")
+    f.text(20, 24, "чтение mouse.usd_rate", "h")
+    f.box(20, 40, 250, 92, "", "box")
+    f.text(36, 64, "1  mouse.__dict__", "c"); f.text(56, 88, "name, price", "cs"); f.text(56, 110, "usd_rate — нет", "s")
+    f.arrow("M270 86H326"); f.text(282, 78, "нет", "s")
+    f.box(330, 40, 280, 92, "", "box2")
+    f.text(346, 64, "2  Product.__dict__", "c"); f.text(366, 88, "currency, price_usd", "cs"); f.text(366, 110, 'usd_rate = Decimal("100.00")', "cs")
+    f.arrow("M610 86H666"); f.text(622, 78, "нет", "s")
+    f.box(670, 62, 190, 48, "AttributeError", "err", "errt")
+    f.arrow("M470 132V164"); f.text(480, 154, "есть", "s")
+    f.box(370, 168, 200, 40, 'Decimal("100.00")', "ok", "cs")
+    f.line("M20 232H860", "lnd")
+    f.text(20, 262, 'после mouse.usd_rate = Decimal("50.00")', "h")
+    f.box(20, 278, 250, 104, "", "box")
+    f.text(36, 302, "1  mouse.__dict__", "c"); f.text(56, 326, "name, price", "cs")
+    f.raw('<rect x="44" y="336" width="218" height="30" rx="8" class="fig-acc"/>')
+    f.text(52, 356, 'usd_rate = Decimal("50.00")', "onacc")
+    f.arrow("M270 330H366"); f.text(290, 322, "есть", "s")
+    f.box(370, 310, 200, 40, 'Decimal("50.00")', "ok", "cs")
+    f.raw('<rect x="610" y="278" width="250" height="104" rx="12" class="fig-dash"/>')
+    f.text(626, 302, "Product.__dict__", "c"); f.text(626, 326, 'usd_rate = Decimal("100.00")', "cs")
+    f.text(626, 352, "не изменился и не нужен:", "s"); f.text(626, 370, "до класса поиск не дошёл", "s")
+    f.save(out(PY7 / "02-class-and-instance-attributes" / "img" / "attribute-lookup.svg"))
+
+
 if __name__ == "__main__":
     for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
                   sets_venn, nested_order, copy_modes, comprehension_anatomy,
                   mutable_default, legb_scopes, recursion_stack, decorator_wrap,
                   try_flow, traceback_stack, for_protocol, generator_flow, lazy_pipeline,
-                  dict_lookup, lost_key):
+                  dict_lookup, lost_key, objects_and_class,
+                  attribute_lookup):
         build()
     print("ok")

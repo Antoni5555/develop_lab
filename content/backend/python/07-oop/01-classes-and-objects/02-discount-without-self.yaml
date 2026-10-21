@@ -1,0 +1,75 @@
+title: Скидка, которая не сохраняется
+type: exercise
+difficulty: 1
+pitfall: Присваивание без `self.` внутри метода создаёт локальную переменную — объект не меняется, а ошибки нет.
+statement: |
+  Менеджер ставит товару скидку в процентах методом `set_discount(percent)`,
+  а `final_price()` возвращает цену со скидкой. Скидка «не применяется»:
+  после `set_discount(10)` цена остаётся прежней. Исправьте класс `Product`.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+          self.discount = 0
+
+      def set_discount(self, percent):
+          discount = percent
+
+      def final_price(self):
+          return self.price * (100 - self.discount) / 100
+
+
+  mouse = Product("Беспроводная мышь", Decimal("1500.00"))
+  mouse.set_discount(10)
+  print(mouse.final_price())
+check:
+  type: tests
+  tests:
+    - code: |
+        p = Product("Мышь", Decimal("1500.00"))
+        p.set_discount(10)
+        assert p.final_price() == Decimal("1350")
+      fail: "После `set_discount(10)` цена не изменилась. Куда записывается `discount` внутри метода — в объект или в локальную переменную?"
+    - code: |
+        p = Product("Коврик", Decimal("490.00"))
+        assert p.final_price() == Decimal("490")
+        p.set_discount(50)
+        p.set_discount(20)
+        assert p.final_price() == Decimal("392")
+      fail: Действует последняя установленная скидка; без скидки цена — полная.
+    - code: |
+        a, b = Product("Мышь", Decimal("1000")), Product("Коврик", Decimal("1000"))
+        a.set_discount(30)
+        assert b.final_price() == Decimal("1000")
+      fail: Скидка одного товара не должна менять цену другого.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+          self.discount = 0
+
+      def set_discount(self, percent):
+          self.discount = percent
+
+      def final_price(self):
+          return self.price * (100 - self.discount) / 100
+
+
+  mouse = Product("Беспроводная мышь", Decimal("1500.00"))
+  mouse.set_discount(10)
+  print(mouse.final_price())
+hints:
+  - "Добавьте `print(mouse.discount)` после `set_discount(10)`."
+  - Атрибут объекта внутри метода меняют только через `self.`.
+explanation: |
+  Внутри метода `discount = percent` — обычное присваивание локальной переменной: она исчезает,
+  когда метод заканчивается. Атрибут объекта остаётся `0`, и ошибки нет — поэтому баг
+  легко пропустить. `self.discount = percent` записывает значение в сам объект.

@@ -1,0 +1,68 @@
+title: Чужие товары в корзине
+type: exercise
+difficulty: 1
+pitfall: Список в теле класса — один на все объекты; `append` через объект меняет общий список.
+statement: |
+  Покупатели жалуются: в корзине появляются товары, которых они не добавляли.
+  Каждый покупатель получает свою корзину `Cart(user_id)`, а `add(product_id, quantity)`
+  добавляет в неё позицию. Исправьте класс так, чтобы у каждой корзины был свой список `items`.
+starter_code: |
+  class Cart:
+      items = []
+
+      def __init__(self, user_id):
+          self.user_id = user_id
+
+      def add(self, product_id, quantity):
+          self.items.append((product_id, quantity))
+
+
+  anna = Cart(user_id=7)
+  boris = Cart(user_id=8)
+  anna.add(1, 2)
+  boris.add(5, 1)
+  print(anna.items, boris.items)
+check:
+  type: tests
+  tests:
+    - code: |
+        Cart = run()["Cart"]
+        a, b = Cart(1), Cart(2)
+        a.add(1, 2)
+        b.add(5, 1)
+        assert a.items == [(1, 2)] and b.items == [(5, 1)]
+      fail: "Позиции одной корзины видны в другой. Сколько списков `items` существует на самом деле?"
+    - code: |
+        Cart = run()["Cart"]
+        Cart(1).add(1, 1)
+        assert Cart(2).items == []
+      fail: Новая корзина должна быть пустой, даже если до неё что-то добавляли в другие.
+    - code: |
+        Cart = run()["Cart"]
+        c = Cart(3)
+        c.add(1, 1)
+        c.add(2, 4)
+        assert c.items == [(1, 1), (2, 4)]
+      fail: Позиции одной корзины должны накапливаться по порядку.
+solution: |
+  class Cart:
+      def __init__(self, user_id):
+          self.user_id = user_id
+          self.items = []
+
+      def add(self, product_id, quantity):
+          self.items.append((product_id, quantity))
+
+
+  anna = Cart(user_id=7)
+  boris = Cart(user_id=8)
+  anna.add(1, 2)
+  boris.add(5, 1)
+  print(anna.items, boris.items)
+hints:
+  - "Проверьте `anna.items is boris.items`."
+  - "Создавайте список в `__init__`: `self.items = []`."
+explanation: |
+  Тело класса выполняется один раз, поэтому `items = []` — один список на все корзины.
+  `self.items.append(...)` ничего не присваивает: поиск находит атрибут класса, и `append`
+  меняет общий список. Список, созданный в `__init__`, появляется заново для каждой корзины.
