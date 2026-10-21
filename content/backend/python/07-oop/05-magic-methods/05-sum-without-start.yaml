@@ -1,0 +1,73 @@
+title: Сумма корзин падает
+type: exercise
+difficulty: 3
+pitfall: "`sum()` начинает с `0` — без начального значения первым выполняется `0 + объект`."
+statement: |
+  Покупатель собирал товары в нескольких сессиях, и у него накопилось несколько корзин.
+  Их нужно слить в одну. Корзины складываются оператором `+`, но
+  `merge_all(carts)` падает с `TypeError`. Исправьте `merge_all`: она возвращает
+  объединённую корзину, а для пустого списка — пустую корзину `Cart()`.
+starter_code: |
+  class Cart:
+      def __init__(self, items=None):
+          self.items = dict(items or {})
+
+      def __add__(self, other):
+          if not isinstance(other, Cart):
+              return NotImplemented
+          merged = Cart(self.items)
+          for product_id, quantity in other.items.items():
+              merged.items[product_id] = merged.items.get(product_id, 0) + quantity
+          return merged
+
+
+  def merge_all(carts):
+      return sum(carts)
+
+
+  carts = [Cart({1: 2}), Cart({1: 1, 5: 1}), Cart({7: 3})]
+  print(merge_all(carts).items)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert merge_all(carts).items == {1: 3, 5: 1, 7: 3}
+      fail: "`sum` падает с `TypeError`. С какого значения `sum` начинает складывать?"
+    - code: |
+        r = merge_all([])
+        assert isinstance(r, Cart) and r.items == {}
+      fail: Для пустого списка — пустая корзина `Cart()`, а не `0`.
+    - code: |
+        a = Cart({1: 1})
+        merge_all([a, Cart({1: 1})])
+        assert a.items == {1: 1}
+      fail: Исходные корзины не должны меняться.
+solution: |
+  class Cart:
+      def __init__(self, items=None):
+          self.items = dict(items or {})
+
+      def __add__(self, other):
+          if not isinstance(other, Cart):
+              return NotImplemented
+          merged = Cart(self.items)
+          for product_id, quantity in other.items.items():
+              merged.items[product_id] = merged.items.get(product_id, 0) + quantity
+          return merged
+
+
+  def merge_all(carts):
+      return sum(carts, Cart())
+
+
+  carts = [Cart({1: 2}), Cart({1: 1, 5: 1}), Cart({7: 3})]
+  print(merge_all(carts).items)
+hints:
+  - "Прочитайте ошибку: какие два типа Python пытается сложить?"
+  - "У `sum` есть второй аргумент — начальное значение: `sum(carts, Cart())`."
+explanation: |
+  `sum(carts)` считает `0 + carts[0] + carts[1] + ...`. `int.__add__` не умеет складываться
+  с корзиной, `Cart.__radd__` не определён — получается `TypeError: unsupported operand type(s)
+  for +: 'int' and 'Cart'`. С начальным значением `Cart()` первое сложение — корзина плюс корзина,
+  и для пустого списка `sum` возвращает пустую корзину. Другой путь — определить `__radd__`,
+  который принимает `0`, но явное начальное значение проще и понятнее.

@@ -495,12 +495,55 @@ def attribute_lookup():
     f.save(out(PY7 / "02-class-and-instance-attributes" / "img" / "attribute-lookup.svg"))
 
 
+# ---------- Python 7.06: ромб и MRO ----------
+def inheritance_mro():
+    f = Figure(820, 360, "Ромбовидное наследование GiftCard(DigitalProduct, GiftProduct): MRO выстраивает классы в цепочку, Product — один раз и после обоих родителей")
+    nodes = {"Product": (310, 20, 4), "DigitalProduct": (90, 130, 2), "GiftProduct": (530, 130, 3), "GiftCard": (310, 240, 1)}
+    for name, (x, y, n) in nodes.items():
+        f.box(x, y, 200, 48, name, "box2" if name == "GiftCard" else "box", "c")
+        f.raw(f'<circle cx="{x + 200}" cy="{y}" r="14" class="fig-acc"/>')
+        f.text(x + 200, y + 5, str(n), "onacc", "middle")
+    f.arrow("M360 240L230 182"); f.arrow("M460 240L590 182")
+    f.arrow("M190 130L350 72"); f.arrow("M630 130L470 72")
+    f.text(170, 228, "1-й родитель", "s"); f.text(560, 228, "2-й родитель", "s")
+    f.text(20, 330, "MRO:  GiftCard → DigitalProduct → GiftProduct → Product → object", "c")
+    f.text(20, 350, "стрелка — «наследует от»; цифра — место класса в порядке поиска", "s")
+    f.save(out(PY7 / "06-inheritance" / "img" / "inheritance-mro.svg"))
+
+
+# ---------- Python 7.07: иерархия ошибок магазина ----------
+def shop_errors():
+    f = Figure(860, 420, "Иерархия ошибок магазина: except ShopError ловит всю ветку магазина, но не встроенные ошибки и не системные сигналы")
+    f.box(330, 16, 200, 44, "BaseException", "box", "c")
+    f.box(620, 16, 200, 44, "KeyboardInterrupt", "box", "c")
+    f.arrow("M620 38H534")
+    f.text(620, 80, "системный сигнал: свои ошибки", "s")
+    f.text(620, 98, "от BaseException не наследуют", "s")
+    f.box(330, 96, 200, 44, "Exception", "box", "c")
+    f.arrow("M430 96V64")
+    f.raw('<rect x="16" y="166" width="520" height="240" rx="16" class="fig-dash"/>')
+    f.text(32, 190, "ловит except ShopError", "h")
+    f.box(170, 200, 200, 44, "ShopError", "acc", "onacc")
+    f.box(620, 200, 200, 44, "ValueError, KeyError…", "box", "c")
+    f.arrow("M270 200L400 144"); f.arrow("M720 200L460 144")
+    f.box(40, 300, 210, 44, "OutOfStockError", "box2", "c")
+    f.box(290, 280, 200, 44, "PaymentError", "box2", "c")
+    f.box(290, 352, 200, 44, "CardDeclinedError", "box2", "c")
+    f.arrow("M145 300L230 248"); f.arrow("M350 280L310 248")
+    f.arrow("M390 352V328")
+    f.text(620, 270, "встроенные: баги и чужие ошибки.", "s")
+    f.text(620, 290, "В бизнес-коде их не ловят,", "s")
+    f.text(620, 310, "а переводят в свои через from e", "s")
+    f.save(out(PY7 / "07-custom-exceptions" / "img" / "shop-errors.svg"))
+
+
+
 if __name__ == "__main__":
     for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
                   sets_venn, nested_order, copy_modes, comprehension_anatomy,
                   mutable_default, legb_scopes, recursion_stack, decorator_wrap,
                   try_flow, traceback_stack, for_protocol, generator_flow, lazy_pipeline,
                   dict_lookup, lost_key, objects_and_class,
-                  attribute_lookup):
+                  attribute_lookup, inheritance_mro, shop_errors):
         build()
     print("ok")

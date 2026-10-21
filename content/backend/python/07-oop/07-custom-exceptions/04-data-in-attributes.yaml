@@ -1,0 +1,92 @@
+title: Остаток из текста ошибки
+type: exercise
+difficulty: 2
+pitfall: Данные ошибки передают атрибутами — разбор текста сообщения ломается при любой правке текста.
+statement: |
+  API на ошибку «мало товара» отвечает `409` и JSON с `product_id` и остатком `left`, чтобы сайт
+  предложил покупателю нужное количество. Обработчик достаёт остаток из текста ошибки.
+  После того как поменяли текст сообщения, он падает с `ValueError`.
+  Заведите ошибку `OutOfStockError(ShopError)` с атрибутами `product_id` и `left`,
+  выбрасывайте её в `reserve` и берите данные в обработчике из атрибутов.
+  Текст сообщения (`str(e)`) должен остаться прежним.
+starter_code: |
+  class ShopError(Exception):
+      """Базовая ошибка магазина."""
+
+
+  STOCK = {1: 3, 2: 0}
+
+
+  def reserve(product_id, quantity):
+      left = STOCK[product_id]
+      if quantity > left:
+          raise ShopError(f"Товара {product_id} осталось {left} шт.")
+      STOCK[product_id] = left - quantity
+
+
+  def handle_reserve(product_id, quantity):
+      try:
+          reserve(product_id, quantity)
+      except ShopError as e:
+          words = str(e).split()
+          return 409, {"product_id": int(words[1]), "left": int(words[-1])}
+      return 200, {}
+
+
+  print(handle_reserve(1, 5))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert handle_reserve(1, 5) == (409, {"product_id": 1, "left": 3})
+      fail: "Обработчик падает или возвращает не то. Можно ли надёжно достать число из `«... 3 шт.»` через `split()`?"
+    - code: |
+        assert handle_reserve(2, 1) == (409, {"product_id": 2, "left": 0})
+      fail: Для закончившегося товара — `left` равен 0.
+    - code: |
+        e = OutOfStockError(1, 3)
+        assert isinstance(e, ShopError) and (e.product_id, e.left) == (1, 3)
+        assert str(e) == "Товара 1 осталось 3 шт."
+      fail: "`OutOfStockError(product_id, left)` — наследник `ShopError` с атрибутами и прежним текстом."
+    - code: |
+        assert "split" not in source
+      fail: Не разбирайте текст сообщения — берите данные из атрибутов ошибки.
+solution: |
+  class ShopError(Exception):
+      """Базовая ошибка магазина."""
+
+
+  class OutOfStockError(ShopError):
+      def __init__(self, product_id, left):
+          super().__init__(f"Товара {product_id} осталось {left} шт.")
+          self.product_id = product_id
+          self.left = left
+
+
+  STOCK = {1: 3, 2: 0}
+
+
+  def reserve(product_id, quantity):
+      left = STOCK[product_id]
+      if quantity > left:
+          raise OutOfStockError(product_id, left)
+      STOCK[product_id] = left - quantity
+
+
+  def handle_reserve(product_id, quantity):
+      try:
+          reserve(product_id, quantity)
+      except OutOfStockError as e:
+          return 409, {"product_id": e.product_id, "left": e.left}
+      return 200, {}
+
+
+  print(handle_reserve(1, 5))
+hints:
+  - "Выведите `str(e).split()` в обработчике — какой элемент там последний?"
+  - "Сохраните данные в атрибутах ошибки (`self.left = left`), сообщение передайте в `super().__init__`, в обработчике ловите `OutOfStockError` и читайте `e.left`."
+explanation: |
+  Текст сообщения — для людей, его меняют, переводят, уточняют. Обработчик, который разбирает
+  текст, привязан к формату строки и ломается от правки слова. Свой класс ошибки несёт данные
+  в атрибутах: `e.product_id` и `e.left` не зависят от текста. А отдельный тип позволяет ловить
+  именно эту ошибку, не трогая остальные ошибки магазина.

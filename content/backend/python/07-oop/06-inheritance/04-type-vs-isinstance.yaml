@@ -1,0 +1,100 @@
+title: Цифровые книги без скидки
+type: exercise
+difficulty: 1
+pitfall: "`type(x) == Cls` не пропускает наследников — проверку «это товар?» делают через `isinstance`."
+statement: |
+  Акция: скидка 10 % на все товары в заказе, кроме услуг (сборка, упаковка).
+  `discounted_total(items)` применяет скидку к товарам, а услуги считает по полной цене.
+  После добавления `DigitalProduct(Product)` электронные книги перестали получать скидку.
+  Исправьте функцию.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+
+  class DigitalProduct(Product):
+      pass
+
+
+  class Service:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+
+  def discounted_total(items):
+      total = Decimal("0")
+      for item in items:
+          if type(item) == Product:
+              total += item.price * Decimal("0.9")
+          else:
+              total += item.price
+      return total
+
+
+  items = [
+      Product("Мышь", Decimal("1000.00")),
+      DigitalProduct("Книга", Decimal("500.00")),
+      Service("Упаковка", Decimal("100.00")),
+  ]
+  print(discounted_total(items))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert discounted_total(items) == Decimal("1450.00")
+      fail: "Электронная книга посчитана без скидки. Пропускает ли `type(item) == Product` наследников?"
+    - code: |
+        assert discounted_total([Service("Сборка", Decimal("300"))]) == Decimal("300")
+      fail: Услуги считаются по полной цене.
+    - code: |
+        assert discounted_total([DigitalProduct("Книга", Decimal("100"))]) == Decimal("90.0")
+      fail: Наследники `Product` тоже получают скидку.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+
+  class DigitalProduct(Product):
+      pass
+
+
+  class Service:
+      def __init__(self, name, price):
+          self.name = name
+          self.price = price
+
+
+  def discounted_total(items):
+      total = Decimal("0")
+      for item in items:
+          if isinstance(item, Product):
+              total += item.price * Decimal("0.9")
+          else:
+              total += item.price
+      return total
+
+
+  items = [
+      Product("Мышь", Decimal("1000.00")),
+      DigitalProduct("Книга", Decimal("500.00")),
+      Service("Упаковка", Decimal("100.00")),
+  ]
+  print(discounted_total(items))
+hints:
+  - "Выведите `type(items[1]) == Product` и `isinstance(items[1], Product)`."
+  - "Замените сравнение типа на `isinstance(item, Product)`."
+explanation: |
+  `type(item)` — точный класс объекта, у книги это `DigitalProduct`, и он не равен `Product`.
+  `isinstance` проверяет «является ли объект `Product` или его наследником» — именно то,
+  что значит «это товар». Код с `isinstance` не придётся править, когда появятся новые виды товаров.

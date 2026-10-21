@@ -1,0 +1,74 @@
+title: Второй проход по корзине пуст
+type: exercise
+difficulty: 3
+pitfall: Коллекция, которая сама себе итератор, перебирается один раз — позиция хранится в объекте.
+statement: |
+  Страница оформления заказа сначала выводит позиции корзины, потом считает сумму вторым проходом
+  по той же корзине. Сумма всегда `0`. Исправьте класс `Cart` так, чтобы корзину можно было
+  перебирать сколько угодно раз, в том числе вложенными циклами.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Cart:
+      def __init__(self, items):
+          self._items = list(items)
+          self._index = 0
+
+      def __iter__(self):
+          return self
+
+      def __next__(self):
+          if self._index >= len(self._items):
+              raise StopIteration
+          item = self._items[self._index]
+          self._index += 1
+          return item
+
+
+  cart = Cart([("Мышь", Decimal("1499.00"), 2), ("Коврик", Decimal("490.00"), 1)])
+  for name, price, quantity in cart:
+      print(name, quantity)
+  total = sum(price * quantity for _, price, quantity in cart)
+  print(total)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert total == Decimal("3488.00")
+      fail: "Второй проход по корзине ничего не дал. Где хранится позиция перебора и сбрасывается ли она?"
+    - code: |
+        c = Cart([("Мышь", Decimal("1"), 1), ("Коврик", Decimal("2"), 1)])
+        pairs = [(a[0], b[0]) for a in c for b in c]
+        assert len(pairs) == 4
+      fail: Вложенные циклы по одной корзине должны давать все пары — у каждого цикла своя позиция.
+    - code: |
+        c = Cart([])
+        assert list(c) == [] and list(c) == []
+      fail: Пустая корзина перебирается без ошибок.
+solution: |
+  from decimal import Decimal
+
+
+  class Cart:
+      def __init__(self, items):
+          self._items = list(items)
+
+      def __iter__(self):
+          for item in self._items:
+              yield item
+
+
+  cart = Cart([("Мышь", Decimal("1499.00"), 2), ("Коврик", Decimal("490.00"), 1)])
+  for name, price, quantity in cart:
+      print(name, quantity)
+  total = sum(price * quantity for _, price, quantity in cart)
+  print(total)
+hints:
+  - "После первого цикла выведите `cart._index`."
+  - "Пусть `__iter__` каждый раз создаёт новый итератор: генератор с `yield` или `iter(self._items)`."
+explanation: |
+  `__iter__`, возвращающий `self`, делает корзину итератором: позиция `_index` одна на объект
+  и после первого прохода остаётся в конце. Второй `for` сразу получает `StopIteration`,
+  вложенные циклы мешают друг другу. Если `__iter__` — генератор, каждый вызов создаёт
+  отдельный итератор со своей позицией, а корзина остаётся обычной коллекцией.

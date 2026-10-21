@@ -1,0 +1,90 @@
+title: Ошибка оплаты даёт 500
+type: exercise
+difficulty: 1
+pitfall: Ошибка, не унаследованная от базовой ошибки приложения, не ловится общим `except ShopError`.
+statement: |
+  Обработчик заказа отвечает `400` с текстом на любую ошибку магазина, а на всё остальное —
+  `500` («внутренняя ошибка»). Отклонённая карта — ошибка магазина, но клиент получает `500`.
+  Исправьте иерархию ошибок, обработчик не меняйте.
+starter_code: |
+  class ShopError(Exception):
+      """Базовая ошибка магазина."""
+
+
+  class OutOfStockError(ShopError):
+      """Товара недостаточно на складе."""
+
+
+  class PaymentError(Exception):
+      """Не удалось провести оплату."""
+
+
+  def place_order(card):
+      if card == "0000":
+          raise PaymentError("банк отклонил карту")
+      if card == "1111":
+          raise OutOfStockError("товар закончился")
+
+
+  def handle(card):
+      try:
+          place_order(card)
+      except ShopError as e:
+          return 400, str(e)
+      except Exception:
+          return 500, "внутренняя ошибка"
+      return 201, "заказ оформлен"
+
+
+  print(handle("0000"))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert handle("0000") == (400, "банк отклонил карту")
+      fail: "Отклонённая карта даёт 500. От кого унаследована `PaymentError`?"
+    - code: |
+        assert handle("1111") == (400, "товар закончился") and handle("4242") == (201, "заказ оформлен")
+      fail: Остальные ответы обработчика не должны измениться.
+    - code: |
+        assert issubclass(PaymentError, Exception) and "except PaymentError" not in source
+      fail: Исправьте класс `PaymentError`, а не обработчик.
+solution: |
+  class ShopError(Exception):
+      """Базовая ошибка магазина."""
+
+
+  class OutOfStockError(ShopError):
+      """Товара недостаточно на складе."""
+
+
+  class PaymentError(ShopError):
+      """Не удалось провести оплату."""
+
+
+  def place_order(card):
+      if card == "0000":
+          raise PaymentError("банк отклонил карту")
+      if card == "1111":
+          raise OutOfStockError("товар закончился")
+
+
+  def handle(card):
+      try:
+          place_order(card)
+      except ShopError as e:
+          return 400, str(e)
+      except Exception:
+          return 500, "внутренняя ошибка"
+      return 201, "заказ оформлен"
+
+
+  print(handle("0000"))
+hints:
+  - "Выведите `issubclass(PaymentError, ShopError)`."
+  - "Ошибки магазина наследуют от `ShopError`: `class PaymentError(ShopError)`."
+explanation: |
+  `except ShopError` ловит `ShopError` и всех её наследников. `PaymentError` унаследована
+  напрямую от `Exception` — она не в ветке магазина, поэтому проходит мимо и попадает
+  в `except Exception` как неизвестная ошибка. Когда все ошибки приложения наследуют
+  от одной базовой, обработчик ловит их одной строкой, а новые ошибки попадают туда автоматически.

@@ -1,0 +1,82 @@
+title: Цифровой товар без названия
+type: exercise
+difficulty: 1
+pitfall: Переопределённый `__init__` без `super().__init__()` не создаёт атрибуты родителя.
+statement: |
+  Цифровые товары добавили наследником `DigitalProduct(Product)` со ссылкой на скачивание.
+  Товар создаётся без ошибок, но страница каталога падает на нём с `AttributeError`.
+  Исправьте `DigitalProduct`.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price, stock):
+          self.name = name
+          self.price = price
+          self.stock = stock
+
+      def __str__(self):
+          return f"{self.name} — {self.price} ₽"
+
+
+  class DigitalProduct(Product):
+      def __init__(self, name, price, stock, download_url):
+          self.download_url = download_url
+
+
+  catalog = [
+      Product("Мышь", Decimal("1499.00"), 12),
+      DigitalProduct("Книга «Чистый код»", Decimal("690.00"), 100, "/download/42"),
+  ]
+  for product in catalog:
+      print(product)
+check:
+  type: tests
+  tests:
+    - code: |
+        p = DigitalProduct("Книга", Decimal("690.00"), 100, "/download/42")
+        assert str(p) == "Книга — 690.00 ₽"
+      fail: "У цифрового товара нет названия и цены. Кто заполняет `name`, `price` и `stock`, если `__init__` переопределён?"
+    - code: |
+        p = DigitalProduct("Книга", Decimal("690.00"), 100, "/download/42")
+        assert p.stock == 100 and p.download_url == "/download/42"
+      fail: У цифрового товара должны быть и общие поля, и `download_url`.
+    - code: |
+        assert "Product.__init__" not in source
+      fail: "Вызывайте родительский `__init__` через `super()`, а не по имени класса."
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, name, price, stock):
+          self.name = name
+          self.price = price
+          self.stock = stock
+
+      def __str__(self):
+          return f"{self.name} — {self.price} ₽"
+
+
+  class DigitalProduct(Product):
+      def __init__(self, name, price, stock, download_url):
+          super().__init__(name, price, stock)
+          self.download_url = download_url
+
+
+  catalog = [
+      Product("Мышь", Decimal("1499.00"), 12),
+      DigitalProduct("Книга «Чистый код»", Decimal("690.00"), 100, "/download/42"),
+  ]
+  for product in catalog:
+      print(product)
+hints:
+  - "Выведите `vars(catalog[1])`."
+  - "Первой строкой `__init__` наследника вызовите `super().__init__(name, price, stock)`."
+explanation: |
+  Переопределённый `__init__` полностью заменяет родительский: Python не вызывает `__init__`
+  родителя сам. Объект создаётся только с `download_url`, а ошибка появляется позже —
+  при первом чтении `name`. `super().__init__(...)` выполняет инициализацию родителя,
+  и наследник дополняет её своим полем. По имени (`Product.__init__(self, ...)`) вызывать хуже:
+  при нескольких родителях это ломает порядок MRO.

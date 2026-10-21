@@ -1,0 +1,83 @@
+title: Уникальные товары из двух выгрузок
+type: exercise
+difficulty: 2
+pitfall: Свой `__eq__` без `__hash__` делает объекты нехешируемыми — их нельзя положить в `set`.
+statement: |
+  Товары приходят из двух выгрузок, одни и те же товары встречаются в обеих.
+  `unique_count(products)` должна вернуть число разных товаров (товар определяется `id`).
+  Тимлид научил `Product` сравниваться по `id`, но функция падает с `TypeError`.
+  Исправьте класс, функцию не меняйте.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, id, name, price):
+          self.id = id
+          self.name = name
+          self.price = price
+
+      def __eq__(self, other):
+          if not isinstance(other, Product):
+              return NotImplemented
+          return self.id == other.id
+
+
+  def unique_count(products):
+      return len(set(products))
+
+
+  first = [Product(1, "Мышь", Decimal("1499.00")), Product(2, "Коврик", Decimal("490.00"))]
+  second = [Product(1, "Мышь", Decimal("1299.00")), Product(3, "Клавиатура", Decimal("2990.00"))]
+  print(unique_count(first + second))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert unique_count(first + second) == 3
+      fail: "Функция падает или считает неверно. Что Python делает с `__hash__` класса, в котором определён свой `__eq__`?"
+    - code: |
+        a, b = Product(5, "Мышь", Decimal("1")), Product(5, "Мышь", Decimal("2"))
+        assert a == b and hash(a) == hash(b)
+      fail: Равные товары (одинаковый `id`) обязаны иметь равные хеши.
+    - code: |
+        stock = {Product(1, "Мышь", Decimal("1")): 12}
+        assert stock[Product(1, "Мышь", Decimal("9"))] == 12
+      fail: Товар с тем же `id` должен находиться как ключ словаря.
+    - code: |
+        assert Product(1, "Мышь", Decimal("1")) != Product(2, "Мышь", Decimal("1"))
+      fail: Товары с разными `id` не равны.
+solution: |
+  from decimal import Decimal
+
+
+  class Product:
+      def __init__(self, id, name, price):
+          self.id = id
+          self.name = name
+          self.price = price
+
+      def __eq__(self, other):
+          if not isinstance(other, Product):
+              return NotImplemented
+          return self.id == other.id
+
+      def __hash__(self):
+          return hash(self.id)
+
+
+  def unique_count(products):
+      return len(set(products))
+
+
+  first = [Product(1, "Мышь", Decimal("1499.00")), Product(2, "Коврик", Decimal("490.00"))]
+  second = [Product(1, "Мышь", Decimal("1299.00")), Product(3, "Клавиатура", Decimal("2990.00"))]
+  print(unique_count(first + second))
+hints:
+  - "Выведите `Product.__hash__`."
+  - "Добавьте `__hash__`, который считает хеш по тому же полю, что и `__eq__`: `hash(self.id)`."
+explanation: |
+  Если в классе определён `__eq__`, Python ставит `__hash__ = None`: хеш по умолчанию считается
+  от тождества объекта и противоречил бы новому равенству. Класс становится нехешируемым.
+  `__hash__` от `id` восстанавливает правило «равные объекты — равные хеши», и `set` с `dict`
+  находят товар, как бы он ни был загружен. Цена в хеш не входит, как и в равенство.

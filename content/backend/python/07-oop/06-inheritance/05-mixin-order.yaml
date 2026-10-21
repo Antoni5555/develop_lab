@@ -1,0 +1,77 @@
+title: Аудит не пишет логи
+type: exercise
+difficulty: 3
+pitfall: Примесь, которая расширяет метод через `super()`, должна стоять в списке родителей левее базового класса.
+statement: |
+  Служба безопасности требует записывать каждое сохранение заказа в журнал аудита.
+  Для этого написали примесь `AuditMixin`: её `save()` добавляет запись в `audit_log`
+  и вызывает `super().save()`. Заказ сохраняется, но журнал остаётся пустым.
+  Исправьте объявление класса `Order`, сами `BaseModel` и `AuditMixin` не меняйте.
+starter_code: |
+  audit_log = []
+  saved = []
+
+
+  class BaseModel:
+      def save(self):
+          saved.append(self)
+
+
+  class AuditMixin:
+      def save(self):
+          audit_log.append(f"сохранение {type(self).__name__} №{self.id}")
+          super().save()
+
+
+  class Order(BaseModel, AuditMixin):
+      def __init__(self, id):
+          self.id = id
+
+
+  Order(1042).save()
+  print(audit_log, len(saved))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert audit_log == ["сохранение Order №1042"]
+      fail: "Журнал пуст. Чей `save` Python находит первым — посмотрите `Order.__mro__`."
+    - code: |
+        assert len(saved) == 1
+      fail: Заказ должен сохраниться ровно один раз.
+    - code: |
+        assert "class BaseModel:\n    def save(self):\n        saved.append(self)" in source
+        assert "audit_log.append" in source and source.count("super().save()") == 1
+      fail: "`BaseModel` и `AuditMixin` менять не нужно — исправьте список родителей `Order`."
+solution: |
+  audit_log = []
+  saved = []
+
+
+  class BaseModel:
+      def save(self):
+          saved.append(self)
+
+
+  class AuditMixin:
+      def save(self):
+          audit_log.append(f"сохранение {type(self).__name__} №{self.id}")
+          super().save()
+
+
+  class Order(AuditMixin, BaseModel):
+      def __init__(self, id):
+          self.id = id
+
+
+  Order(1042).save()
+  print(audit_log, len(saved))
+hints:
+  - "Выведите `[c.__name__ for c in Order.__mro__]`."
+  - "Поставьте примесь первой: `class Order(AuditMixin, BaseModel)`."
+explanation: |
+  Методы ищутся по MRO: `Order → BaseModel → AuditMixin → object`. Первым находится
+  `BaseModel.save`. Он не вызывает `super()`, поэтому до `AuditMixin.save` дело не доходит.
+  При порядке `(AuditMixin, BaseModel)` первым срабатывает `AuditMixin.save`, пишет в журнал,
+  и его `super().save()` ведёт к следующему в MRO — `BaseModel.save`. Так устроены примеси
+  в Django: миксины пишут левее базового класса представления.

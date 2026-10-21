@@ -1,0 +1,62 @@
+title: В логе — кортеж вместо сообщения
+type: exercise
+difficulty: 2
+pitfall: Свой `__init__` без `super().__init__(сообщение)` — `str(e)` становится кортежем аргументов.
+statement: |
+  В логе ошибок оформления заказа вместо сообщения появляются строки вида `(1, 5, 3)`.
+  Исправьте `OutOfStockError` так, чтобы `str(e)` было
+  `товар 1: запрошено 5, осталось 3`, а атрибуты `product_id`, `requested`, `left` сохранились.
+starter_code: |
+  class ShopError(Exception):
+      """Базовая ошибка магазина."""
+
+
+  class OutOfStockError(ShopError):
+      def __init__(self, product_id, requested, left):
+          self.product_id = product_id
+          self.requested = requested
+          self.left = left
+
+
+  try:
+      raise OutOfStockError(1, 5, 3)
+  except ShopError as e:
+      print(f"ошибка оформления: {e}")
+check:
+  type: tests
+  tests:
+    - code: |
+        assert str(OutOfStockError(1, 5, 3)) == "товар 1: запрошено 5, осталось 3"
+      fail: "`str(e)` — не сообщение. Что попадает в `e.args`, если родительский `__init__` не вызван?"
+    - code: |
+        e = OutOfStockError(7, 2, 0)
+        assert (e.product_id, e.requested, e.left) == (7, 2, 0)
+      fail: Атрибуты `product_id`, `requested`, `left` должны остаться.
+    - code: |
+        assert output == "ошибка оформления: товар 1: запрошено 5, осталось 3\n"
+      fail: "В лог должно попасть сообщение: `ошибка оформления: товар 1: запрошено 5, осталось 3`."
+solution: |
+  class ShopError(Exception):
+      """Базовая ошибка магазина."""
+
+
+  class OutOfStockError(ShopError):
+      def __init__(self, product_id, requested, left):
+          super().__init__(f"товар {product_id}: запрошено {requested}, осталось {left}")
+          self.product_id = product_id
+          self.requested = requested
+          self.left = left
+
+
+  try:
+      raise OutOfStockError(1, 5, 3)
+  except ShopError as e:
+      print(f"ошибка оформления: {e}")
+hints:
+  - "Выведите `e.args`."
+  - "Передайте готовое сообщение родителю: `super().__init__(f\"товар {product_id}: ...\")`."
+explanation: |
+  Текст исключения берётся из `e.args` — аргументов, с которыми был инициализирован `Exception`.
+  Если свой `__init__` не вызывает родительский, в `args` остаются аргументы конструктора, и `str(e)`
+  выводит их кортеж. `super().__init__(сообщение)` кладёт в `args` одну строку — её и показывают
+  `print`, логи и traceback. Данные для кода остаются в атрибутах.

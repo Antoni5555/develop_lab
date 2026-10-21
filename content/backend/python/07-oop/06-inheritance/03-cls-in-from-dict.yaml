@@ -1,0 +1,67 @@
+title: Подарочный заказ теряет открытку
+type: exercise
+difficulty: 2
+pitfall: "`Order(...)` вместо `cls(...)` в методе класса: наследник получает объект базового класса."
+statement: |
+  Подарочный заказ `GiftOrder(Order)` умеет печатать открытку (`card_text()`).
+  Оба вида заказов создаются из данных API методом `from_dict`, унаследованным от `Order`.
+  Но `GiftOrder.from_dict(...)` возвращает объект без `card_text`. Исправьте `Order.from_dict`.
+starter_code: |
+  class Order:
+      def __init__(self, id, user_id, comment=""):
+          self.id = id
+          self.user_id = user_id
+          self.comment = comment
+
+      @classmethod
+      def from_dict(cls, data):
+          return Order(data["id"], data["user_id"], data.get("comment", ""))
+
+
+  class GiftOrder(Order):
+      def card_text(self):
+          return f"Подарок к заказу №{self.id}. {self.comment}"
+
+
+  order = GiftOrder.from_dict({"id": 1042, "user_id": 7, "comment": "С днём рождения!"})
+  print(type(order).__name__)
+  print(order.card_text())
+check:
+  type: tests
+  tests:
+    - code: |
+        o = GiftOrder.from_dict({"id": 1, "user_id": 7, "comment": "Ура"})
+        assert type(o) is GiftOrder and o.card_text() == "Подарок к заказу №1. Ура"
+      fail: "`GiftOrder.from_dict` вернул объект не того класса. Какой класс создаёт `from_dict` — тот, что в `cls`, или всегда `Order`?"
+    - code: |
+        o = Order.from_dict({"id": 2, "user_id": 8})
+        assert type(o) is Order and o.comment == ""
+      fail: "`Order.from_dict` по-прежнему должен возвращать `Order`."
+solution: |
+  class Order:
+      def __init__(self, id, user_id, comment=""):
+          self.id = id
+          self.user_id = user_id
+          self.comment = comment
+
+      @classmethod
+      def from_dict(cls, data):
+          return cls(data["id"], data["user_id"], data.get("comment", ""))
+
+
+  class GiftOrder(Order):
+      def card_text(self):
+          return f"Подарок к заказу №{self.id}. {self.comment}"
+
+
+  order = GiftOrder.from_dict({"id": 1042, "user_id": 7, "comment": "С днём рождения!"})
+  print(type(order).__name__)
+  print(order.card_text())
+hints:
+  - "Выведите `cls` внутри `from_dict` при вызове `GiftOrder.from_dict(...)`."
+  - "Создавайте объект через `cls(...)`."
+explanation: |
+  При вызове `GiftOrder.from_dict(...)` в `cls` попадает `GiftOrder`: метод класса получает тот
+  класс, через который его вызвали. Но код игнорирует `cls` и всегда создаёт `Order`.
+  `cls(...)` создаёт объект нужного класса, и альтернативный конструктор работает
+  для всех наследников без переопределения.

@@ -1,0 +1,86 @@
+title: Пропавший промокод
+type: exercise
+difficulty: 2
+pitfall: Объект с `__len__` ложен, когда пуст, — `if not obj` проверяет не только `None`.
+statement: |
+  Покупатель вводит промокод ещё на пустую корзину, потом добавляет товар — и промокод пропадает.
+  Корзины хранятся в словаре `carts` по `user_id`. `get_cart(carts, user_id)` должна вернуть
+  существующую корзину покупателя, а новую создавать, только если корзины у него ещё нет.
+  Исправьте `get_cart`.
+starter_code: |
+  class Cart:
+      def __init__(self, user_id):
+          self.user_id = user_id
+          self.promo_code = None
+          self._items = []
+
+      def add(self, product_id, quantity):
+          self._items.append((product_id, quantity))
+
+      def __len__(self):
+          return len(self._items)
+
+
+  def get_cart(carts, user_id):
+      cart = carts.get(user_id)
+      if not cart:
+          cart = Cart(user_id)
+          carts[user_id] = cart
+      return cart
+
+
+  carts = {}
+  get_cart(carts, 7).promo_code = "SPRING10"
+  get_cart(carts, 7).add(1, 2)
+  print(get_cart(carts, 7).promo_code, len(get_cart(carts, 7)))
+check:
+  type: tests
+  tests:
+    - code: |
+        c = {}
+        get_cart(c, 7).promo_code = "SPRING10"
+        assert get_cart(c, 7).promo_code == "SPRING10"
+      fail: "Пустая корзина с промокодом заменилась новой. Чему равно `not cart` для пустой корзины с `__len__`?"
+    - code: |
+        c = {}
+        first = get_cart(c, 7)
+        assert get_cart(c, 7) is first and len(c) == 1
+      fail: Повторный вызов должен вернуть ту же корзину, а не создать вторую.
+    - code: |
+        c = {}
+        a, b = get_cart(c, 7), get_cart(c, 8)
+        assert a is not b and a.user_id == 7 and b.user_id == 8
+      fail: У разных покупателей — разные корзины.
+solution: |
+  class Cart:
+      def __init__(self, user_id):
+          self.user_id = user_id
+          self.promo_code = None
+          self._items = []
+
+      def add(self, product_id, quantity):
+          self._items.append((product_id, quantity))
+
+      def __len__(self):
+          return len(self._items)
+
+
+  def get_cart(carts, user_id):
+      cart = carts.get(user_id)
+      if cart is None:
+          cart = Cart(user_id)
+          carts[user_id] = cart
+      return cart
+
+
+  carts = {}
+  get_cart(carts, 7).promo_code = "SPRING10"
+  get_cart(carts, 7).add(1, 2)
+  print(get_cart(carts, 7).promo_code, len(get_cart(carts, 7)))
+hints:
+  - "Выведите `bool(Cart(7))`."
+  - "Отсутствие корзины проверяйте через `is None`."
+explanation: |
+  Без `__bool__` Python берёт истинность объекта из `__len__`: корзина без товаров ложна.
+  `if not cart:` срабатывает и для `None`, и для пустой существующей корзины — и заменяет её новой,
+  вместе с промокодом. `cart is None` проверяет ровно то, что нужно: корзины нет в словаре.
