@@ -236,6 +236,7 @@
 /* Вкладки-«таблетки» верхнего уровня (переключатель движков) */
 .tabs--pills {
   display: inline-flex;
+  max-width: 100%;   /* шире экрана — вкладки прокручиваются внутри, а не вся страница */
   margin-bottom: var(--space-5);
   padding: var(--space-1);
   background: var(--surface);
@@ -547,8 +548,9 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 
 .page-head .muted { margin-top: var(--space-2); }
 
-.page-title { font-size: var(--fs-xl); font-weight: var(--fw-bold); letter-spacing: -0.02em; line-height: 1.15; }
-.page-title--xl { font-size: var(--fs-2xl); max-width: 18ch; }
+/* H1 страниц — Unbounded (--font-display); он шире Manrope, поэтому размер меньше --fs-xl */
+.page-title { font-family: var(--font-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); hyphens: auto; font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.15; }
+.page-title--xl { font-size: clamp(1.75rem, 4.4vw, 3.2rem); max-width: 18ch; }
 
 .section-head {
   display: flex;

@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/home.css' %}">{% endblock %}
+{% block scripts %}<script src="{% static 'js/reveal.js' %}" defer></script>{% endblock %}
 
 {% block content %}
-<div class="container stack-xl">
+<div class="container stack-home">
   {% include 'home/components/_hero.html' %}
   {% include 'home/components/_how_it_works.html' %}
-  {% include 'home/components/_features.html' %}
-  {% include 'home/components/_popular_courses.html' %}
-  {% include 'home/components/_stats.html' %}
+  {% include 'home/components/_showcase.html' %}
+  {% include 'home/components/_learning_path.html' %}
   {% include 'common/_cta.html' %}
 </div>
 {% endblock %}

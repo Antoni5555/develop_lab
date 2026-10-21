@@ -1,0 +1,152 @@
+{% comment %}
+  «Что внутри»: функции сайта зигзагом — текст + рисунок (через один зеркально).
+  Рисунки — статичная демонстрация, inline SVG (классы sc-*); подложка лаймовая,
+  внутри всегда светлая схема. id sc1-clip — уникальный на странице.
+{% endcomment %}
+<section class="showcase">
+  <div class="section-head">
+    <div class="section-head__titles">
+      <span class="kicker">Возможности</span>
+      <h2 class="section-title">Что внутри</h2>
+    </div>
+  </div>
+
+  {# Ряд 1: тренажёр #}
+  <article class="showcase__row">
+    <div class="showcase__text">
+      <span class="eyebrow eyebrow--dark">Тренажёр</span>
+      <h3 class="showcase__title">Видно, что сделал твой код</h3>
+      <p class="muted">Каждый запуск — карточка в журнале: новая таблица в схеме, добавленные, изменённые и удалённые строки, SQL, который сгенерировал Django.</p>
+      <ul class="checks">
+        <li>Python, SQL, Django и Linux</li>
+        <li>Всё выполняется в браузере</li>
+        <li>Сессия сохраняется между визитами</li>
+      </ul>
+      <a href="{% url 'trainers:playground' %}" class="link-arrow">Открыть тренажёр <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="showcase__art" aria-hidden="true">
+      <svg viewBox="0 0 400 260">
+        <defs><clipPath id="sc1-clip"><rect x="24" y="40" width="300" height="190" rx="14"/></clipPath></defs>
+        {# журнал: шаг 2, INSERT, таблица с добавленными строками #}
+        <g class="sc-card-shadow">
+          <rect x="24" y="40" width="300" height="190" rx="14" class="sc-card"/>
+          <g clip-path="url(#sc1-clip)">
+            <circle cx="48" cy="61" r="10" class="sc-ink"/><text x="48" y="65" class="sc-t sc-t--onink sc-t--c sc-t--b">2</text>
+            <text x="66" y="65" class="sc-t sc-t--mono">INSERT INTO products</text>
+            <rect x="238" y="51" width="72" height="20" rx="10" class="sc-ok-bg"/><text x="274" y="65" class="sc-t sc-t--ok sc-t--c sc-t--sm">+2 строки</text>
+            <rect x="24" y="82" width="300" height="26" class="sc-head"/>
+            <text x="42" y="99" class="sc-t sc-t--muted sc-t--mono sc-t--sm">id</text>
+            <text x="90" y="99" class="sc-t sc-t--muted sc-t--mono sc-t--sm">name</text>
+            <text x="232" y="99" class="sc-t sc-t--muted sc-t--mono sc-t--sm">price</text>
+            <text x="42" y="129" class="sc-t sc-t--mono">21</text><text x="90" y="129" class="sc-t">Мышь</text><text x="232" y="129" class="sc-t sc-t--mono">1 499.00</text>
+            <rect x="24" y="148" width="300" height="40" class="sc-added"/><rect x="24" y="148" width="4" height="40" class="sc-added-mark"/>
+            <text x="42" y="173" class="sc-t sc-t--mono">22</text><text x="90" y="173" class="sc-t">Клавиатура</text><text x="232" y="173" class="sc-t sc-t--mono">3 990.00</text>
+            <rect x="24" y="188" width="300" height="42" class="sc-added"/><rect x="24" y="188" width="4" height="42" class="sc-added-mark"/>
+            <text x="42" y="213" class="sc-t sc-t--mono">23</text><text x="90" y="213" class="sc-t">Коврик</text><text x="232" y="213" class="sc-t sc-t--mono">590.00</text>
+            <path d="M24 108H324M24 148H324M24 188H324M78 82V230M220 82V230" class="sc-grid"/>
+          </g>
+        </g>
+        {# плашка «готово» #}
+        <g class="sc-card-shadow">
+          <rect x="236" y="218" width="148" height="36" rx="18" class="sc-ink"/>
+          <circle cx="256" cy="236" r="9" class="sc-accent"/><path d="M251.5 236l3 3 6-6" class="sc-check"/>
+          <text x="272" y="240.5" class="sc-t sc-t--onink sc-t--b">Готово · 3 мс</text>
+        </g>
+      </svg>
+    </div>
+  </article>
+
+  {# Ряд 2: курсы и программа #}
+  <article class="showcase__row showcase__row--reverse">
+    <div class="showcase__text">
+      <span class="eyebrow eyebrow--dark">Курсы</span>
+      <h3 class="showcase__title">Программа без пробелов</h3>
+      <p class="muted">Курс разбит на разделы и темы, каждая тема опирается только на пройденное. Справа от урока всегда видно, где ты и что дальше.</p>
+      <ul class="checks">
+        <li>Уроки на 5–13 минут</li>
+        <li>Задачи на подводные камни из реальной работы</li>
+        <li>Вопросы с собеседований в каждой теме</li>
+      </ul>
+      <a href="{% url 'courses:list' %}" class="link-arrow">Смотреть курсы <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="showcase__art" aria-hidden="true">
+      <svg viewBox="0 0 400 260">
+        {# программа курса: прогресс, пройденные разделы, текущая тема #}
+        <g class="sc-card-shadow">
+          <rect x="40" y="22" width="270" height="216" rx="14" class="sc-card"/>
+          <text x="60" y="54" class="sc-t sc-t--title">Python</text>
+          <text x="290" y="53" class="sc-t sc-t--muted sc-t--sm sc-t--r">21 / 48</text>
+          <rect x="60" y="66" width="230" height="6" rx="3" class="sc-track"/>
+          <rect x="60" y="66" width="100" height="6" rx="3" class="sc-ink"/>
+          <circle cx="70" cy="98" r="10" class="sc-ok"/><path d="M65.5 98l3 3 6-6" class="sc-check sc-check--w"/>
+          <text x="90" y="102" class="sc-t sc-t--muted">Основы</text>
+          <circle cx="70" cy="130" r="10" class="sc-ok"/><path d="M65.5 130l3 3 6-6" class="sc-check sc-check--w"/>
+          <text x="90" y="134" class="sc-t sc-t--muted">Коллекции</text>
+          <circle cx="70" cy="162" r="10" class="sc-ink"/><text x="70" y="166" class="sc-t sc-t--onink sc-t--c sc-t--b sc-t--sm">3</text>
+          <text x="90" y="166" class="sc-t sc-t--b">Функции</text>
+          <path d="M70 174V210" class="sc-grid"/>
+          <rect x="86" y="180" width="206" height="34" rx="9" class="sc-accent"/>
+          <text x="100" y="201" class="sc-t sc-t--b">Генераторы</text>
+          <text x="280" y="201" class="sc-t sc-t--sm sc-t--r">урок · 6 мин</text>
+        </g>
+        {# плашка «продолжить» #}
+        <g class="sc-card-shadow">
+          <rect x="250" y="40" width="132" height="36" rx="18" class="sc-ink"/>
+          <text x="316" y="62.5" class="sc-t sc-t--accent sc-t--b sc-t--c">Продолжить →</text>
+        </g>
+      </svg>
+    </div>
+  </article>
+
+  {# Ряд 3: заметки → шпаргалки #}
+  <article class="showcase__row">
+    <div class="showcase__text">
+      <span class="eyebrow eyebrow--dark">Шпаргалки</span>
+      <h3 class="showcase__title">Заметки сами складываются в шпаргалку</h3>
+      <p class="muted">Пишешь заметку справа от урока — она попадает в шпаргалку курса, в ту тему, где ты её написал. Перед собеседованием открываешь и повторяешь.</p>
+      <ul class="checks">
+        <li>Форматирование: списки, код, выделение</li>
+        <li>Сгруппировано по темам курса</li>
+        <li>Видны только тебе</li>
+      </ul>
+      <a href="{% url 'cheatsheets:list' %}" class="link-arrow">Открыть шпаргалки <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="showcase__art" aria-hidden="true">
+      <svg viewBox="0 0 400 260">
+        {# заметка с форматированием #}
+        <g class="sc-card-shadow">
+          <rect x="14" y="40" width="182" height="196" rx="14" class="sc-card"/>
+          <text x="30" y="62" class="sc-t sc-t--muted sc-t--sm">Тема заметки</text>
+          <rect x="28" y="70" width="154" height="28" rx="8" class="sc-field"/>
+          <text x="38" y="88.5" class="sc-t sc-t--b sc-t--sm">Один проход</text>
+          <rect x="28" y="106" width="154" height="22" rx="6" class="sc-head"/>
+          <text x="40" y="121" class="sc-t sc-t--b sc-t--sm">B</text><text x="58" y="121" class="sc-t sc-t--sm sc-t--i">I</text><text x="74" y="121" class="sc-t sc-t--sm sc-t--u">U</text><text x="92" y="121" class="sc-t sc-t--sm">•≡</text><text x="114" y="121" class="sc-t sc-t--mono sc-t--sm">&lt;/&gt;</text>
+          <text x="30" y="150" class="sc-t sc-t--sm">Проходится <tspan class="sc-t--b">один раз</tspan>:</text>
+          <rect x="28" y="158" width="128" height="22" rx="6" class="sc-code"/>
+          <text x="36" y="173" class="sc-t sc-t--mono sc-t--sm">list(gen) → []</text>
+          <rect x="112" y="200" width="70" height="24" rx="12" class="sc-accent"/>
+          <text x="147" y="216" class="sc-t sc-t--b sc-t--xs sc-t--c">Сохранить</text>
+        </g>
+        <path d="M204 138h22M218 130l8 8-8 8" class="sc-arrow"/>
+        {# шпаргалка курса: тема и заметки, новая выделена #}
+        <g class="sc-card-shadow">
+          <rect x="232" y="22" width="156" height="216" rx="14" class="sc-card"/>
+          <text x="246" y="44" class="sc-t sc-t--muted sc-t--xs">Шпаргалка · Python</text>
+          <text x="246" y="66" class="sc-t sc-t--title sc-t--sm-title">Генераторы</text>
+          <rect x="246" y="80" width="128" height="32" rx="8" class="sc-field"/><rect x="246" y="80" width="3" height="32" class="sc-accent"/>
+          <text x="258" y="100" class="sc-t sc-t--b sc-t--xs">yield и return</text>
+          <rect x="246" y="120" width="128" height="32" rx="8" class="sc-field"/><rect x="246" y="120" width="3" height="32" class="sc-accent"/>
+          <text x="258" y="140" class="sc-t sc-t--b sc-t--xs">send() и throw()</text>
+          <rect x="246" y="160" width="128" height="58" rx="8" class="sc-field sc-field--new"/>
+          <text x="258" y="180" class="sc-t sc-t--b sc-t--xs">Один проход</text>
+          <text x="258" y="198" class="sc-t sc-t--muted sc-t--xs">Проходится один раз:</text>
+          <text x="258" y="211" class="sc-t sc-t--mono sc-t--xs">list(gen) → []</text>
+        </g>
+        <g class="sc-card-shadow">
+          <rect x="330" y="150" width="50" height="20" rx="10" class="sc-accent"/>
+          <text x="355" y="164" class="sc-t sc-t--b sc-t--xs sc-t--c">новая</text>
+        </g>
+      </svg>
+    </div>
+  </article>
+</section>

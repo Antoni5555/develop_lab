@@ -14,7 +14,7 @@
   border-radius: var(--radius-lg);
 }
 
-.auth__title { font-size: var(--fs-xl); font-weight: var(--fw-bold); }
+.auth__title { font-family: var(--font-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); hyphens: auto; font-size: clamp(1.4rem, 2.4vw, 1.75rem); line-height: 1.15; }
 .auth__foot { text-align: center; font-size: var(--fs-sm); }
 .profile-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); }
 .profile-head__action { margin-left: auto; }

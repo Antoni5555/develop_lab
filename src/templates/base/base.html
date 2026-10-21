@@ -16,6 +16,8 @@
 
   <link rel="preload" href="{% static 'fonts/manrope-cyrillic-400.woff2' %}" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{% static 'fonts/manrope-latin-400.woff2' %}" as="font" type="font/woff2" crossorigin>
+  {# Unbounded — заголовки на каждой странице; кириллица нужна сразу, латиница догрузится #}
+  <link rel="preload" href="{% static 'fonts/unbounded-cyrillic-600.woff2' %}" as="font" type="font/woff2" crossorigin>
 
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="stylesheet" href="{% static 'css/components.css' %}">

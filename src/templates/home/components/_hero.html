@@ -1,16 +1,14 @@
+{# Первый экран: текст, кнопки, цифры + картинка «полный цикл» #}
 <div class="hero hero--home">
   <div class="hero__text">
     <span class="eyebrow">Бесплатно · в браузере · без установки</span>
     <h1 class="hero__title">Практика для&nbsp;разработчиков</h1>
-    <p class="hero__lead">Курсы с короткой теорией, задачи и тренажёры Python, SQL, Django и Linux. Пишешь код — сразу видишь таблицы и что изменилось, а заметки сами собираются в шпаргалки.</p>
+    <p class="hero__lead">Курсы с короткой теорией, задачи и тренажёры Python, SQL, Django и Linux. Пишешь код — сразу видишь результат, а заметки сами собираются в шпаргалки.</p>
     <div class="hero__cta">
-      <a href="{% if start_cards %}{{ start_cards.0.course.get_absolute_url }}{% else %}{% url 'courses:list' %}{% endif %}" class="btn btn--accent btn--lg">Начать обучение <span aria-hidden="true">→</span></a>
+      <a href="{% if first_card %}{{ first_card.course.get_absolute_url }}{% else %}{% url 'courses:list' %}{% endif %}" class="btn btn--accent btn--lg">Начать обучение <span aria-hidden="true">→</span></a>
       <a href="{% url 'trainers:playground' %}" class="btn btn--on-ink btn--lg">Открыть тренажёр</a>
     </div>
-    <nav class="tracks" aria-label="Направления">
-      <a href="{% url 'courses:list' %}" class="track track--active">Backend</a>
-      <span class="track track--soon">Frontend <small>скоро</small></span>
-      <span class="track track--soon">DevOps <small>скоро</small></span>
-    </nav>
+    {% include 'home/components/_hero_numbers.html' %}
   </div>
+  {% include 'home/components/_hero_art.html' %}
 </div>

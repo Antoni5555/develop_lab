@@ -4,7 +4,7 @@
 .task { display: grid; gap: var(--space-3); padding: var(--space-5); }
 .task__head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
 .task__nav { display: flex; gap: var(--space-2); }
-.task__title { font-size: var(--fs-xl); font-weight: var(--fw-bold); letter-spacing: -0.01em; }
+.task__title { font-family: var(--font-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); hyphens: auto; font-size: clamp(1.4rem, 2.4vw, 1.85rem); line-height: 1.15; }
 .hint summary { font-size: var(--fs-sm); font-weight: var(--fw-bold); cursor: pointer; }
 .hint p { margin-top: var(--space-2); font-size: var(--fs-sm); color: var(--muted); }
 

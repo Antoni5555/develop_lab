@@ -2,6 +2,7 @@ from django.conf import settings
 from django.views.generic import TemplateView
 
 from apps.courses.services.selectors import home_summary
+from apps.progress.services import progress
 
 
 class HomeView(TemplateView):
@@ -12,7 +13,9 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(home_summary())
+        summary = home_summary()
+        progress.apply_to_path(summary['cards'], self.request.user)
+        context.update(summary)
         return context
 
 

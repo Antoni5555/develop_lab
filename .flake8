@@ -1,9 +1,10 @@
 [flake8]
 max-line-length = 88
 
-# content/ — скрипты сессии «Контент», не код сайта
+# content/ и design/ — скрипты сессий «Контент» и «Дизайн», не код сайта
 exclude =
     content,
+    design,
     .git,
     .venv,
     venv,

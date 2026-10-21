@@ -195,6 +195,25 @@ def apply_to_cards(cards, user):
     return cards
 
 
+def apply_to_path(cards, user):
+    """Станции карты пути на главной: done, current, open (не начат), soon.
+
+    Статусы — как у карточек каталога (apply_to_cards). Если курса «проходит
+    сейчас» нет (гость или ещё ничего не начато), первый открытый курс —
+    current с подписью «начни здесь» (card.start_here).
+    """
+    apply_to_cards(cards, user)
+    for card in cards:
+        card.path_status = 'open' if card.status == 'new' else card.status
+        card.start_here = False
+    if not any(card.path_status == 'current' for card in cards):
+        first_open = next((card for card in cards if card.path_status == 'open'), None)
+        if first_open:
+            first_open.path_status = 'current'
+            first_open.start_here = True
+    return cards
+
+
 # --- профиль ---
 
 @dataclass

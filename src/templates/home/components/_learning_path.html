@@ -1,0 +1,32 @@
+{% load plural %}
+{% comment %}
+  Карта пути: все курсы направления по Course.order, как схема метро.
+  Статус станции — card.path_status (progress.apply_to_path): done — пройден,
+  current — проходит сейчас (или «начни здесь»), open — не начат, soon — скоро (без ссылки).
+{% endcomment %}
+<section>
+  <div class="section-head">
+    <div class="section-head__titles">
+      <span class="kicker">Программа</span>
+      <h2 class="section-title">Путь обучения {{ track.title }}</h2>
+    </div>
+    <a href="{% url 'courses:list' %}" class="link-arrow">Все курсы <span aria-hidden="true">→</span></a>
+  </div>
+  <ol class="metro">
+    {% for card in cards %}
+    <li class="metro__stop metro__stop--{{ card.path_status }}">
+      {% if card.path_status == 'soon' %}
+      <span class="metro__dot"></span><span class="metro__step">Шаг {{ card.step }}</span><span class="metro__name">{{ card.course.title }}</span><span class="metro__meta">скоро</span>
+      {% else %}
+      <a href="{{ card.course.get_absolute_url }}"><span class="metro__dot"></span><span class="metro__step">Шаг {{ card.step }}</span><span class="metro__name">{{ card.course.title }}</span><span class="metro__meta">{% if card.path_status == 'done' %}✓ пройден{% elif card.start_here %}начни здесь{% elif card.path_status == 'current' %}вы здесь · {{ card.solved }} / {{ card.course.exercise_count }}{% else %}{{ card.course.exercise_count|plural:"задача,задачи,задач" }}{% endif %}</span></a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  <div class="metro-legend">
+    <span><i class="metro-legend__dot metro-legend__dot--done"></i>пройден</span>
+    <span><i class="metro-legend__dot metro-legend__dot--current"></i>вы здесь</span>
+    <span><i class="metro-legend__dot metro-legend__dot--open"></i>открыт</span>
+    <span><i class="metro-legend__dot metro-legend__dot--soon"></i>скоро</span>
+  </div>
+</section>

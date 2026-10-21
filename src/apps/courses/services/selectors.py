@@ -9,7 +9,7 @@ from django.db.models import Count, Prefetch, Q, Sum
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from apps.courses.models import Course, Exercise, Lesson, Section, Topic, Track
+from apps.courses.models import Course, Exercise, Section, Topic, Track
 
 
 PUBLISHED_TOPICS = Q(sections__is_published=True, sections__topics__is_published=True)
@@ -248,17 +248,17 @@ def playground(engine):
 
 
 def home_summary():
-    """Для главной: первые курсы программы и общие числа."""
-    _, _, cards = catalog()
-    open_cards = [card for card in cards if not card.is_soon]
+    """Для главной: курсы направления (карта пути) и числа под кнопками первого экрана.
+
+    Курсов — все, включая «скоро»: это программа направления. Задач — опубликованные.
+    """
+    _, track, cards = catalog()
     return {
-        'start_cards': open_cards[:3],
-        'stats': {
-            'courses': len(open_cards),
-            'lessons': Lesson.objects.published().filter(
-                topic__is_published=True, topic__section__is_published=True,
-                topic__section__course__in=[card.course for card in open_cards],
-            ).count(),
-            'exercises': sum(card.course.exercise_count for card in open_cards),
+        'track': track,
+        'cards': cards,
+        'first_card': next((card for card in cards if not card.is_soon), None),
+        'numbers': {
+            'courses': len(cards),
+            'exercises': sum(card.course.exercise_count for card in cards),
         },
     }

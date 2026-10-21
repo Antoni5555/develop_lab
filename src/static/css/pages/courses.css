@@ -14,7 +14,7 @@
 }
 
 .course-hero__text { display: grid; gap: var(--space-4); max-width: 60ch; }
-.course-hero__title { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -0.03em; line-height: 1; }
+.course-hero__title { font-family: var(--font-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); hyphens: auto; font-size: clamp(1.75rem, 4.4vw, 3.2rem); line-height: 1.05; }
 .course-hero__side { display: grid; gap: var(--space-3); justify-items: start; min-width: 260px; }
 .course-hero__progress { display: grid; gap: var(--space-2); width: 100%; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
 .course-hero__progress .progress { background: rgb(0 0 0 / 0.12); }
@@ -34,7 +34,7 @@
 }
 
 .article__meta { display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-sm); }
-.article__title { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -0.03em; line-height: 1.05; }
+.article__title { font-family: var(--font-display); font-weight: var(--fw-display); letter-spacing: var(--ls-display); hyphens: auto; font-size: clamp(1.75rem, 4.4vw, 3.2rem); line-height: 1.1; }
 .article__lead { font-size: var(--fs-lg); color: var(--muted); }
 .article h2 { margin-top: var(--space-4); font-size: var(--fs-lg); font-weight: var(--fw-bold); }
 

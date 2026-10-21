@@ -1,27 +1,43 @@
+{# «Как это работает»: путь из 4 шагов на одной линии, иконки — inline SVG #}
 <section>
   <div class="section-head">
-    <h2 class="section-title">Как это работает</h2>
+    <div class="section-head__titles">
+      <span class="kicker">Процесс</span>
+      <h2 class="section-title">Как это работает</h2>
+    </div>
   </div>
-  <div class="steps">
-    <div class="step">
-      <span class="step__num">01</span>
-      <h3 class="step__title">Выбираешь курс</h3>
+  <ol class="journey">
+    <li class="journey__step">
+      <span class="journey__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z"/><path d="M9 4v14M15 6v14"/></svg>
+      </span>
+      <span class="journey__num">01</span>
+      <h3 class="journey__title">Выбираешь курс</h3>
       <p class="muted">Курсы идут по шагам программы, внутри — разделы и темы. Видно, что пройдено и что дальше.</p>
-    </div>
-    <div class="step">
-      <span class="step__num">02</span>
-      <h3 class="step__title">Читаешь теорию</h3>
-      <p class="muted">Короткий урок на одну идею: зачем это нужно, как работает, частые ошибки.</p>
-    </div>
-    <div class="step">
-      <span class="step__num">03</span>
-      <h3 class="step__title">Решаешь задачу</h3>
-      <p class="muted">Пишешь код в браузере и видишь результат: таблицы, изменённые строки, SQL от ORM.</p>
-    </div>
-    <div class="step step--accent">
-      <span class="step__num">04</span>
-      <h3 class="step__title">Пишешь заметки</h3>
-      <p>Заметка справа от урока сама попадает в шпаргалку курса — в ту тему, где ты её написал.</p>
-    </div>
-  </div>
+    </li>
+    <li class="journey__step">
+      <span class="journey__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h5v17H6a2 2 0 0 0-2 2z"/><path d="M20 5a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 1 2 2z"/></svg>
+      </span>
+      <span class="journey__num">02</span>
+      <h3 class="journey__title">Читаешь теорию</h3>
+      <p class="muted">Короткий урок на одну идею: теория, наглядная схема, разбор задачи из магазина, частые ошибки.</p>
+    </li>
+    <li class="journey__step">
+      <span class="journey__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>
+      </span>
+      <span class="journey__num">03</span>
+      <h3 class="journey__title">Решаешь задачу</h3>
+      <p class="muted">Код запускается прямо в браузере, тесты сразу говорят, где подвох.</p>
+    </li>
+    <li class="journey__step journey__step--accent">
+      <span class="journey__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>
+      </span>
+      <span class="journey__num">04</span>
+      <h3 class="journey__title">Пишешь заметки</h3>
+      <p class="muted">Заметка справа от урока сама попадает в шпаргалку курса — в ту тему, где ты её написал.</p>
+    </li>
+  </ol>
 </section>
