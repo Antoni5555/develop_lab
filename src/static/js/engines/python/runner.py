@@ -15,7 +15,8 @@
    и созданные программой не переходят в следующий запуск, свои модули импортируются.
    Тесты задачи выполняются в папке основного запуска — им видны файлы программы;
 5. настройки logging прошлого запуска сбрасываются: в браузере интерпретатор
-   один на все запуски.
+   один на все запуски;
+6. глубина рекурсии кода ученика и тестов — RECURSION_LIMIT (а не 1000, как обычно).
 
 Тайм-аут здесь не реализован: в браузере зависшую программу останавливает
 главная страница (перезапуском Web Worker), в check_tasks.py — signal.alarm через guard.
@@ -34,6 +35,14 @@ import traceback
 
 STUDENT_FILE = 'main.py'
 TIMEOUT_MESSAGE = 'Программа не завершилась'
+
+# В браузере рекурсия через C-код Python (сеттер property, __setattr__, __repr__)
+# тратит стек JS быстрее обычной: при глубине 1000 стек Web Worker кончается
+# раньше, чем Python выбросит RecursionError, и Pyodide падает целиком.
+# Замер в Chromium: сеттер выдерживает ~475 уровней — берём 300 с запасом
+# для других браузеров. В check_tasks.py лимит тот же, чтобы задача, прошедшая
+# проверку контента, не упала на сайте.
+RECURSION_LIMIT = 300
 
 
 @contextlib.contextmanager
@@ -61,6 +70,25 @@ def workdir():
             if module_file.startswith(path):
                 del sys.modules[name]
         shutil.rmtree(path, ignore_errors=True)
+
+
+@contextlib.contextmanager
+def recursion_limit():
+    """Код внутри может уйти вглубь на RECURSION_LIMIT вызовов от текущего места.
+
+    Python считает все кадры стека, включая вызовы runner.py и pytest, поэтому
+    лимит — от текущей глубины: ученику доступно одинаково везде.
+    После — прежний лимит (ученик мог поменять его сам).
+    """
+    depth, frame = 0, sys._getframe()
+    while frame is not None:
+        depth, frame = depth + 1, frame.f_back
+    old_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(depth + RECURSION_LIMIT)
+    try:
+        yield
+    finally:
+        sys.setrecursionlimit(old_limit)
 
 
 def reset_logging():
@@ -99,7 +127,7 @@ def execute(code, inputs='', override=None, guard=contextlib.nullcontext):
     ns.update(override or {})
     buffer = io.StringIO()
     try:
-        with guard(), contextlib.redirect_stdout(buffer), \
+        with guard(), recursion_limit(), contextlib.redirect_stdout(buffer), \
                 contextlib.redirect_stderr(buffer):
             exec(compile(code, STUDENT_FILE, 'exec'), ns)
         error = None
@@ -143,7 +171,7 @@ def run_tests(code, task, guard=contextlib.nullcontext):
         for test in task['check']['tests']:
             env = {**ns, 'source': code, 'run': run}
             try:
-                with guard():
+                with guard(), recursion_limit():
                     exec(test['code'], env)
             except TimeoutError:
                 failed.append(TIMEOUT_MESSAGE)

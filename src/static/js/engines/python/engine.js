@@ -3,11 +3,16 @@
 //
 // Тайм-аут: если программа не ответила вовремя (бесконечный цикл), воркер
 // останавливается и запускается заново — Pyodide второй раз берётся из кэша браузера.
+// Так же — если Pyodide упал целиком (кончился стек браузера): после такой ошибки
+// он не работает, поэтому воркер перезапускается.
+// В обоих случаях run() и check() возвращают { aborted: 'текст для ученика' }.
 
 const RUN_TIMEOUT = 2500;      // 2 секунды на программу + запас на передачу данных
 const CHECK_TIMEOUT = 8000;    // проверка запускает код несколько раз (тесты с run())
 
-export const TIMEOUT_MESSAGE = 'Программа не завершилась за 2 секунды — возможно, бесконечный цикл.';
+const TIMEOUT_MESSAGE = 'Программа не завершилась за 2 секунды — возможно, бесконечный цикл.';
+const CRASH_MESSAGE = 'RecursionError: программа ушла в слишком глубокую рекурсию — '
+  + 'возможно, функция или метод вызывает сам себя без конца. Среда Python перезапущена.';
 
 export class PythonEngine {
   /**
@@ -54,9 +59,16 @@ export class PythonEngine {
     if (!request) return;
     clearTimeout(request.timer);
     this.pending.delete(id);
-    this.onStatus('ready');
-    if (ok) request.resolve(result);
-    else request.reject(new Error(error));
+    if (ok) {
+      this.onStatus('ready');
+      request.resolve(result);
+      return;
+    }
+    // Ошибки Python runner.py возвращает в result; сюда доходит только
+    // падение самого Pyodide
+    console.error(error);
+    this.reset();
+    request.resolve({ aborted: CRASH_MESSAGE });
   }
 
   async request(action, data, timeout) {
@@ -67,7 +79,7 @@ export class PythonEngine {
       const timer = setTimeout(() => {
         this.pending.delete(id);
         this.reset();
-        resolve({ timedOut: true });
+        resolve({ aborted: TIMEOUT_MESSAGE });
       }, timeout);
       this.pending.set(id, { resolve, reject, timer });
       this.worker.postMessage({ id, action, ...data });

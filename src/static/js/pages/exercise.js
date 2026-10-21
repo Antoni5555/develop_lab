@@ -1,7 +1,7 @@
 // Страница задачи: редактор, «Запустить», «Проверить» (exercise — тесты, predict — ответ).
 
 import { CodeEditor } from '../editor.js';
-import { PythonEngine, TIMEOUT_MESSAGE } from '../engines/python/engine.js';
+import { PythonEngine } from '../engines/python/engine.js';
 import { markSolved } from '../progress.js';
 import {
   drafts, escapeHtml, hideAlert, inlineCode, showAlert, showConsole, showEngineStatus,
@@ -49,8 +49,8 @@ function revealExplanation() {
 async function run() {
   hideAlert(alertEl);
   const result = await engine.run(editor.value, exercise.inputs || '');
-  if (result.timedOut) {
-    showConsole(consoleEl, { error: TIMEOUT_MESSAGE });
+  if (result.aborted) {
+    showConsole(consoleEl, { error: result.aborted });
     return;
   }
   showConsole(consoleEl, result);
@@ -58,8 +58,8 @@ async function run() {
 
 async function checkExercise() {
   const result = await engine.check(editor.value, exercise);
-  if (result.timedOut) {
-    showAlert(alertEl, 'error', `<strong>${TIMEOUT_MESSAGE}</strong>`);
+  if (result.aborted) {
+    showAlert(alertEl, 'error', `<strong>${result.aborted}</strong>`);
     return;
   }
   showConsole(consoleEl, result);
@@ -78,8 +78,8 @@ async function checkExercise() {
 
 async function checkPredict() {
   const result = await engine.check(editor.value, exercise);
-  if (result.timedOut) {
-    showAlert(alertEl, 'error', `<strong>${TIMEOUT_MESSAGE}</strong>`);
+  if (result.aborted) {
+    showAlert(alertEl, 'error', `<strong>${result.aborted}</strong>`);
     return;
   }
   // После попытки показываем настоящий вывод и разбор: сравнить — и есть обучение

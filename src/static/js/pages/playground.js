@@ -1,7 +1,7 @@
 // Песочница Python: свободный код, «Запустить», вывод. Код хранится в localStorage.
 
 import { CodeEditor } from '../editor.js';
-import { PythonEngine, TIMEOUT_MESSAGE } from '../engines/python/engine.js';
+import { PythonEngine } from '../engines/python/engine.js';
 import { drafts, showConsole, showEngineStatus } from '../trainer-ui.js';
 
 const root = document.querySelector('[data-playground]');
@@ -20,7 +20,7 @@ const engine = new PythonEngine(
 
 async function run() {
   const result = await engine.run(editor.value);
-  showConsole(consoleEl, result.timedOut ? { error: TIMEOUT_MESSAGE } : result);
+  showConsole(consoleEl, result.aborted ? { error: result.aborted } : result);
 }
 
 const editor = new CodeEditor(textarea.closest('.editor'), {

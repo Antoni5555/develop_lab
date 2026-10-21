@@ -6,6 +6,7 @@
 import contextlib
 import importlib.util
 import signal
+import sys
 from pathlib import Path
 
 import pytest
@@ -187,3 +188,45 @@ def test_import_own_module_created_in_inputs():
 
     assert first['output'] == '20\n'
     assert second['output'] == '10\n'      # модуль не взят из кэша прошлого запуска
+
+
+SETTER_RECURSION = '''class Product:
+    @property
+    def price(self):
+        return 1
+
+    @price.setter
+    def price(self, value):
+        self.price = value
+
+Product().price = 5
+'''
+
+
+def test_recursion_limit_same_as_in_browser():
+    """Глубина рекурсии ученика — RECURSION_LIMIT от места запуска, как в браузере.
+
+    Иначе в обычном Python глубина 1000, а в браузере стек кончится раньше.
+    """
+    depth = 'def f(n):\n    return 0 if n == 0 else 1 + f(n - 1)\nprint(f({}))\n'
+
+    assert runner.run_program(depth.format(runner.RECURSION_LIMIT - 10))['error'] == ''
+    assert 'RecursionError' in runner.run_program(
+        depth.format(runner.RECURSION_LIMIT + 10))['error']
+
+
+def test_recursion_in_setter_is_reported_and_limit_restored():
+    """Бесконечная рекурсия (сеттер присваивает сам себе) — обычный RecursionError.
+
+    И в коде ученика, и в тестах задачи; после запуска лимит прежний.
+    """
+    limit_before = sys.getrecursionlimit()
+    task = {'check': {'tests': [
+        {'code': 'Product().price = 1', 'fail': 'Сеттер вызывает сам себя.'},
+    ]}}
+
+    result = runner.check_exercise(SETTER_RECURSION, task)
+
+    assert result['error'].endswith('RecursionError: maximum recursion depth exceeded')
+    assert result['failed'] == ['Сеттер вызывает сам себя.']
+    assert sys.getrecursionlimit() == limit_before
