@@ -21,7 +21,8 @@
   </div>
   <div class="note-editor__area" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Текст заметки"></div>
   <div class="note-editor__foot">
-    <span class="muted small" data-note-status>{% if note.target %}→ {{ note.target|cut:"Шпаргалки → " }}{% endif %}</span>
+    {# Пусто; JS показывает здесь «Сохранено ✓» и ошибки сохранения #}
+    <span class="muted small" data-note-status></span>
     <span class="tags">
       <button type="button" class="btn btn--ghost btn--sm" data-note-cancel hidden>Отмена</button>
       <button type="button" class="btn btn--accent btn--sm" data-note-save>Сохранить</button>

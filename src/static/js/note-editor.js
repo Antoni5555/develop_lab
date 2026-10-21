@@ -22,7 +22,6 @@ export class NoteEditor {
     this.area = root.querySelector('.note-editor__area');
     this.status = root.querySelector('[data-note-status]');
     this.saveButton = root.querySelector('[data-note-save]');
-    this.defaultStatus = this.status.textContent;
 
     // Enter создаёт <p>, а не <div> (div сервер всё равно убрал бы)
     document.execCommand('defaultParagraphSeparator', false, 'p');
@@ -108,7 +107,7 @@ for (const root of document.querySelectorAll('[data-note-editor][data-source]'))
     onSaved: (note) => {
       editor.clear();
       editor.showStatus('Сохранено ✓ — заметка уже в шпаргалке');
-      setTimeout(() => editor.showStatus(editor.defaultStatus), 3000);
+      setTimeout(() => editor.showStatus(''), 3000);
       const link = root.parentElement.querySelector('[data-note-link]');
       if (link) {
         link.querySelector('[data-note-count]').textContent = note.count;

@@ -71,7 +71,8 @@
   content: counter(how);
   position: absolute;
   left: var(--space-4);
-  top: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
   display: grid;
   place-items: center;
   width: 26px;
