@@ -30,61 +30,37 @@ H2_REQUIRED = H2_ORDER[:6]
 PSEUDO_GRAPHICS = re.compile(r"[─│┌┐└┘├┤►◄▼▲]")
 
 
-class Timeout(Exception):
-    pass
+# Задачи Python выполняет тот же runner.py, что и тренажёр на сайте («Разработка»):
+# если эталон прошёл здесь, он пройдёт и у ученика.
+sys.path.insert(0, str(ROOT.parent / "src" / "static" / "js" / "engines" / "python"))
+import runner  # noqa: E402
 
 
 def _alarm(signum, frame):
-    raise Timeout("Программа не завершилась")
+    raise TimeoutError(runner.TIMEOUT_MESSAGE)
 
 
 signal.signal(signal.SIGALRM, _alarm)
 
 
-def execute(code, inputs="", override=None):
-    """Выполнить код ученика так же, как тренажёр: сначала inputs (код входных данных),
-    затем подмена значений из override, затем код ученика."""
-    ns = {}
-    exec(inputs or "", ns)
-    ns.update(override or {})
-    buf = io.StringIO()
+@contextlib.contextmanager
+def guard():
+    """Тайм-аут выполнения, как в тренажёре: зависшая программа — TimeoutError."""
     signal.alarm(TIMEOUT)
     try:
-        with contextlib.redirect_stdout(buf):
-            exec(compile(code, "<student>", "exec"), ns)
-        error = None
-    except BaseException as e:  # noqa: BLE001 — нужна любая ошибка ученика
-        error = e
+        yield
     finally:
         signal.alarm(0)
-    ns["output"] = buf.getvalue()
-    return ns, error
+
+
+def execute(code, inputs="", override=None):
+    return runner.execute(code, inputs, override, guard=guard)
 
 
 def run_tests(code, task):
-    """Вернуть список сообщений fail для непройденных тестов."""
-    inputs = task.get("inputs") or ""
-    ns, error = execute(code, inputs)
-
-    def run(**override):
-        result, _ = execute(code, inputs, override)
-        return result
-
-    failed = []
-    for test in task["check"]["tests"]:
-        env = {**ns, "source": code, "run": run}
-        try:
-            signal.alarm(TIMEOUT)
-            with contextlib.redirect_stdout(io.StringIO()):   # print из функций ученика не мешает выводу проверки
-                exec(test["code"], env)
-        except Timeout:
-            failed.append("Программа не завершилась")
-        except Exception:
-            failed.append(test["fail"])
-        finally:
-            signal.alarm(0)
-    if error is not None and not failed:
-        failed.append(f"код упал: {type(error).__name__}: {error}")
+    """Сообщения fail непройденных тестов (print из функций ученика не мешает выводу проверки)."""
+    with contextlib.redirect_stdout(io.StringIO()):
+        _, _, failed = runner.run_tests(code, task, guard=guard)
     return failed
 
 
@@ -350,9 +326,10 @@ def check_task(path):
     elif task["type"] == "fix":
         problems += check_fix(task)
     elif task["type"] == "predict":
-        ns, error = execute(task["code"])
-        if ns["output"] != task["answer"]:
-            problems.append(f"ответ не совпадает с выводом:\n{ns['output']!r}\n{task['answer']!r}")
+        with guard():
+            result = runner.check_predict(task["code"], task["answer"])
+        if not result["correct"]:
+            problems.append(f"ответ не совпадает с выводом (как сравнивает сайт):\n{result['actual']!r}\n{task['answer']!r}")
     return problems
 
 
