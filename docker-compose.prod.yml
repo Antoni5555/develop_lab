@@ -1,0 +1,98 @@
+# Окружение для сервера. На сервере файл лежит как docker-compose.yml рядом с .env
+# (его копирует CI при каждом деплое). Инструкция — docs/deploy.md.
+#
+# Образы не собираются на сервере, а скачиваются из GitHub Container Registry:
+# CI собирает их после зелёных тестов, тег = SHA коммита (IMAGE_TAG в .env).
+# Наружу открыт только nginx (80, 443); база и Redis видны только внутри Docker.
+
+# Общее для всех сервисов: после падения или перезагрузки сервера — запуститься снова
+x-restart: &restart
+  restart: unless-stopped
+
+services:
+  db:
+    <<: *restart
+    image: postgres:16-alpine
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    <<: *restart
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    <<: *restart
+    image: ${IMAGE_PREFIX:?}/develop-lab-web:${IMAGE_TAG:?}
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DB_HOST: db
+      REDIS_URL: redis://redis:6379/0
+    # Проверка «приложение живо»: запрос к /health/ изнутри контейнера.
+    # Host и X-Forwarded-Proto — как от nginx, иначе Django ответит 400 или редиректом.
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import os, urllib.request as r;
+          r.urlopen(r.Request('http://127.0.0.1:8000/health/', headers={
+          'Host': os.environ['DOMAIN'], 'X-Forwarded-Proto': 'https'}), timeout=3)
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  nginx:
+    <<: *restart
+    image: ${IMAGE_PREFIX:?}/develop-lab-nginx:${IMAGE_TAG:?}
+    environment:
+      DOMAIN: ${DOMAIN:?}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot_certs:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    # Раз в 12 часов nginx перечитывает конфиг — подхватывает продлённый сертификат
+    command: >-
+      sh -c "while :; do sleep 12h; nginx -s reload; done &
+      exec /docker-entrypoint.sh nginx -g 'daemon off;'"
+    depends_on:
+      web:
+        condition: service_healthy
+
+  # Продлевает сертификат Let's Encrypt (проверка дважды в день, продлевает
+  # за 30 дней до конца). Первый сертификат выпускается вручную — docs/deploy.md.
+  certbot:
+    <<: *restart
+    image: certbot/certbot:v5.8.0
+    volumes:
+      - certbot_certs:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: >-
+      sh -c "trap exit TERM; while :; do
+      certbot renew --webroot -w /var/www/certbot --quiet;
+      sleep 12h & wait $${!}; done"
+
+volumes:
+  postgres_data:
+  certbot_certs:
+  certbot_www:

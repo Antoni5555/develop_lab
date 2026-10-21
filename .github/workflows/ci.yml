@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
 
+# Два деплоя одновременно не идут: новый ждёт, пока закончится предыдущий
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -49,10 +54,75 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - run: pytest
 
-  # Образ должен собираться — иначе сломанный Dockerfile заметим только при деплое.
-  # Деплой добавим позже отдельной задачей с `needs: [lint, tests, docker]`.
-  docker:
+  # Образы web и nginx с тегом = SHA коммита. Собираются всегда (сломанный
+  # Dockerfile видно сразу), а в GHCR уходят только с main и только после
+  # зелёных lint и tests.
+  images:
+    needs: [lint, tests]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t develop-lab-web:${{ github.sha }} .
+      # Имя образа в GHCR — только строчными: Antoni5555 → antoni5555
+      - run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+      - name: Сборка
+        run: |
+          # Метка связывает образ с репозиторием: у пакета те же права, что у него
+          label="org.opencontainers.image.source=https://github.com/${{ github.repository }}"
+          for target in web nginx; do
+            docker build --target "$target" --label "$label" \
+              -t "$IMAGE_PREFIX/develop-lab-$target:${{ github.sha }}" .
+          done
+      - name: Отправка в GHCR
+        if: env.PUSH == 'true'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" \
+            | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for target in web nginx; do
+            docker push "$IMAGE_PREFIX/develop-lab-$target:${{ github.sha }}"
+          done
+
+  # Деплой на сервер по SSH. Включается переменной репозитория
+  # DEPLOY_ENABLED=true (Settings → Secrets and variables → Actions → Variables),
+  # когда сервер настроен по docs/deploy.md. До этого job пропускается.
+  deploy:
+    needs: [images]
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/main'
+      && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      packages: read
+    env:
+      SSH_TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+      DEPLOY_DIR: develop_lab
+    steps:
+      - uses: actions/checkout@v4
+      - name: SSH-ключ
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          # Отпечаток сервера заранее известен: подменённый сервер не пройдёт
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      - name: Файлы деплоя на сервер
+        run: |
+          scp docker-compose.prod.yml "$SSH_TARGET:$DEPLOY_DIR/docker-compose.yml"
+          scp deploy/deploy.sh "$SSH_TARGET:$DEPLOY_DIR/deploy.sh"
+      - name: Вход сервера в GHCR
+        # Временный токен этого запуска CI: им сервер скачает образы
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | ssh "$SSH_TARGET" \
+            docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Деплой
+        run: ssh "$SSH_TARGET" "cd $DEPLOY_DIR && sh deploy.sh ${{ github.sha }}"
+      - name: Выход сервера из GHCR
+        # Токен уже не действует после этого запуска — не оставляем его на сервере
+        if: always()
+        run: ssh "$SSH_TARGET" docker logout ghcr.io
