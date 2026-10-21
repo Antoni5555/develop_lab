@@ -50,7 +50,8 @@ def test_exercise_navigation(client, loaded_content):
 
     assert 'aria-label="Назад: Привет, Python"' in html
     assert 'aria-label="Дальше: Что выведет"' in html
-    assert ('<li class="lesson lesson--task lesson--current">'
+    assert ('<li class="lesson lesson--task lesson--current" '
+            'data-exercise-key="python/basics/hello/greeting">'
             '<a href="/courses/python/basics/hello/greeting/">'
             '<span class="lesson__label">Задача 1</span>Приветствие</a>') in html
 

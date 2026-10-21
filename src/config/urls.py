@@ -19,4 +19,5 @@ urlpatterns = [
     path('', include('apps.trainers.urls')),
     path('accounts/', include('apps.accounts.urls')),   # профиль
     path('accounts/', include('allauth.urls')),         # вход, регистрация, пароль
+    path('api/progress/', include('apps.progress.urls')),
 ]

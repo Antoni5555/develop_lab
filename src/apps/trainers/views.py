@@ -7,6 +7,7 @@ from django.conf import settings
 from django.views.generic import TemplateView
 
 from apps.courses.services import selectors
+from apps.progress.services import progress
 from apps.courses.services.rendering import highlight
 
 
@@ -31,6 +32,13 @@ class ExerciseView(EngineMixin, TemplateView):
             kwargs['course'], kwargs['section'], kwargs['topic'], kwargs['exercise'],
         ))
         exercise = context['exercise']
+        progress.apply_to_outline(context['sections'], self.request.user)
+        exercise.is_solved = any(
+            item.is_solved for section in context['sections']
+            for topic in section.topics.all() for item in topic.exercises.all()
+            if item.pk == exercise.pk
+        )
+        context['exercise_key'] = progress.exercise_key(exercise)
         spec = exercise.spec
         # Код на странице — с подсветкой, как в уроке
         if exercise.type == exercise.Type.PREDICT:

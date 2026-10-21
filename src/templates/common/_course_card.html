@@ -1,5 +1,8 @@
 {% load plural %}
-{# Карточка курса. Параметры: card (CourseCard: course, step, is_soon), accent — выделить лаймом с бейджем «Начни здесь». #}
+{% comment %} Карточка курса. Параметры: card (CourseCard), accent — «Начни здесь» на главной.
+   Статус (у вошедшего, progress.apply_to_cards): current — лайм «Продолжить», done — зелёная рамка,
+   new — белая, soon — пунктир. У гостя статуса нет — карточка «не начат».
+{% endcomment %}
 {% with course=card.course %}
 {% if card.is_soon %}
 <div class="course-card course-card--soon">
@@ -11,14 +14,22 @@
   <p class="course-card__text">{{ course.description }}</p>
 </div>
 {% else %}
-<a href="{{ course.get_absolute_url }}" class="course-card{% if accent %} course-card--accent{% endif %}">
+<a href="{{ course.get_absolute_url }}" class="course-card{% if accent or card.status == 'current' %} course-card--accent{% elif card.status == 'done' %} course-card--done{% endif %}">
   <div class="course-card__top">
     <span class="course-card__step">Шаг {{ card.step }}</span>
-    {% if accent %}<span class="badge badge--on-accent">Начни здесь</span>{% else %}<span class="round-btn" aria-hidden="true">↗</span>{% endif %}
+    {% if card.status == 'done' %}<span class="badge badge--done">✓ Пройден</span>
+    {% elif card.status == 'current' %}<span class="badge badge--on-accent">Продолжить</span>
+    {% elif accent %}<span class="badge badge--on-accent">Начни здесь</span>
+    {% else %}<span class="round-btn" aria-hidden="true">↗</span>{% endif %}
   </div>
   <h3 class="course-card__title">{{ course.title }}</h3>
   <p class="course-card__text">{{ course.description }}</p>
-  <span class="course-card__meta">{{ course.topic_count|plural:"тема,темы,тем" }} · {{ course.exercise_count|plural:"задача,задачи,задач" }}</span>
+  {% if user.is_authenticated and card.status %}
+    <div class="progress"><div class="progress__bar" style="--value: {{ card.percent }}%"></div></div>
+    <span class="course-card__meta">{% if card.solved %}{{ card.solved }} из {{ course.exercise_count|plural:"задачи,задач,задач" }}{% else %}{{ course.exercise_count|plural:"задача,задачи,задач" }} · не начат{% endif %}</span>
+  {% else %}
+    <span class="course-card__meta">{{ course.topic_count|plural:"тема,темы,тем" }} · {{ course.exercise_count|plural:"задача,задачи,задач" }}</span>
+  {% endif %}
 </a>
 {% endif %}
 {% endwith %}

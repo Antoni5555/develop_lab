@@ -1,0 +1,7 @@
+{% load plural %}
+<div class="stats">
+  <div class="stat"><span class="stat__value">{{ summary.solved }}</span><span class="stat__label">{{ summary.solved|plural_word:"задача решена,задачи решены,задач решено" }}</span></div>
+  <div class="stat"><span class="stat__value">{{ summary.streak }}</span><span class="stat__label">{{ summary.streak|plural_word:"день подряд,дня подряд,дней подряд" }}</span></div>
+  <div class="stat"><span class="stat__value">{{ summary.completed }}</span><span class="stat__label">{{ summary.completed|plural_word:"курс пройден,курса пройдено,курсов пройдено" }}</span></div>
+  <div class="stat"><span class="stat__value">{{ summary.lessons }}</span><span class="stat__label">{{ summary.lessons|plural_word:"урок прочитан,урока прочитано,уроков прочитано" }}</span></div>
+</div>

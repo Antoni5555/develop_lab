@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'allauth',
     'allauth.account',
+    'rest_framework',
 
     'core.apps.CoreConfig',
     'apps.pages.apps.PagesConfig',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'apps.cheatsheets.apps.CheatsheetsConfig',
     'apps.trainers.apps.TrainersConfig',
     'apps.accounts.apps.AccountsConfig',
+    'apps.progress.apps.ProgressConfig',
 ]
 
 MIDDLEWARE = [
@@ -149,6 +151,16 @@ LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = 'accounts:profile'
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@localhost')
+
+
+# --- API (DRF): его вызывает JS страниц, вход — обычной сессией сайта (с CSRF) ---
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
+    'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
+}
 
 # Уроки и задачи (папка content/ в корне репозитория). Загружаются командой
 # manage.py load_content; в Docker папка подключена в /content

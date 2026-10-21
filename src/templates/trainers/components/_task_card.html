@@ -4,6 +4,8 @@
       <span class="tag">Задача {{ number }}</span>
       <span class="tag tag--level-{{ exercise.difficulty }}">{% if exercise.difficulty == 1 %}Лёгкая{% elif exercise.difficulty == 2 %}Средняя{% else %}Сложная{% endif %}</span>
       {% if exercise.type == 'predict' %}<span class="tag">Что выведет код</span>{% endif %}
+      {# у гостя бейдж показывает js/progress.js по ключу из localStorage #}
+      <span class="badge badge--done" data-solved-badge="{{ exercise_key }}"{% if not exercise.is_solved %} hidden{% endif %}>✓ Решена</span>
     </div>
     <div class="task__nav">
       {% if prev_item %}<a href="{{ prev_item.url }}" class="round-btn round-btn--sm" aria-label="Назад: {{ prev_item.title }}" title="{{ prev_item.title }}">←</a>{% endif %}

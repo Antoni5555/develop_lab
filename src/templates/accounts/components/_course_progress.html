@@ -1,0 +1,19 @@
+{# Курсы, где есть активность. Вкладка «Последние заметки» появится вместе с заметками (шаг 3.3) #}
+<section class="panel">
+  <h2 class="section-title section-title--sm">Мои курсы</h2>
+  {% if summary.courses %}
+  <ul class="progress-list">
+    {% for item in summary.courses %}
+    <li>
+      <div class="progress-list__head">
+        <a href="{{ item.course.get_absolute_url }}">{{ item.course.title }}</a>
+        {% if item.is_done %}<span class="badge badge--done">✓ Пройден</span>{% else %}<span class="muted">{{ item.solved }} / {{ item.total }}</span>{% endif %}
+      </div>
+      <div class="progress"><div class="progress__bar" style="--value: {{ item.percent }}%"></div></div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">Вы ещё не начали ни одного курса. <a href="{% url 'courses:list' %}">Выбрать курс →</a></p>
+  {% endif %}
+</section>

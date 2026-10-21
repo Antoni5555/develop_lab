@@ -11,8 +11,21 @@
   </div>
   {% if first_topic %}
   <div class="course-hero__side">
-    <a href="{{ first_topic.get_absolute_url }}" class="btn btn--ink btn--lg">Начать курс <span aria-hidden="true">→</span></a>
-    <span class="course-hero__next">Первая тема: «{{ first_topic.title }}»</span>
+    {% if user.is_authenticated and progress.solved %}
+      <div class="course-hero__progress">
+        <span>Пройдено {{ progress.solved }} из {{ progress.total|plural:"задачи,задач,задач" }}</span>
+        <div class="progress"><div class="progress__bar" style="--value: {% widthratio progress.solved progress.total 100 %}%"></div></div>
+      </div>
+      {% if continue_item %}
+        <a href="{{ continue_item.url }}" class="btn btn--ink btn--lg">Продолжить <span aria-hidden="true">→</span></a>
+        <span class="course-hero__next">Следующая: «{{ continue_item.title }}»</span>
+      {% else %}
+        <span class="badge badge--on-accent">✓ Курс пройден</span>
+      {% endif %}
+    {% else %}
+      <a href="{{ first_topic.get_absolute_url }}" class="btn btn--ink btn--lg">Начать курс <span aria-hidden="true">→</span></a>
+      <span class="course-hero__next">Первая тема: «{{ first_topic.title }}»</span>
+    {% endif %}
   </div>
   {% endif %}
 </div>

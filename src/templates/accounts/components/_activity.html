@@ -1,0 +1,8 @@
+{# Активность: 35 клеток (5 недель), цвет — сколько задач решено и уроков открыто за день #}
+<section class="panel">
+  <h2 class="section-title section-title--sm">Активность</h2>
+  <div class="heatmap" aria-label="Активность за последние 5 недель">
+    {% for cell in summary.heatmap %}<i data-l="{{ cell.level }}" title="{{ cell.day|date:'j E' }}: {{ cell.count }}"></i>{% endfor %}
+  </div>
+  <p class="muted small">Последние 5 недель</p>
+</section>

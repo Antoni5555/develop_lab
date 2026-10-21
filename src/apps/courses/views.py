@@ -1,5 +1,8 @@
-"""Страницы курсов. Views тонкие: данные готовят функции из services/selectors.py."""
+"""Страницы курсов. Views тонкие: данные готовят services/selectors.py
+и apps/progress/services/progress.py (статусы пользователя)."""
 from django.views.generic import TemplateView
+
+from apps.progress.services import progress
 
 from .services import selectors
 
@@ -13,12 +16,13 @@ class CourseListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tracks, track, cards = selectors.catalog(self.request.GET.get('track'))
+        progress.apply_to_cards(cards, self.request.user)
         context.update(tracks=tracks, track=track, cards=cards)
         return context
 
 
 class CourseDetailView(TemplateView):
-    """Курс: программа по разделам и темам."""
+    """Курс: программа по разделам и темам, у вошедшего — прогресс и «Продолжить»."""
 
     template_name = 'courses/course_detail.html'
     extra_context = {'active_nav': 'courses'}
@@ -26,11 +30,16 @@ class CourseDetailView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(selectors.course_detail(kwargs['course']))
+        sections = context['sections']
+        context['progress'] = progress.apply_to_outline(sections, self.request.user)
+        if self.request.user.is_authenticated and context['progress']['solved']:
+            items = selectors.course_items(sections)
+            context['continue_item'] = progress.next_item(items)
         return context
 
 
 class LessonView(TemplateView):
-    """Урок темы с программой курса справа."""
+    """Урок темы с программой курса справа. У вошедшего урок отмечается прочитанным."""
 
     template_name = 'courses/lesson_detail.html'
     extra_context = {'active_nav': 'courses'}
@@ -40,4 +49,7 @@ class LessonView(TemplateView):
         context.update(selectors.lesson_page(
             kwargs['course'], kwargs['section'], kwargs['topic'],
         ))
+        if self.request.user.is_authenticated:
+            progress.mark_viewed(self.request.user, context['lesson'])
+        progress.apply_to_outline(context['sections'], self.request.user)
         return context

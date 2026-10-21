@@ -1,5 +1,5 @@
 {# Урок: HTML собран из Markdown командой load_content (apps/courses/services/rendering.py) #}
-<article class="article">
+<article class="article" data-current-lesson="{{ course.slug }}/{{ section.slug }}/{{ topic.slug }}">
   <div class="article__meta"><span class="tag">Урок</span><span class="muted">{{ lesson.reading_time }} мин</span><span class="muted">{{ section.title }}</span></div>
   <h1 class="article__title">{{ lesson.title }}</h1>
   {{ lesson.body_html|safe }}

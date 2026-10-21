@@ -2,6 +2,7 @@
 
 import { CodeEditor } from '../editor.js';
 import { PythonEngine, TIMEOUT_MESSAGE } from '../engines/python/engine.js';
+import { markSolved } from '../progress.js';
 import {
   drafts, escapeHtml, hideAlert, inlineCode, showAlert, showConsole, showEngineStatus,
 } from '../trainer-ui.js';
@@ -38,7 +39,8 @@ const editor = new CodeEditor(textarea.closest('.editor'), {
 const draft = drafts.get(draftKey);
 if (draft !== null) editor.value = draft;
 
-function solved() {
+/** Показать разбор; вернуть HTML ссылки «Дальше →» для сообщения. */
+function revealExplanation() {
   const next = nextLink ? ` <a href="${nextLink.href}">Дальше →</a>` : '';
   explanation.hidden = false;
   return next;
@@ -63,7 +65,8 @@ async function checkExercise() {
   showConsole(consoleEl, result);
   const passed = result.total - result.failed.length;
   if (result.failed.length === 0) {
-    const next = solved();
+    markSolved(root.dataset.exercise);
+    const next = revealExplanation();
     showAlert(alertEl, 'success',
       `<strong>Верно!</strong> Все проверки пройдены (${passed} из ${result.total}).${next}`);
   } else {
@@ -81,8 +84,9 @@ async function checkPredict() {
   }
   // После попытки показываем настоящий вывод и разбор: сравнить — и есть обучение
   showConsole(consoleEl, { output: result.actual }, 'Программа вывела:');
-  const next = solved();
+  const next = revealExplanation();
   if (result.correct) {
+    markSolved(root.dataset.exercise);
     showAlert(alertEl, 'success', `<strong>Верно!</strong> Вывод совпал.${next}`);
   } else {
     showAlert(alertEl, 'error',

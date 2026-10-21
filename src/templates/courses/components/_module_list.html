@@ -1,25 +1,31 @@
 {% load plural %}
-{# Разделы курса → темы. Статусы прохождения (✓, «1 / 3 темы») появятся с прогрессом на этапе 3. #}
+{% comment %} Разделы курса → темы. Статусы (✓, «1 / 3 темы», «1 / 4») — у вошедшего
+   (progress.apply_to_outline); у гостя все разделы без статуса. Открыт раздел, где остановились,
+   иначе — первый. {% endcomment %}
 <div class="module-list">
   {% for section in sections %}
-  <details class="module"{% if forloop.first %} open{% endif %}>
+  {% with topics=section.topics.all %}
+  <details class="module{% if section.is_done %} module--done{% elif section.is_started %} module--current{% endif %}"{% if section.is_started and not section.is_done or not progress.solved and forloop.first %} open{% endif %}>
     <summary class="module__head">
       <span class="module__num">{{ forloop.counter|stringformat:"02d" }}</span>
       <span class="module__info">
         <span class="module__title">{{ section.title }}</span>
-        <span class="module__desc">{{ section.get_level_display|capfirst }} · {{ section.topics.all|length|plural:"тема,темы,тем" }} · {{ section.exercise_count|plural:"задача,задачи,задач" }}</span>
+        <span class="module__desc">{{ section.get_level_display|capfirst }} · {{ topics|length|plural:"тема,темы,тем" }} · {{ section.exercise_count|plural:"задача,задачи,задач" }}</span>
       </span>
-      <span></span>
+      {% if section.is_done %}<span class="badge badge--done">✓ Пройден</span>
+      {% elif section.is_started %}<span class="badge badge--current">{{ section.done_topics }} / {{ topics|length|plural:"тема,тем,тем" }}</span>
+      {% else %}<span></span>{% endif %}
     </summary>
     <ol class="module__topics">
-      {% for topic in section.topics.all %}
-      <li class="topic-item">
+      {% for topic in topics %}
+      <li class="topic-item{% if topic.is_done %} topic-item--done{% endif %}">
         {% if topic.lesson %}<a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a>{% else %}<span>{{ topic.title }}</span>{% endif %}
         <span class="muted">урок · {{ topic.exercises.all|length|plural:"задача,задачи,задач" }}</span>
-        <span class="topic-item__status"></span>
+        <span class="topic-item__status">{% if topic.is_done %}✓{% elif topic.is_started %}{{ topic.solved_count }} / {{ topic.exercises.all|length }}{% endif %}</span>
       </li>
       {% endfor %}
     </ol>
   </details>
+  {% endwith %}
   {% endfor %}
 </div>
