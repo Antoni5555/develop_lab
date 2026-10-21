@@ -1,0 +1,45 @@
+title: Журнал оформления заказов пуст
+type: exercise
+difficulty: 2
+pitfall: basicConfig после первого сообщения ничего не меняет — настройку делают в начале.
+statement: |
+  Программа оформления заказов должна писать в журнал сообщения уровня `INFO` в формате
+  `INFO shop.orders: заказ 1042 оформлен`. Настройка журнала в коде есть, но сообщения
+  о заказах не появляются. Исправьте программу, не используя `force=True`.
+starter_code: |
+  import logging
+
+  logger = logging.getLogger("shop.orders")
+
+  logging.warning("запуск оформления заказов")
+  logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+
+  for order_id in (1042, 1043):
+      logger.info("заказ %s оформлен", order_id)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert "INFO shop.orders: заказ 1042 оформлен" in output
+        assert "INFO shop.orders: заказ 1043 оформлен" in output
+      fail: "Сообщений `INFO` нет. Сработал ли `basicConfig`, если до него уже было сообщение `logging.warning`?"
+    - code: |
+        assert "force=True" not in source
+      fail: "Решите без `force=True`: настройку журнала делают до первого сообщения."
+solution: |
+  import logging
+
+  logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+  logger = logging.getLogger("shop.orders")
+
+  logging.warning("запуск оформления заказов")
+
+  for order_id in (1042, 1043):
+      logger.info("заказ %s оформлен", order_id)
+hints:
+  - "Первый вызов `logging.warning(...)` сам настраивает журнал по умолчанию."
+  - "`basicConfig` — первой строкой после импорта."
+explanation: |
+  Функции модуля `logging.warning/info/...` при первом вызове, если журнал не настроен, сами
+  вызывают `basicConfig()` с настройками по умолчанию (уровень `WARNING`). После этого ваш
+  `basicConfig(level=INFO)` ничего не делает — журнал уже настроен. Настройку ставят в самое начало.

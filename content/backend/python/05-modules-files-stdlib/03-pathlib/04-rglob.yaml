@@ -1,0 +1,38 @@
+title: Отчёты за год не находятся
+type: exercise
+difficulty: 2
+pitfall: glob ищет только в самой папке — для подпапок нужен rglob.
+statement: |
+  Отчёты лежат в `reports/<месяц>/orders.csv`. `all_reports()` должна вернуть список путей
+  ко всем CSV-файлам внутри `reports` в виде строк, отсортированный по возрастанию.
+  Сейчас она возвращает пустой список.
+inputs: |
+  from pathlib import Path
+  for month in ("2026-10", "2026-09", "2026-11"):
+      (Path("reports") / month).mkdir(parents=True)
+      (Path("reports") / month / "orders.csv").write_text("order_id,total\n", encoding="utf-8")
+  Path("reports/readme.txt").write_text("отчёты по месяцам\n", encoding="utf-8")
+starter_code: |
+  from pathlib import Path
+
+
+  def all_reports():
+      return sorted(str(p) for p in Path("reports").glob("*.csv"))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert all_reports() == ["reports/2026-09/orders.csv", "reports/2026-10/orders.csv", "reports/2026-11/orders.csv"]
+      fail: "Список пустой: CSV лежат в подпапках. Где ищет `glob(\"*.csv\")`?"
+solution: |
+  from pathlib import Path
+
+
+  def all_reports():
+      return sorted(str(p) for p in Path("reports").rglob("*.csv"))
+hints:
+  - "`rglob` ищет во всех вложенных папках."
+explanation: |
+  `glob("*.csv")` проверяет только файлы прямо в `reports`, а там лежит лишь `readme.txt`.
+  `rglob("*.csv")` (или `glob("**/*.csv")`) обходит всё дерево. Сортировка нужна потому,
+  что порядок обхода файловой системы не гарантирован.

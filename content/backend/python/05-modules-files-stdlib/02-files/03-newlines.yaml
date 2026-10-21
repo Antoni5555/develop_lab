@@ -1,0 +1,35 @@
+title: Отчёт в одну строку
+type: exercise
+difficulty: 1
+pitfall: write не добавляет перевод строки.
+statement: |
+  `save_report(order_ids)` записывает в файл `report.txt` номера заказов — по одному на строку.
+  Бухгалтерия получает файл, где все номера слиплись в одну строку. Исправьте функцию.
+starter_code: |
+  def save_report(order_ids):
+      with open("report.txt", "w", encoding="utf-8") as f:
+          for order_id in order_ids:
+              f.write(str(order_id))
+check:
+  type: tests
+  tests:
+    - code: |
+        from pathlib import Path
+        save_report([1042, 1043, 1044])
+        assert Path("report.txt").read_text(encoding="utf-8") == "1042\n1043\n1044\n"
+      fail: "В файле `104210431044`. Что `write` добавляет после записанной строки?"
+    - code: |
+        from pathlib import Path
+        save_report([])
+        assert Path("report.txt").read_text(encoding="utf-8") == ""
+      fail: Нет заказов — пустой файл.
+solution: |
+  def save_report(order_ids):
+      with open("report.txt", "w", encoding="utf-8") as f:
+          for order_id in order_ids:
+              f.write(f"{order_id}\n")
+hints:
+  - "`write` пишет ровно то, что передали, — перевод строки `\\n` добавьте сами."
+explanation: |
+  В отличие от `print`, метод `write` не добавляет `\n` после строки. Каждую запись
+  заканчивают переводом строки явно: `f.write(f"{order_id}\n")`.

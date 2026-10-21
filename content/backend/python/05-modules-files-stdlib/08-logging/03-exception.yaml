@@ -1,0 +1,59 @@
+title: Ошибка импорта без подробностей
+type: exercise
+difficulty: 2
+pitfall: logger.error в except теряет traceback — нужен logger.exception.
+statement: |
+  `import_quantity(raw)` превращает количество из файла поставщика в `int`; при ошибке пишет
+  в журнал и возвращает `0`. В журнале видно только «не удалось разобрать количество» —
+  непонятно, какое значение и в какой строке кода сломалось. Исправьте запись в журнал так,
+  чтобы в нём был traceback ошибки.
+starter_code: |
+  import logging
+
+  logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+  logger = logging.getLogger("shop.import")
+
+
+  def import_quantity(raw):
+      try:
+          return int(raw)
+      except ValueError:
+          logger.error("не удалось разобрать количество")
+          return 0
+check:
+  type: tests
+  tests:
+    - code: |
+        import contextlib, io, logging
+        log = io.StringIO()
+        handler = logging.StreamHandler(log)
+        logger.addHandler(handler)
+        try:
+            assert import_quantity("три") == 0
+        finally:
+            logger.removeHandler(handler)
+        text = log.getvalue()
+        assert "Traceback" in text and "ValueError" in text
+      fail: "В журнале нет traceback. Какой метод логгера добавляет к сообщению traceback пойманной ошибки?"
+    - code: |
+        assert import_quantity("5") == 5
+      fail: Корректное количество — число.
+solution: |
+  import logging
+
+  logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+  logger = logging.getLogger("shop.import")
+
+
+  def import_quantity(raw):
+      try:
+          return int(raw)
+      except ValueError:
+          logger.exception("не удалось разобрать количество")
+          return 0
+hints:
+  - "`logger.exception(...)` внутри `except`."
+explanation: |
+  `logger.error` пишет только текст сообщения. `logger.exception` — то же сообщение уровня `ERROR`
+  плюс traceback текущей ошибки: тип, текст (`invalid literal for int() ... 'три'`) и строка кода.
+  Вызывают его только внутри `except`.

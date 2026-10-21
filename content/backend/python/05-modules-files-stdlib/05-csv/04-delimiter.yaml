@@ -1,0 +1,40 @@
+title: Прайс из Excel
+type: exercise
+difficulty: 2
+pitfall: CSV из русского Excel разделён точкой с запятой — разделитель указывают явно.
+statement: |
+  Менеджер присылает прайс, сохранённый в Excel: разделитель — `;`, дробная часть цены —
+  через запятую (`1499,90`). `read_excel_price(path)` должна вернуть словарь
+  `{id: цена}`, где `id` — `int`, цена — `Decimal`. Функция падает с `KeyError`. Исправьте её.
+inputs: |
+  from pathlib import Path
+  Path("excel.csv").write_text("id;name;price\n42;Мышь;1499,90\n13;Коврик;490\n", encoding="utf-8")
+starter_code: |
+  import csv
+  from decimal import Decimal
+
+
+  def read_excel_price(path):
+      with open(path, newline="", encoding="utf-8") as f:
+          return {int(row["id"]): Decimal(row["price"].replace(",", ".")) for row in csv.DictReader(f)}
+check:
+  type: tests
+  tests:
+    - code: |
+        from decimal import Decimal
+        assert read_excel_price("excel.csv") == {42: Decimal("1499.90"), 13: Decimal("490")}
+      fail: "`KeyError: 'id'`. Выведите первую строку `DictReader` — какой у неё ключ? Каким символом разделены поля?"
+solution: |
+  import csv
+  from decimal import Decimal
+
+
+  def read_excel_price(path):
+      with open(path, newline="", encoding="utf-8") as f:
+          return {int(row["id"]): Decimal(row["price"].replace(",", ".")) for row in csv.DictReader(f, delimiter=";")}
+hints:
+  - "`csv.DictReader(f, delimiter=\";\")`"
+explanation: |
+  С разделителем по умолчанию `DictReader` ищет запятые: вся строка заголовка становится одним
+  полем `"id;name;price"`, и ключа `"id"` нет. `delimiter=";"` говорит, чем разделены поля.
+  Запятую в цене меняем на точку уже после разбора.

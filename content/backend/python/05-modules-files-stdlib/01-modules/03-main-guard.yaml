@@ -1,0 +1,52 @@
+title: Рассылка при импорте
+type: exercise
+difficulty: 2
+pitfall: Код на верхнем уровне модуля выполняется при каждом импорте.
+statement: |
+  Модуль рассылки содержит функцию `send_promo(emails)` и строку для ручного запуска,
+  которая отправляет письмо тестовому адресу. Когда другие модули импортируют этот файл,
+  письмо уходит каждый раз. Сделайте так, чтобы тестовая отправка выполнялась **только при
+  запуске файла как программы**, а при импорте — нет.
+starter_code: |
+  def send_promo(emails):
+      for email in emails:
+          print(f"письмо отправлено: {email}")
+
+
+  send_promo(["test@shop.test"])
+check:
+  type: tests
+  tests:
+    - code: |
+        assert "письмо отправлено: test@shop.test" in output
+      fail: При запуске файла как программы тестовое письмо должно отправляться.
+    - code: |
+        import contextlib, io
+        imported = {"__name__": "notify"}
+        captured = io.StringIO()
+        with contextlib.redirect_stdout(captured):
+            exec(source, imported)
+        assert captured.getvalue() == ""
+      fail: "При импорте (когда `__name__` — имя модуля) письмо всё ещё уходит. Какая проверка отличает запуск от импорта?"
+    - code: |
+        import contextlib, io
+        captured = io.StringIO()
+        with contextlib.redirect_stdout(captured):
+            send_promo(["a@shop.test"])
+        assert captured.getvalue() == "письмо отправлено: a@shop.test\n"
+      fail: Функция рассылки должна работать как раньше.
+solution: |
+  def send_promo(emails):
+      for email in emails:
+          print(f"письмо отправлено: {email}")
+
+
+  if __name__ == "__main__":
+      send_promo(["test@shop.test"])
+hints:
+  - "При запуске файла `__name__ == \"__main__\"`, при импорте — имя модуля."
+explanation: |
+  При импорте Python выполняет весь файл, в том числе вызов `send_promo(...)` на верхнем уровне.
+  Блок `if __name__ == "__main__":` выполняется только при запуске файла как программы — туда
+  и переносят «ручной» код. Второй тест так и проверяет: выполняет ваш код с `__name__ = "notify"`,
+  как это происходит при импорте.

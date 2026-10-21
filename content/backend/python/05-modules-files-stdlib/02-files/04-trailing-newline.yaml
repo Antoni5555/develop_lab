@@ -1,0 +1,38 @@
+title: Артикулы поставщика не находятся
+type: exercise
+difficulty: 2
+pitfall: Строки, прочитанные из файла, заканчиваются переводом строки.
+statement: |
+  Поставщик присылает файл `supplier.txt` — по одному артикулу на строку. `in_stock(sku)`
+  проверяет, есть ли артикул в файле. Сейчас она возвращает `False` даже для артикулов,
+  которые в файле точно есть. Исправьте функцию.
+inputs: |
+  from pathlib import Path
+  Path("supplier.txt").write_text("KB-0142\nMS-0007\nMP-0003\n", encoding="utf-8")
+starter_code: |
+  def in_stock(sku):
+      with open("supplier.txt", encoding="utf-8") as f:
+          skus = list(f)
+      return sku in skus
+check:
+  type: tests
+  tests:
+    - code: |
+        assert in_stock("MS-0007") is True
+      fail: "Выведите `skus` — как выглядят прочитанные строки?"
+    - code: |
+        assert in_stock("XX-0000") is False
+      fail: Артикула нет в файле — `False`.
+    - code: |
+        assert in_stock("MP-0003") is True
+      fail: Последний артикул файла тоже должен находиться.
+solution: |
+  def in_stock(sku):
+      with open("supplier.txt", encoding="utf-8") as f:
+          skus = [line.rstrip("\n") for line in f]
+      return sku in skus
+hints:
+  - "Строки файла — `\"KB-0142\\n\"`, а не `\"KB-0142\"`."
+explanation: |
+  Перебор файла отдаёт строки вместе с `\n` на конце, и `"MS-0007" in ["MS-0007\n", ...]` — `False`.
+  Строки чистят: `line.rstrip("\n")` (или `.strip()`, если вокруг бывают пробелы).

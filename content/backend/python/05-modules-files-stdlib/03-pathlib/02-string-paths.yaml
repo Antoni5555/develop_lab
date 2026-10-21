@@ -1,0 +1,35 @@
+title: Отчёт в папке reports2026-10
+type: exercise
+difficulty: 1
+pitfall: Пути склеивают оператором / у Path, а не строками.
+statement: |
+  `report_path(month)` возвращает путь к отчёту за месяц: `reports/<month>/orders.csv`
+  (объект `Path`). Сейчас отчёты оказываются в папках вида `reports2026-10orders.csv`.
+  Исправьте функцию.
+starter_code: |
+  from pathlib import Path
+
+
+  def report_path(month):
+      return Path("reports" + month + "orders.csv")
+check:
+  type: tests
+  tests:
+    - code: |
+        assert report_path("2026-10") == Path("reports") / "2026-10" / "orders.csv"
+      fail: "Путь склеился без разделителей. Как соединяют части пути у `Path`?"
+    - code: |
+        p = report_path("2026-11")
+        assert p.name == "orders.csv" and p.parent.name == "2026-11"
+      fail: Файл — `orders.csv` в папке месяца.
+solution: |
+  from pathlib import Path
+
+
+  def report_path(month):
+      return Path("reports") / month / "orders.csv"
+hints:
+  - "`Path(\"reports\") / month / \"orders.csv\"`"
+explanation: |
+  Сложение строк не знает о разделителях путей — части просто слипаются. Оператор `/` у `Path`
+  ставит правильный разделитель для системы и возвращает новый `Path`.

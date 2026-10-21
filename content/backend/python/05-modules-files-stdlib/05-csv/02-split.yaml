@@ -1,0 +1,47 @@
+title: Название с запятой
+type: exercise
+difficulty: 2
+pitfall: split(",") разрезает значения с запятой внутри кавычек — нужен модуль csv.
+statement: |
+  `read_price(path)` читает прайс поставщика (заголовок `id,name,price`) и возвращает список
+  пар `(название, цена)`, где цена — `Decimal`. На товарах с запятой в названии функция
+  падает. Исправьте её.
+inputs: |
+  from pathlib import Path
+  Path("price.csv").write_text(
+      'id,name,price\n42,Мышь,1499.90\n43,"Мышь, беспроводная",1990.00\n',
+      encoding="utf-8",
+  )
+starter_code: |
+  from decimal import Decimal
+
+
+  def read_price(path):
+      result = []
+      with open(path, encoding="utf-8") as f:
+          next(f)
+          for line in f:
+              product_id, name, price = line.rstrip("\n").split(",")
+              result.append((name, Decimal(price)))
+      return result
+check:
+  type: tests
+  tests:
+    - code: |
+        from decimal import Decimal
+        assert read_price("price.csv") == [("Мышь", Decimal("1499.90")), ("Мышь, беспроводная", Decimal("1990.00"))]
+      fail: "На строке `43,\"Мышь, беспроводная\",1990.00` — четыре значения вместо трёх. Кто умеет разбирать кавычки в CSV?"
+solution: |
+  import csv
+  from decimal import Decimal
+
+
+  def read_price(path):
+      with open(path, newline="", encoding="utf-8") as f:
+          return [(row["name"], Decimal(row["price"])) for row in csv.DictReader(f)]
+hints:
+  - "`csv.DictReader(f)` — строки словарями по заголовку."
+explanation: |
+  Название в кавычках содержит запятую, и `split(",")` режет его на два поля. Модуль `csv` знает,
+  что запятая внутри кавычек — часть значения. `DictReader` заодно сам пропускает заголовок
+  и даёт обращаться к полям по имени.

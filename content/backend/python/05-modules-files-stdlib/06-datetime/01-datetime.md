@@ -18,7 +18,8 @@ reading_time: 9
 | `date` | год, месяц, день | `date(2026, 12, 31)` | срок действия промокода, день рождения |
 | `datetime` | дата + время (+ пояс) | `datetime(2026, 10, 20, 14, 30, tzinfo=timezone.utc)` | создание заказа, время оплаты |
 | `timedelta` | промежуток | `timedelta(days=30, hours=2)` | «действует 30 дней», «заказы за 7 дней» |
-| `timezone` | смещение от UTC | `timezone.utc`, `timezone(timedelta(hours=3))` | перевод в местное время покупателя |
+| `timezone` | фиксированное смещение от UTC | `timezone.utc` | хранение и сравнение времени в UTC |
+| `ZoneInfo` (модуль `zoneinfo`) | часовой пояс по имени, с летним временем | `ZoneInfo("Europe/Moscow")` | показ времени покупателю в его поясе |
 
 **Таблица 2.** Преобразование в строку и обратно.
 
@@ -106,16 +107,18 @@ ValueError: time data '1998-03-05' does not match format '%d.%m.%Y'
 Строка не в том формате — `ValueError`; данные из формы проверяют так же, как числа.
 
 ### Шаг 6. Переводим в местное время
-Заказ создан в 14:30 UTC; покупатель в Москве (UTC+3) должен увидеть 17:30:
+Заказ создан в 14:30 UTC; покупатель в Москве должен увидеть местное время. Пояс задаём по имени через `zoneinfo`:
 ```python
-msk = timezone(timedelta(hours=3))
-local = created_at.astimezone(msk)
-print(local.strftime("%d.%m.%Y %H:%M"), local.isoformat())
+from zoneinfo import ZoneInfo
+
+moscow = ZoneInfo("Europe/Moscow")
+local = created_at.astimezone(moscow)
+print(local.strftime("%d.%m.%Y %H:%M %Z"), local.isoformat())
 print(local == created_at)
 ```
 Результат:
 ```
-20.10.2026 17:30 2026-10-20T17:30:00+03:00
+20.10.2026 17:30 MSK 2026-10-20T17:30:00+03:00
 True
 ```
 Это один и тот же момент времени, просто записанный в другом поясе, — поэтому `==` даёт `True`.
@@ -160,7 +163,7 @@ print(recent_orders(orders, now))
 - **`datetime` против `date`.** `datetime(…) <= date(…)` — `TypeError`. Приводите к одному типу: `dt.date()`.
 - **Арифметика по полям.** `date(year, month, day - 7)` падает в начале месяца (`ValueError: day is out of range for month`). Промежутки — только через `timedelta`.
 - **`datetime.now()` в логике.** Наивное местное время сервера и результат, который нельзя проверить тестом. Берите `datetime.now(timezone.utc)` и передавайте «сейчас» параметром.
-- **Местное время с фиксированным смещением.** `timezone(timedelta(hours=3))` не знает о переходах на летнее время. В проектах пояс задают по имени через модуль `zoneinfo` (`ZoneInfo("Europe/Moscow")`), а в Django — настройкой `TIME_ZONE`.
+- **Фиксированное смещение вместо пояса.** `timezone(timedelta(hours=3))` — просто «+3 часа» и не знает о переходах на летнее время в других странах. Местное время задают поясом по имени: `ZoneInfo("Europe/Berlin")`; в Django — настройкой `TIME_ZONE`.
 
 ## Итог
 **Типы**
@@ -172,7 +175,7 @@ print(recent_orders(orders, now))
 
 **Часовые пояса**
 - Наивное время — без пояса, осведомлённое — с поясом; смешивать нельзя.
-- Хранить и сравнивать в UTC, переводить в местное при показе: `astimezone()`.
+- Хранить и сравнивать в UTC, переводить в местное при показе: `dt.astimezone(ZoneInfo("Europe/Moscow"))`.
 - «Сейчас» — `datetime.now(timezone.utc)`; в функции лучше передавать параметром.
 
 ## Вопросы на собеседовании

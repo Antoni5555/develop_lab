@@ -1,0 +1,46 @@
+title: Второй отчёт за месяц
+type: exercise
+difficulty: 2
+pitfall: mkdir без parents и exist_ok падает на вложенной или уже существующей папке.
+statement: |
+  `save_report(month, text)` сохраняет отчёт в `reports/<month>/orders.csv` и возвращает путь.
+  Первый отчёт в новой установке не сохраняется, а второй отчёт за тот же месяц падает.
+  Исправьте функцию: она должна работать всегда.
+starter_code: |
+  from pathlib import Path
+
+
+  def save_report(month, text):
+      folder = Path("reports") / month
+      folder.mkdir()
+      path = folder / "orders.csv"
+      path.write_text(text, encoding="utf-8")
+      return path
+check:
+  type: tests
+  tests:
+    - code: |
+        p = save_report("2026-10", "order_id,total\n")
+        assert p.read_text(encoding="utf-8") == "order_id,total\n"
+      fail: "Папки `reports` ещё нет — `FileNotFoundError`. Какой параметр `mkdir` создаёт родительские папки?"
+    - code: |
+        save_report("2026-11", "первый\n")
+        p = save_report("2026-11", "второй\n")
+        assert p.read_text(encoding="utf-8") == "второй\n"
+      fail: "Повторное сохранение за тот же месяц падает с `FileExistsError`."
+solution: |
+  from pathlib import Path
+
+
+  def save_report(month, text):
+      folder = Path("reports") / month
+      folder.mkdir(parents=True, exist_ok=True)
+      path = folder / "orders.csv"
+      path.write_text(text, encoding="utf-8")
+      return path
+hints:
+  - "`mkdir(parents=True, exist_ok=True)`"
+explanation: |
+  `mkdir()` по умолчанию создаёт ровно одну папку и требует, чтобы родительская существовала,
+  а уже существующая папка — ошибка. `parents=True` создаёт недостающие уровни, `exist_ok=True`
+  разрешает повторный вызов.

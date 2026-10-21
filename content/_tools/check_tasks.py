@@ -10,6 +10,7 @@
 import concurrent.futures
 import contextlib
 import json
+import linecache
 import os
 import subprocess
 import tempfile
@@ -384,6 +385,7 @@ def check_lesson_code(text):
 def _check_lesson_code(text):
     problems, ns = [], {"__name__": "__main__"}
     blocks = fenced_blocks(text)
+    buf = io.StringIO()   # один поток на весь урок: обработчики logging из ранних блоков пишут сюда же
     for k, (lang, code, caption) in enumerate(blocks):
         if (m := FILE_CAPTION.search(caption)) and lang in ("python", "text", "csv", "json", "ini", ""):
             Path(m.group(1)).parent.mkdir(parents=True, exist_ok=True)
@@ -394,26 +396,28 @@ def _check_lesson_code(text):
         expected = None
         if k + 1 < len(blocks) and blocks[k + 1][0] == "" and blocks[k + 1][2].startswith("Результат"):
             expected = blocks[k + 1][1]
-        buf = io.StringIO()
+        start = buf.tell()
         error = None
         signal.alarm(TIMEOUT)
         try:
+            # текст блока — в linecache: traceback показывает строки кода, как в терминале
+            linecache.cache["main.py"] = (len(code), None, code.splitlines(True), "main.py")
             with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
                 exec(compile(code, "main.py", "exec"), ns)
         except BaseException as e:  # noqa: BLE001
             error = traceback.format_exception(e)[-1].rstrip("\n")
         finally:
             signal.alarm(0)
-        actual = buf.getvalue().rstrip("\n")
+        actual = buf.getvalue()[start:].rstrip("\n")
         first = code.splitlines()[0][:50]
         if expected is None:
             if error:
                 problems.append(f"пример «{first}» упал без блока «Результат:»: {error}")
             continue
-        exp_lines = expected.splitlines()
+        exp_lines = expected.splitlines() or [""]
         markers = [n for n, l in enumerate(exp_lines) if l.startswith("Traceback") or l.startswith('  File "')]
         looks_like_error = bool(re.fullmatch(r"[\w.]+(Error|Exception|Iteration|Exit|Interrupt)(: .*)?", exp_lines[-1]))
-        if markers or (error and looks_like_error):
+        if error is not None and (markers or looks_like_error):
             exp_out = "\n".join(exp_lines[:markers[0]] if markers else exp_lines[:-1])
             if error != exp_lines[-1]:
                 problems.append(f"пример «{first}»: ожидалась ошибка {exp_lines[-1]!r}, получено {error!r}")

@@ -1,0 +1,43 @@
+title: Доставка по цене товара
+type: exercise
+difficulty: 2
+pitfall: Импорт одинаковых имён из разных модулей — второе перезаписывает первое.
+statement: |
+  В проекте два модуля: `pricing.py` (функция `cost(price, qty)` — стоимость позиции) и
+  `shipping.py` (функция `cost(weight)` — стоимость доставки). Модули уже лежат в рабочей
+  папке, их не меняйте. `order_total(price, qty, weight)` должна возвращать стоимость позиции
+  плюс доставку. Сейчас она падает или считает неверно.
+inputs: |
+  from pathlib import Path
+  Path("pricing.py").write_text("def cost(price, qty):\n    return price * qty\n")
+  Path("shipping.py").write_text("def cost(weight):\n    return 199 if weight <= 5 else 399\n")
+starter_code: |
+  from pricing import cost
+  from shipping import cost
+
+
+  def order_total(price, qty, weight):
+      return cost(price, qty) + cost(weight)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert order_total(1499, 2, 3) == 3197
+      fail: "Какая функция `cost` осталась в программе после двух импортов?"
+    - code: |
+        assert order_total(5990, 1, 8) == 6389
+      fail: Тяжёлая посылка — доставка 399.
+solution: |
+  import pricing
+  import shipping
+
+
+  def order_total(price, qty, weight):
+      return pricing.cost(price, qty) + shipping.cost(weight)
+hints:
+  - "Второй `from shipping import cost` перезаписал имя `cost`."
+  - "Импортируйте модули целиком и обращайтесь через точку — или переименуйте через `as`."
+explanation: |
+  `from ... import cost` кладёт в программу имя `cost`; второй такой импорт заменяет его функцией
+  доставки, и первая становится недоступна. `import pricing` и `import shipping` оставляют имена
+  внутри модулей: `pricing.cost` и `shipping.cost` не мешают друг другу.

@@ -1,0 +1,46 @@
+title: Выручка по выгрузке
+type: exercise
+difficulty: 2
+pitfall: Все значения из CSV — строки; суммы нужно привести к Decimal.
+statement: |
+  `paid_revenue(path)` возвращает сумму поля `total` по оплаченным заказам из выгрузки
+  (заголовок `order_id,status,total`) как `Decimal`. Функция падает с `TypeError`. Исправьте её.
+inputs: |
+  from pathlib import Path
+  Path("orders.csv").write_text(
+      "order_id,status,total\n1042,paid,1499.90\n1043,cancelled,5990.00\n1044,paid,490.00\n",
+      encoding="utf-8",
+  )
+starter_code: |
+  import csv
+
+
+  def paid_revenue(path):
+      with open(path, newline="", encoding="utf-8") as f:
+          return sum(row["total"] for row in csv.DictReader(f) if row["status"] == "paid")
+check:
+  type: tests
+  tests:
+    - code: |
+        from decimal import Decimal
+        assert paid_revenue("orders.csv") == Decimal("1989.90")
+      fail: "`TypeError: unsupported operand type(s) for +: 'int' and 'str'`. Какого типа значения в строках CSV?"
+    - code: |
+        from decimal import Decimal
+        from pathlib import Path
+        Path("empty.csv").write_text("order_id,status,total\n", encoding="utf-8")
+        assert paid_revenue("empty.csv") == 0
+      fail: Пустая выгрузка — 0.
+solution: |
+  import csv
+  from decimal import Decimal
+
+
+  def paid_revenue(path):
+      with open(path, newline="", encoding="utf-8") as f:
+          return sum(Decimal(row["total"]) for row in csv.DictReader(f) if row["status"] == "paid")
+hints:
+  - "`Decimal(row[\"total\"])`"
+explanation: |
+  CSV — текст, и `DictReader` отдаёт все значения строками. `sum` начинает с `0` и пытается
+  прибавить строку — `TypeError`. Суммы приводят к `Decimal` — не к `float`, чтобы не потерять копейки.

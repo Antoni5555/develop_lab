@@ -1,0 +1,32 @@
+title: Журнал хранит одну запись
+type: exercise
+difficulty: 1
+pitfall: Режим "w" стирает файл при открытии — для журнала нужен "a".
+statement: |
+  `log_event(text)` добавляет строку `text` в журнал `events.log` (каждая запись — отдельная
+  строка). В журнале всегда оказывается только последняя запись. Исправьте функцию.
+inputs: |
+  from pathlib import Path
+  Path("events.log").write_text("журнал открыт\n", encoding="utf-8")
+starter_code: |
+  def log_event(text):
+      with open("events.log", "w", encoding="utf-8") as f:
+          f.write(text + "\n")
+check:
+  type: tests
+  tests:
+    - code: |
+        from pathlib import Path
+        log_event("1042 оплачен")
+        log_event("1043 отменён")
+        assert Path("events.log").read_text(encoding="utf-8") == "журнал открыт\n1042 оплачен\n1043 отменён\n"
+      fail: "Прежние записи пропали. Что режим `\"w\"` делает с файлом при открытии?"
+solution: |
+  def log_event(text):
+      with open("events.log", "a", encoding="utf-8") as f:
+          f.write(text + "\n")
+hints:
+  - "Режим `\"a\"` — дозапись в конец."
+explanation: |
+  `"w"` обрезает файл до нуля при каждом открытии — от журнала остаётся последняя строка.
+  `"a"` открывает файл на дозапись: новые строки добавляются после существующих.
