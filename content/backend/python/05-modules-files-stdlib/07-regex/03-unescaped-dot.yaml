@@ -1,0 +1,37 @@
+title: Цена с запятой
+type: exercise
+difficulty: 2
+pitfall: Точка в шаблоне — любой символ; точку как символ нужно экранировать.
+statement: |
+  API принимает цену строкой в формате «целые рубли, точка, ровно две цифры копеек»:
+  `1499.90`. `is_valid_price(text)` пропускает и `1499,90`, и `1499x90` — их потом не может
+  разобрать `Decimal`. Исправьте шаблон.
+starter_code: |
+  import re
+
+
+  def is_valid_price(text):
+      return bool(re.fullmatch(r"\d+.\d{2}", text))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert is_valid_price("1499,90") is False and is_valid_price("1499x90") is False
+      fail: "`1499,90` прошла проверку. Что означает `.` в регулярном выражении?"
+    - code: |
+        assert is_valid_price("1499.90") is True and is_valid_price("0.10") is True
+      fail: Цены с точкой должны проходить.
+    - code: |
+        assert is_valid_price("1499.9") is False
+      fail: Копеек — ровно две цифры.
+solution: |
+  import re
+
+
+  def is_valid_price(text):
+      return bool(re.fullmatch(r"\d+\.\d{2}", text))
+hints:
+  - "`.` совпадает с любым символом."
+explanation: |
+  Точка в шаблоне — любой символ, поэтому запятая и буква тоже подошли. Чтобы искать именно точку,
+  её экранируют: `\.`.

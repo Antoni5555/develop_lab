@@ -1,0 +1,36 @@
+title: Отчёт за неделю в начале месяца
+type: exercise
+difficulty: 2
+pitfall: Даты считают через timedelta, а не арифметикой по полям.
+statement: |
+  `week_start(today)` возвращает дату ровно на 7 дней раньше `today` — начало периода для отчёта.
+  В начале каждого месяца отчёт падает. Исправьте функцию.
+starter_code: |
+  from datetime import date, timedelta
+
+
+  def week_start(today):
+      return date(today.year, today.month, today.day - 7)
+check:
+  type: tests
+  tests:
+    - code: |
+        assert week_start(date(2026, 10, 3)) == date(2026, 9, 26)
+      fail: "`ValueError: day is out of range for month` — день стал отрицательным. Какой тип умеет считать промежутки через границу месяца?"
+    - code: |
+        assert week_start(date(2027, 1, 5)) == date(2026, 12, 29)
+      fail: Неделя может переходить и через границу года.
+    - code: |
+        assert week_start(date(2026, 10, 20)) == date(2026, 10, 13)
+      fail: В середине месяца — на 7 дней раньше.
+solution: |
+  from datetime import date, timedelta
+
+
+  def week_start(today):
+      return today - timedelta(days=7)
+hints:
+  - "`today - timedelta(days=7)`"
+explanation: |
+  Поле `day` — просто число, и `3 - 7` даёт `-4`, а такой даты нет. `timedelta` учитывает длину
+  месяцев и годов: `date(2026, 10, 3) - timedelta(days=7)` — `2026-09-26`.

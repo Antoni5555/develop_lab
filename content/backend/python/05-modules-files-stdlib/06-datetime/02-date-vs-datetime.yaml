@@ -1,0 +1,38 @@
+title: Промокод в последний день
+type: exercise
+difficulty: 2
+pitfall: datetime и date нельзя сравнивать напрямую — приводите к одному типу.
+statement: |
+  `is_promo_active(valid_until, now)` проверяет промокод: `valid_until` — дата (`date`),
+  по которую промокод действует **включительно**, `now` — текущий момент (`datetime` в UTC).
+  Функция падает с `TypeError`. Исправьте её.
+starter_code: |
+  from datetime import date, datetime, timezone
+
+
+  def is_promo_active(valid_until, now):
+      return now <= valid_until
+check:
+  type: tests
+  tests:
+    - code: |
+        assert is_promo_active(date(2026, 11, 19), datetime(2026, 11, 19, 23, 59, tzinfo=timezone.utc)) is True
+      fail: "В последний день промокод действует. `TypeError: can't compare datetime.datetime to datetime.date` — как привести момент к дате?"
+    - code: |
+        assert is_promo_active(date(2026, 11, 19), datetime(2026, 11, 20, 0, 1, tzinfo=timezone.utc)) is False
+      fail: На следующий день промокод уже не действует.
+    - code: |
+        assert is_promo_active(date(2026, 11, 19), datetime(2026, 10, 1, tzinfo=timezone.utc)) is True
+      fail: До срока промокод действует.
+solution: |
+  from datetime import date, datetime, timezone
+
+
+  def is_promo_active(valid_until, now):
+      return now.date() <= valid_until
+hints:
+  - "У `datetime` есть метод `.date()`."
+explanation: |
+  `datetime` и `date` — разные типы, и Python не сравнивает их между собой. Срок действия — дата,
+  поэтому момент приводим к дате: `now.date() <= valid_until`. Сравнение «по дату включительно»
+  работает весь последний день.

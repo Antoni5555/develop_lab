@@ -1,0 +1,41 @@
+title: Свежие заказы
+type: exercise
+difficulty: 3
+pitfall: Наивное время нельзя сравнивать с осведомлённым — граница периода должна быть в UTC.
+statement: |
+  `orders_since(orders, year, month, day)` возвращает номера заказов, созданных начиная
+  с полуночи указанного дня **по UTC**. Заказы — список `(номер, created_at)`, где `created_at` —
+  `datetime` в UTC. Функция падает с `TypeError`. Исправьте её.
+starter_code: |
+  from datetime import datetime, timezone
+
+
+  def orders_since(orders, year, month, day):
+      since = datetime(year, month, day)
+      return [order_id for order_id, created in orders if created >= since]
+check:
+  type: tests
+  tests:
+    - code: |
+        orders = [(1, datetime(2026, 10, 20, 0, 0, tzinfo=timezone.utc)),
+                  (2, datetime(2026, 10, 19, 23, 59, tzinfo=timezone.utc)),
+                  (3, datetime(2026, 10, 21, 8, 0, tzinfo=timezone.utc))]
+        assert orders_since(orders, 2026, 10, 20) == [1, 3]
+      fail: "`TypeError: can't compare offset-naive and offset-aware datetimes`. У какого из двух моментов нет часового пояса?"
+    - code: |
+        assert orders_since([], 2026, 10, 20) == []
+      fail: Нет заказов — пустой список.
+solution: |
+  from datetime import datetime, timezone
+
+
+  def orders_since(orders, year, month, day):
+      since = datetime(year, month, day, tzinfo=timezone.utc)
+      return [order_id for order_id, created in orders if created >= since]
+hints:
+  - "Выведите `since.tzinfo` и `created.tzinfo`."
+  - "`datetime(..., tzinfo=timezone.utc)`"
+explanation: |
+  Время заказов — в UTC, а граница периода создана без пояса. Python не знает, в каком поясе
+  «полночь» без пояса, и отказывается сравнивать. Граница тоже должна быть в UTC — тогда сравнение
+  однозначно.

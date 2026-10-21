@@ -1,0 +1,45 @@
+title: Сервер падает на кривом запросе
+type: exercise
+difficulty: 2
+pitfall: Ошибка разбора JSON — JSONDecodeError (подвид ValueError), её нужно ловить.
+statement: |
+  `handle(body)` принимает тело запроса на добавление в корзину. Для корректного JSON она
+  возвращает `{"status": 200, "qty": ...}`, для тела, которое не является JSON, —
+  `{"status": 400}`. Сейчас на кривом теле сервер падает. Исправьте обработку ошибки.
+starter_code: |
+  import json
+
+
+  def handle(body):
+      try:
+          data = json.loads(body)
+      except KeyError:
+          return {"status": 400}
+      return {"status": 200, "qty": data["qty"]}
+check:
+  type: tests
+  tests:
+    - code: |
+        assert handle("{'qty': 2}") == {"status": 400}
+      fail: "На одинарных кавычках функция падает. Какое исключение бросает `json.loads` на невалидном тексте?"
+    - code: |
+        assert handle("") == {"status": 400}
+      fail: Пустое тело — тоже 400.
+    - code: |
+        assert handle('{"qty": 2}') == {"status": 200, "qty": 2}
+      fail: Корректный JSON — 200 и количество.
+solution: |
+  import json
+
+
+  def handle(body):
+      try:
+          data = json.loads(body)
+      except json.JSONDecodeError:
+          return {"status": 400}
+      return {"status": 200, "qty": data["qty"]}
+hints:
+  - "Уберите `try` и посмотрите тип ошибки для `\"{'qty': 2}\"`."
+explanation: |
+  Невалидный JSON даёт `json.JSONDecodeError`, а не `KeyError`, — обработчик ловил не ту ошибку.
+  `JSONDecodeError` — подкласс `ValueError`, поэтому подойдёт и `except ValueError`.

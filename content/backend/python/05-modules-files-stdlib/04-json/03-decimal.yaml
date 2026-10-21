@@ -1,0 +1,42 @@
+title: Ответ API с ценой
+type: exercise
+difficulty: 2
+pitfall: Decimal не сериализуется в JSON — его превращают в строку, а не во float.
+statement: |
+  `product_json(product)` возвращает JSON-строку товара для API. Цена в товаре — `Decimal`,
+  и функция падает с `TypeError`. Исправьте её: цена должна попасть в JSON **строкой**
+  с сохранением всех знаков (`"1499.90"`), кириллица — как есть, без `\u…`.
+starter_code: |
+  import json
+
+
+  def product_json(product):
+      return json.dumps(product)
+check:
+  type: tests
+  tests:
+    - code: |
+        from decimal import Decimal
+        text = product_json({"id": 42, "name": "Мышь", "price": Decimal("1499.90")})
+        assert json.loads(text)["price"] == "1499.90"
+      fail: "`TypeError: Object of type Decimal is not JSON serializable`. Как сказать `dumps`, что делать с незнакомым типом?"
+    - code: |
+        from decimal import Decimal
+        assert "Мышь" in product_json({"id": 42, "name": "Мышь", "price": Decimal("1")})
+      fail: "Кириллица должна быть как есть — параметр `ensure_ascii`."
+    - code: |
+        from decimal import Decimal
+        assert json.loads(product_json({"id": 1, "name": "A", "price": Decimal("0.10")}))["price"] == "0.10"
+      fail: "Цена должна сохранять все знаки. Через `float` получилось бы `0.1`."
+solution: |
+  import json
+
+
+  def product_json(product):
+      return json.dumps(product, default=str, ensure_ascii=False)
+hints:
+  - "`json.dumps(..., default=str)`"
+explanation: |
+  JSON не знает `Decimal`, и `dumps` бросает `TypeError`. `default=str` вызывается для незнакомых типов
+  и превращает цену в строку `"1499.90"` — копейки и запись сохраняются. Перевод во `float`
+  дал бы `0.1` вместо `"0.10"` и мог бы исказить значение.

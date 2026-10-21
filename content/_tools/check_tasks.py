@@ -12,6 +12,7 @@ import contextlib
 import json
 import os
 import subprocess
+import tempfile
 import difflib
 import io
 import re
@@ -41,6 +42,19 @@ def _alarm(signum, frame):
 
 
 signal.signal(signal.SIGALRM, _alarm)
+
+
+@contextlib.contextmanager
+def sandbox():
+    """Каждая задача и урок — в своей пустой временной папке: файлы из примеров
+    не попадают в репозиторий и не переходят из задачи в задачу."""
+    old = os.getcwd()
+    with tempfile.TemporaryDirectory() as tmp:
+        os.chdir(tmp)
+        try:
+            yield tmp
+        finally:
+            os.chdir(old)
 
 
 @contextlib.contextmanager
@@ -292,6 +306,11 @@ def check_state(task):
 
 
 def check_task(path):
+    with sandbox():
+        return _check_task(path)
+
+
+def _check_task(path):
     try:
         task = yaml.safe_load(path.read_text())
     except yaml.YAMLError as e:
@@ -393,6 +412,11 @@ def check_lesson_code(text):
 
 
 def check_lesson(path):
+    with sandbox():
+        return _check_lesson(path)
+
+
+def _check_lesson(path):
     text = path.read_text()
     problems = []
     h2 = re.findall(r"^## (.+)$", text, flags=re.M)

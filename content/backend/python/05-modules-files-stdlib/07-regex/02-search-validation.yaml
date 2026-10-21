@@ -1,0 +1,39 @@
+title: Артикул с мусором прошёл проверку
+type: exercise
+difficulty: 2
+pitfall: search находит совпадение внутри строки — для проверки формата нужен fullmatch.
+statement: |
+  `is_valid_sku(sku)` проверяет формат артикула: две заглавные латинские буквы, дефис,
+  четыре цифры, дефис, три заглавные буквы (`KB-0142-BLK`). В базу попали артикулы вида
+  `XXKB-0142-BLK!!`. Исправьте функцию — она должна возвращать `bool`.
+starter_code: |
+  import re
+
+
+  def is_valid_sku(sku):
+      return bool(re.search(r"[A-Z]{2}-\d{4}-[A-Z]{3}", sku))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert is_valid_sku("XXKB-0142-BLK!!") is False
+      fail: "Артикул с лишними символами вокруг прошёл. Что ищет `re.search`?"
+    - code: |
+        assert is_valid_sku("KB-0142-BLK") is True and is_valid_sku("MS-0007-WHT") is True
+      fail: Правильные артикулы должны проходить.
+    - code: |
+        assert is_valid_sku("KB-0142-BLK\n") is False
+      fail: Перевод строки в конце — тоже лишний символ.
+solution: |
+  import re
+
+
+  def is_valid_sku(sku):
+      return bool(re.fullmatch(r"[A-Z]{2}-\d{4}-[A-Z]{3}", sku))
+hints:
+  - "`re.search` ищет подходящий кусок в любом месте строки."
+  - "`re.fullmatch` требует совпадения всей строки."
+explanation: |
+  `search` находит `KB-0142-BLK` внутри `XXKB-0142-BLK!!` и считает проверку пройденной.
+  `fullmatch` требует, чтобы шаблону соответствовала вся строка, — мусор вокруг не проходит.
+  Вариант `^...$` с `search` хуже: `$` допускает перевод строки в конце.

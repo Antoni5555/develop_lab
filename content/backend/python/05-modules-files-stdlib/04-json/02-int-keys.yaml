@@ -1,0 +1,36 @@
+title: Остатки после перезапуска
+type: exercise
+difficulty: 2
+pitfall: Ключи объекта JSON — всегда строки; после разбора числовые ключи нужно вернуть.
+statement: |
+  Остатки на складе сохраняются строкой JSON. `restore_stock(text)` должна вернуть словарь
+  `{product_id: остаток}`, где `product_id` — **целые числа**, как до сохранения.
+  Сейчас после восстановления `stock.get(42)` всегда даёт `None`.
+starter_code: |
+  import json
+
+
+  def restore_stock(text):
+      return json.loads(text)
+check:
+  type: tests
+  tests:
+    - code: |
+        stock = restore_stock(json.dumps({42: 12, 7: 0}))
+        assert stock == {42: 12, 7: 0}
+      fail: "Ключи остались строками `\"42\"`, `\"7\"`. Каким типом бывают ключи в JSON?"
+    - code: |
+        assert restore_stock("{}") == {}
+      fail: Пустые остатки — пустой словарь.
+solution: |
+  import json
+
+
+  def restore_stock(text):
+      return {int(product_id): qty for product_id, qty in json.loads(text).items()}
+hints:
+  - "Выведите `json.loads(json.dumps({42: 12}))`."
+  - Приведите ключи к `int` через dict comprehension.
+explanation: |
+  JSON допускает только строковые ключи: при `dumps` ключ `42` стал `"42"`, и `loads` вернул строку.
+  Числовые id восстанавливают явно: `{int(k): v for k, v in data.items()}`.
