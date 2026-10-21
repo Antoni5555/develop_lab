@@ -1,0 +1,91 @@
+title: Контракт, который ничего не проверяет
+type: exercise
+difficulty: 2
+pitfall: "`@abstractmethod` работает только в классе-наследнике `ABC` — без него проверка не выполняется."
+statement: |
+  Тимлид описал контракт уведомлений: любой канал обязан реализовать `send(user_id, text)`.
+  Но канал `PushNotifier` без `send` создаётся без ошибок, и уведомления падают только при отправке.
+  Исправьте `Notifier` так, чтобы неполный канал нельзя было создать (`TypeError`),
+  а сам `Notifier` — тоже.
+starter_code: |
+  from abc import abstractmethod
+
+
+  class Notifier:
+      @abstractmethod
+      def send(self, user_id, text):
+          """Отправить уведомление пользователю."""
+
+
+  class EmailNotifier(Notifier):
+      def send(self, user_id, text):
+          return f"email to {user_id}: {text}"
+
+
+  class PushNotifier(Notifier):
+      def send_push(self, user_id, text):
+          return f"push to {user_id}: {text}"
+
+
+  print(EmailNotifier().send(7, "Заказ оплачен"))
+  try:
+      PushNotifier()
+      print("PushNotifier создан")
+  except TypeError as e:
+      print(e)
+check:
+  type: tests
+  tests:
+    - code: |
+        try:
+            PushNotifier()
+        except TypeError:
+            pass
+        else:
+            raise AssertionError
+      fail: "`PushNotifier` без `send` создаётся. Работает ли `@abstractmethod` в обычном классе?"
+    - code: |
+        try:
+            Notifier()
+        except TypeError:
+            pass
+        else:
+            raise AssertionError
+      fail: Сам `Notifier` создавать нельзя — это контракт.
+    - code: |
+        assert EmailNotifier().send(7, "x") == "email to 7: x"
+      fail: Полный канал `EmailNotifier` должен создаваться и работать.
+solution: |
+  from abc import ABC, abstractmethod
+
+
+  class Notifier(ABC):
+      @abstractmethod
+      def send(self, user_id, text):
+          """Отправить уведомление пользователю."""
+
+
+  class EmailNotifier(Notifier):
+      def send(self, user_id, text):
+          return f"email to {user_id}: {text}"
+
+
+  class PushNotifier(Notifier):
+      def send_push(self, user_id, text):
+          return f"push to {user_id}: {text}"
+
+
+  print(EmailNotifier().send(7, "Заказ оплачен"))
+  try:
+      PushNotifier()
+      print("PushNotifier создан")
+  except TypeError as e:
+      print(e)
+hints:
+  - "От какого класса наследует `Notifier`?"
+  - "`from abc import ABC, abstractmethod` и `class Notifier(ABC)`."
+explanation: |
+  `@abstractmethod` только помечает метод. Проверяет пометки при создании объекта механизм
+  класса `ABC` (его метакласс `ABCMeta`). В обычном классе пометку никто не читает, и неполные
+  наследники создаются. С `class Notifier(ABC)` и сам контракт, и `PushNotifier`
+  без `send` дают `TypeError` при создании.

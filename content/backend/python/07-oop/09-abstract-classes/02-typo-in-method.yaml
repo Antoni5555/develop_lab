@@ -1,0 +1,75 @@
+title: Шлюз рассрочки не создаётся
+type: exercise
+difficulty: 1
+pitfall: Метод с опечаткой в имени — просто новый метод; абстрактный остаётся нереализованным.
+statement: |
+  Подключили оплату в рассрочку. Класс `InstallmentGateway` реализует оба метода контракта,
+  но при создании объекта Python сообщает, что `refund` не реализован. Исправьте `InstallmentGateway`.
+starter_code: |
+  from abc import ABC, abstractmethod
+
+
+  class PaymentGateway(ABC):
+      @abstractmethod
+      def charge(self, order_id, amount):
+          """Списать деньги и вернуть id транзакции."""
+
+      @abstractmethod
+      def refund(self, order_id, amount):
+          """Вернуть деньги покупателю."""
+
+
+  class InstallmentGateway(PaymentGateway):
+      def charge(self, order_id, amount):
+          return f"inst-{order_id}"
+
+      def refound(self, order_id, amount):
+          return f"inst-refund-{order_id}"
+
+
+  gateway = InstallmentGateway()
+  print(gateway.charge(1042, 2998), gateway.refund(1042, 2998))
+check:
+  type: tests
+  tests:
+    - code: |
+        g = InstallmentGateway()
+        assert g.refund(7, 100) == "inst-refund-7"
+      fail: "Объект не создаётся. Сравните имя метода в шлюзе с именем в `PaymentGateway` по буквам."
+    - code: |
+        assert InstallmentGateway().charge(7, 100) == "inst-7"
+      fail: "`charge` должен работать как раньше."
+    - code: |
+        assert not hasattr(InstallmentGateway, "refound")
+      fail: "Метод с опечаткой не нужен — переименуйте его."
+solution: |
+  from abc import ABC, abstractmethod
+
+
+  class PaymentGateway(ABC):
+      @abstractmethod
+      def charge(self, order_id, amount):
+          """Списать деньги и вернуть id транзакции."""
+
+      @abstractmethod
+      def refund(self, order_id, amount):
+          """Вернуть деньги покупателю."""
+
+
+  class InstallmentGateway(PaymentGateway):
+      def charge(self, order_id, amount):
+          return f"inst-{order_id}"
+
+      def refund(self, order_id, amount):
+          return f"inst-refund-{order_id}"
+
+
+  gateway = InstallmentGateway()
+  print(gateway.charge(1042, 2998), gateway.refund(1042, 2998))
+hints:
+  - "Прочитайте ошибку: какой метод Python считает нереализованным?"
+  - "`refound` → `refund`."
+explanation: |
+  Python связывает реализацию с абстрактным методом только по точному имени. `refound` — новый,
+  никому не нужный метод, а `refund` остаётся абстрактным, и класс нельзя создать. Без `ABC`
+  такая опечатка прожила бы до первого возврата денег; абстрактный класс поймал её при создании.

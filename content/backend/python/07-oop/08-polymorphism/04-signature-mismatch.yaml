@@ -1,0 +1,80 @@
+title: Почта ломает расчёт корзины
+type: exercise
+difficulty: 2
+pitfall: Общий интерфейс — это и одинаковые параметры; лишний параметр у одной реализации ломает общий вызов.
+statement: |
+  `cheapest(total, deliveries)` выбирает самый дешёвый способ доставки и возвращает его название
+  (`name`). Для почты добавили зависимость от региона: `calc_price(total, region)`.
+  Теперь `cheapest` падает с `TypeError`, если среди способов есть почта.
+  Исправьте класс `PostDelivery`: регион передаётся при создании объекта.
+  Тарифы: регион `"msk"` — 250, остальные — 450. Функцию `cheapest` не меняйте.
+starter_code: |
+  from decimal import Decimal
+
+
+  class CourierDelivery:
+      name = "курьер"
+
+      def calc_price(self, total):
+          return Decimal("0.00") if total >= 3000 else Decimal("299.00")
+
+
+  class PostDelivery:
+      name = "почта"
+
+      def calc_price(self, total, region):
+          return Decimal("250.00") if region == "msk" else Decimal("450.00")
+
+
+  def cheapest(total, deliveries):
+      return min(deliveries, key=lambda d: d.calc_price(total)).name
+
+
+  print(cheapest(Decimal("1499.00"), [CourierDelivery(), PostDelivery("msk")]))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert cheapest(Decimal("1499.00"), [CourierDelivery(), PostDelivery("msk")]) == "почта"
+      fail: "Расчёт падает. С какими аргументами `cheapest` вызывает `calc_price` и сколько их ждёт почта?"
+    - code: |
+        assert cheapest(Decimal("1499.00"), [CourierDelivery(), PostDelivery("spb")]) == "курьер"
+        assert PostDelivery("spb").calc_price(Decimal("1")) == Decimal("450.00")
+      fail: Вне Москвы почта стоит 450.
+    - code: |
+        assert "def cheapest(total, deliveries):\n    return min(deliveries, key=lambda d: d.calc_price(total)).name" in source
+      fail: "`cheapest` менять не нужно — исправьте `PostDelivery`."
+solution: |
+  from decimal import Decimal
+
+
+  class CourierDelivery:
+      name = "курьер"
+
+      def calc_price(self, total):
+          return Decimal("0.00") if total >= 3000 else Decimal("299.00")
+
+
+  class PostDelivery:
+      name = "почта"
+
+      def __init__(self, region):
+          self.region = region
+
+      def calc_price(self, total):
+          return Decimal("250.00") if self.region == "msk" else Decimal("450.00")
+
+
+  def cheapest(total, deliveries):
+      return min(deliveries, key=lambda d: d.calc_price(total)).name
+
+
+  print(cheapest(Decimal("1499.00"), [CourierDelivery(), PostDelivery("msk")]))
+hints:
+  - "Код уже создаёт `PostDelivery(\"msk\")`. Куда должен попасть регион?"
+  - "Сохраните регион в `__init__` (`self.region = region`) и уберите его из параметров `calc_price`."
+explanation: |
+  Полиморфный вызов `d.calc_price(total)` одинаков для всех объектов. Если у одной реализации
+  другой набор параметров, она выпадает из интерфейса — и ошибка случается только на ней.
+  Данные, нужные одному способу, — часть его состояния: их передают при создании объекта,
+  а метод интерфейса сохраняет общую сигнатуру.

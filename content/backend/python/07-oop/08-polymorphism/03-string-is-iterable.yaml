@@ -1,0 +1,53 @@
+title: Письмо ушло каждой букве
+type: exercise
+difficulty: 2
+pitfall: Строка тоже итерируемая — функция, которая ждёт «список чего-то», молча перебирает её символы.
+statement: |
+  `notify(recipients, text)` рассылает уведомление и возвращает список адресов, на которые ушло письмо.
+  Она принимает любой итерируемый набор адресов: список, кортеж, множество из базы.
+  Менеджер передал один адрес строкой — и письма ушли на `"m"`, `"@"`, `"s"`…
+  Доработайте функцию: одна строка — это один адрес. Остальные виды наборов должны работать как раньше.
+starter_code: |
+  def notify(recipients, text):
+      sent = []
+      for email in recipients:
+          sent.append(email)
+      return sent
+
+
+  print(notify(["anna@shop.ru", "boris@shop.ru"], "Заказ оплачен"))
+  print(notify("manager@shop.ru", "Новый заказ"))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert notify("manager@shop.ru", "Новый заказ") == ["manager@shop.ru"]
+      fail: "Строка разобрана на символы. Что перебирает `for` по строке?"
+    - code: |
+        assert notify(["a@shop.ru", "b@shop.ru"], "x") == ["a@shop.ru", "b@shop.ru"]
+        assert notify(("a@shop.ru",), "x") == ["a@shop.ru"]
+        assert notify((e for e in ["g@shop.ru"]), "x") == ["g@shop.ru"]
+      fail: Списки, кортежи и генераторы адресов должны работать как раньше.
+    - code: |
+        assert notify([], "x") == []
+      fail: Пустой набор — никому.
+solution: |
+  def notify(recipients, text):
+      if isinstance(recipients, str):
+          recipients = [recipients]
+      sent = []
+      for email in recipients:
+          sent.append(email)
+      return sent
+
+
+  print(notify(["anna@shop.ru", "boris@shop.ru"], "Заказ оплачен"))
+  print(notify("manager@shop.ru", "Новый заказ"))
+hints:
+  - "Выведите `list(\"ab@c\")`."
+  - "Строку оберните в список до цикла: `if isinstance(recipients, str): recipients = [recipients]`."
+explanation: |
+  Утиная типизация пропускает любой объект, который умеет перебираться, — и строка умеет:
+  `for` по ней выдаёт символы. Ошибки нет, результат неверный. Строка — единственный частый
+  случай, когда «перебираемое» не значит «набор элементов», поэтому её проверяют явно.
+  Здесь `isinstance` уместен: он не заменяет полиморфизм, а отсекает особый случай на входе.

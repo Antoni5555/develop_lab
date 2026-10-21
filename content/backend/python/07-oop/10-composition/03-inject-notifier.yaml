@@ -1,0 +1,101 @@
+title: Тест рассылает настоящие письма
+type: exercise
+difficulty: 2
+pitfall: Объект, который сам создаёт свою зависимость, нельзя подменить — ни в тесте, ни при смене канала.
+statement: |
+  `Order.pay()` меняет статус и отправляет уведомление. Уведомитель создаётся внутри `__init__`,
+  поэтому каждый запуск тестов шлёт настоящие письма, а SMS вместо почты не подключить.
+  Сделайте так, чтобы уведомитель передавался параметром: `Order(id, notifier)`.
+  Если его не передали, по умолчанию используется `EmailNotifier()`. Важно: свой для каждого заказа.
+starter_code: |
+  class EmailNotifier:
+      def __init__(self):
+          self.outbox = []
+
+      def send(self, text):
+          self.outbox.append(f"email: {text}")
+
+
+  class Order:
+      def __init__(self, id):
+          self.id = id
+          self.status = "new"
+          self.notifier = EmailNotifier()
+
+      def pay(self):
+          self.status = "paid"
+          self.notifier.send(f"Заказ №{self.id} оплачен")
+
+
+  class FakeNotifier:
+      def __init__(self):
+          self.sent = []
+
+      def send(self, text):
+          self.sent.append(text)
+
+
+  fake = FakeNotifier()
+  order = Order(1042, fake)
+  order.pay()
+  print(order.status, fake.sent)
+check:
+  type: tests
+  tests:
+    - code: |
+        f = FakeNotifier()
+        o = Order(7, f)
+        o.pay()
+        assert o.status == "paid" and f.sent == ["Заказ №7 оплачен"]
+      fail: "Заглушку не передать: `Order` создаёт уведомитель сам. Добавьте параметр `notifier` в `__init__`."
+    - code: |
+        o = Order(8)
+        o.pay()
+        assert isinstance(o.notifier, EmailNotifier) and o.notifier.outbox == ["email: Заказ №8 оплачен"]
+      fail: Без переданного уведомителя заказ должен слать email, как раньше.
+    - code: |
+        a, b = Order(1), Order(2)
+        a.pay()
+        assert a.notifier is not b.notifier and b.notifier.outbox == []
+      fail: "У каждого заказа по умолчанию — свой `EmailNotifier`. Когда вычисляется значение по умолчанию параметра?"
+solution: |
+  class EmailNotifier:
+      def __init__(self):
+          self.outbox = []
+
+      def send(self, text):
+          self.outbox.append(f"email: {text}")
+
+
+  class Order:
+      def __init__(self, id, notifier=None):
+          self.id = id
+          self.status = "new"
+          self.notifier = notifier if notifier is not None else EmailNotifier()
+
+      def pay(self):
+          self.status = "paid"
+          self.notifier.send(f"Заказ №{self.id} оплачен")
+
+
+  class FakeNotifier:
+      def __init__(self):
+          self.sent = []
+
+      def send(self, text):
+          self.sent.append(text)
+
+
+  fake = FakeNotifier()
+  order = Order(1042, fake)
+  order.pay()
+  print(order.status, fake.sent)
+hints:
+  - "Добавьте параметр `notifier` в `__init__`."
+  - "Не пишите `notifier=EmailNotifier()` в параметрах: этот объект создастся один раз на все заказы. По умолчанию — `None`, а внутри — `EmailNotifier()`."
+explanation: |
+  Пока `Order` сам вызывает `EmailNotifier()`, класс намертво связан с почтой. Параметр в `__init__`
+  позволяет передать любой объект с `send` — заглушку в тесте, SMS, push. Это внедрение зависимости.
+  Значение по умолчанию задают через `None`. `notifier=EmailNotifier()` вычислялся бы один раз
+  при определении функции, и все заказы делили бы одну очередь писем — та же ловушка,
+  что и с изменяемым значением по умолчанию.

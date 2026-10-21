@@ -538,12 +538,38 @@ def shop_errors():
 
 
 
+# ---------- Python 7.10: является и имеет ----------
+def is_a_has_a():
+    f = Figure(860, 320, "Наследование — «является»: DigitalProduct это Product. Композиция — «имеет»: Order содержит позиции и пользуется переданным уведомителем")
+    f.text(20, 24, "наследование — «является»", "h")
+    f.box(40, 44, 220, 48, "Product", "box", "c")
+    f.box(40, 190, 220, 48, "DigitalProduct", "box2", "c")
+    f.arrow("M150 190V96"); f.text(162, 148, "является", "s")
+    f.text(40, 270, "все методы Product есть", "s"); f.text(40, 288, "у DigitalProduct", "s")
+    f.line("M310 20V300", "lnd")
+    f.text(340, 24, "композиция — «имеет»", "h")
+    f.box(340, 44, 300, 190, "", "box")
+    f.text(356, 70, "Order", "c")
+    f.text(356, 96, "id, status", "cs")
+    f.raw('<rect x="356" y="112" width="268" height="48" rx="10" class="fig-box2"/>')
+    f.text(370, 134, "items — свой список", "cs"); f.text(370, 152, "создан внутри: композиция", "s")
+    f.raw('<rect x="356" y="172" width="268" height="44" rx="10" class="fig-dash"/>')
+    f.text(370, 199, "notifier — ссылка", "cs")
+    f.box(690, 172, 150, 44, "EmailNotifier", "box2", "cs")
+    f.arrow("M624 194H686")
+    f.text(660, 240, "создан снаружи, передан", "s"); f.text(660, 258, "в __init__: агрегация;", "s")
+    f.text(660, 276, "можно подменить", "s"); f.text(660, 294, "заглушкой в тесте", "s")
+    f.text(340, 270, "у Order только свои методы:", "s"); f.text(340, 288, "total(), pay() — без add() и clear()", "s")
+    f.save(out(PY7 / "10-composition" / "img" / "is-a-has-a.svg"))
+
+
 if __name__ == "__main__":
     for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
                   sets_venn, nested_order, copy_modes, comprehension_anatomy,
                   mutable_default, legb_scopes, recursion_stack, decorator_wrap,
                   try_flow, traceback_stack, for_protocol, generator_flow, lazy_pipeline,
                   dict_lookup, lost_key, objects_and_class,
-                  attribute_lookup, inheritance_mro, shop_errors):
+                  attribute_lookup, inheritance_mro, shop_errors,
+                  is_a_has_a):
         build()
     print("ok")

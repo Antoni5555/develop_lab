@@ -1,0 +1,96 @@
+title: Оплата на ноль рублей прошла
+type: exercise
+difficulty: 2
+pitfall: Наследник, переопределивший шаблонный метод вместо шага, теряет общие проверки базового класса.
+statement: |
+  `PaymentGateway.pay()` проверяет сумму, вызывает `charge()` шлюза и пишет журнал.
+  Разработчик шлюза рассрочки переопределил `pay()` целиком. Теперь через этот шлюз проходят
+  оплаты на `0` и минус сто рублей, а журнал пуст. Исправьте `InstallmentGateway`.
+  `PaymentGateway` не меняйте.
+starter_code: |
+  from abc import ABC, abstractmethod
+  from decimal import Decimal
+
+
+  class PaymentGateway(ABC):
+      def __init__(self):
+          self.log = []
+
+      def pay(self, order_id, amount):
+          if amount <= 0:
+              raise ValueError(f"заказ {order_id}: сумма должна быть больше нуля")
+          transaction_id = self.charge(order_id, amount)
+          self.log.append((order_id, amount, transaction_id))
+          return transaction_id
+
+      @abstractmethod
+      def charge(self, order_id, amount):
+          """Списать деньги и вернуть id транзакции."""
+
+
+  class InstallmentGateway(PaymentGateway):
+      def charge(self, order_id, amount):
+          return f"inst-{order_id}"
+
+      def pay(self, order_id, amount):
+          return f"inst-{order_id}"
+
+
+  gateway = InstallmentGateway()
+  print(gateway.pay(1042, Decimal("2998.00")), gateway.log)
+check:
+  type: tests
+  tests:
+    - code: |
+        g = InstallmentGateway()
+        try:
+            g.pay(1, Decimal("0"))
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: "Оплата на 0 прошла. Чей `pay` вызывается у шлюза рассрочки и где живёт проверка суммы?"
+    - code: |
+        g = InstallmentGateway()
+        assert g.pay(5, Decimal("100")) == "inst-5"
+        assert g.log == [(5, Decimal("100"), "inst-5")]
+      fail: Успешная оплата должна возвращать id транзакции и попадать в журнал.
+    - code: |
+        assert "if amount <= 0" in source and source.count("def pay") == 1
+      fail: Проверка остаётся в `PaymentGateway`; шлюзу не нужен свой `pay`.
+solution: |
+  from abc import ABC, abstractmethod
+  from decimal import Decimal
+
+
+  class PaymentGateway(ABC):
+      def __init__(self):
+          self.log = []
+
+      def pay(self, order_id, amount):
+          if amount <= 0:
+              raise ValueError(f"заказ {order_id}: сумма должна быть больше нуля")
+          transaction_id = self.charge(order_id, amount)
+          self.log.append((order_id, amount, transaction_id))
+          return transaction_id
+
+      @abstractmethod
+      def charge(self, order_id, amount):
+          """Списать деньги и вернуть id транзакции."""
+
+
+  class InstallmentGateway(PaymentGateway):
+      def charge(self, order_id, amount):
+          return f"inst-{order_id}"
+
+
+  gateway = InstallmentGateway()
+  print(gateway.pay(1042, Decimal("2998.00")), gateway.log)
+hints:
+  - "Что именно отличает шлюз рассрочки от остальных — весь `pay` или только `charge`?"
+  - "Удалите `pay` из `InstallmentGateway`: базовый `pay` сам вызовет его `charge`."
+explanation: |
+  `pay` — шаблонный метод: общий алгоритм, в котором шлюз меняет только шаг `charge`.
+  Переопределённый `pay` полностью заменяет алгоритм вместе с проверкой суммы и журналом,
+  и Python этому не мешает. Шлюзу достаточно реализовать `charge`, а базовый `pay` вызовет его
+  через `self.charge(...)` и выполнит общие шаги для всех.

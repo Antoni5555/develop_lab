@@ -1,0 +1,92 @@
+title: Новый способ доставки ломает оформление
+type: exercise
+difficulty: 1
+pitfall: Ветвление по типам вместо общего метода — каждый новый класс требует правки функции.
+statement: |
+  Добавили доставку в пункт выдачи — класс `PickupDelivery` с тем же методом `calc_price(total)`,
+  что у курьера и почты. Оформление заказа с ней падает с `ValueError`.
+  Перепишите `checkout_total(total, delivery)` так, чтобы она работала с любым способом доставки,
+  у которого есть `calc_price(total)`, и не упоминала классы доставки по имени.
+starter_code: |
+  from decimal import Decimal
+
+
+  class CourierDelivery:
+      def calc_price(self, total):
+          return Decimal("0.00") if total >= 3000 else Decimal("299.00")
+
+
+  class PostDelivery:
+      def calc_price(self, total):
+          return Decimal("350.00")
+
+
+  class PickupDelivery:
+      def calc_price(self, total):
+          return Decimal("0.00")
+
+
+  def checkout_total(total, delivery):
+      if isinstance(delivery, CourierDelivery):
+          price = Decimal("0.00") if total >= 3000 else Decimal("299.00")
+      elif isinstance(delivery, PostDelivery):
+          price = Decimal("350.00")
+      else:
+          raise ValueError("неизвестный способ доставки")
+      return total + price
+
+
+  print(checkout_total(Decimal("1499.00"), PickupDelivery()))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert checkout_total(Decimal("1499.00"), PickupDelivery()) == Decimal("1499.00")
+      fail: "Пункт выдачи не поддерживается. Зачем функции знать классы, если у каждого есть `calc_price`?"
+    - code: |
+        assert checkout_total(Decimal("1000"), CourierDelivery()) == Decimal("1299.00")
+        assert checkout_total(Decimal("3000"), CourierDelivery()) == Decimal("3000.00")
+        assert checkout_total(Decimal("1000"), PostDelivery()) == Decimal("1350.00")
+      fail: Курьер и почта должны считаться как раньше.
+    - code: |
+        class Drone:
+            def calc_price(self, total):
+                return Decimal("999")
+        assert checkout_total(Decimal("1"), Drone()) == Decimal("1000")
+      fail: Функция должна работать с любым объектом, у которого есть `calc_price(total)`.
+    - code: |
+        body = source.split("def checkout_total")[1].split("\n\n")[0]
+        assert "isinstance" not in body and "Delivery" not in body
+      fail: "`checkout_total` не должна проверять типы и упоминать классы доставки."
+solution: |
+  from decimal import Decimal
+
+
+  class CourierDelivery:
+      def calc_price(self, total):
+          return Decimal("0.00") if total >= 3000 else Decimal("299.00")
+
+
+  class PostDelivery:
+      def calc_price(self, total):
+          return Decimal("350.00")
+
+
+  class PickupDelivery:
+      def calc_price(self, total):
+          return Decimal("0.00")
+
+
+  def checkout_total(total, delivery):
+      return total + delivery.calc_price(total)
+
+
+  print(checkout_total(Decimal("1499.00"), PickupDelivery()))
+hints:
+  - "Правила цены уже записаны в `calc_price` каждого класса — и продублированы в функции."
+  - "`return total + delivery.calc_price(total)`."
+explanation: |
+  Цепочка `isinstance` дублирует логику, которая уже есть в классах, и знает каждый класс по имени.
+  Поэтому новый способ доставки ломает функцию. Вызов `delivery.calc_price(total)` — полиморфизм:
+  каждый объект сам считает свою цену, а функция работает с любым объектом, у которого есть
+  этот метод, включая ещё не написанные классы.

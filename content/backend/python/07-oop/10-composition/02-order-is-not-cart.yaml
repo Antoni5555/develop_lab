@@ -1,0 +1,100 @@
+title: В оплаченный заказ добавили товар
+type: exercise
+difficulty: 2
+pitfall: Наследник получает весь интерфейс родителя — вместе с методами, которых у него быть не должно.
+statement: |
+  `Order` унаследован от `Cart`, поэтому в оплаченный заказ можно добавить товар через `add`.
+  Кроме того, корзину после оформления продолжают наполнять, и заказ меняется вместе с ней.
+  Перепишите `Order` через композицию. `Order(id, cart)` копирует позиции корзины в `items`,
+  `total()` считает сумму, `status` — `"new"`. Методов `add` и `clear` у заказа быть не должно.
+  `Cart` не меняйте.
+starter_code: |
+  from decimal import Decimal
+
+
+  class Cart:
+      def __init__(self):
+          self.items = []
+
+      def add(self, name, price, quantity=1):
+          self.items.append((name, price, quantity))
+
+      def clear(self):
+          self.items.clear()
+
+      def total(self):
+          return sum(price * quantity for _, price, quantity in self.items)
+
+
+  class Order(Cart):
+      def __init__(self, id, cart):
+          super().__init__()
+          self.id = id
+          self.items = cart.items
+          self.status = "new"
+
+
+  cart = Cart()
+  cart.add("Мышь", Decimal("1499.00"), 2)
+  order = Order(1042, cart)
+  cart.add("Коврик", Decimal("490.00"))
+  print(order.total(), hasattr(order, "add"))
+check:
+  type: tests
+  tests:
+    - code: |
+        assert not hasattr(order, "add") and not hasattr(order, "clear") and not isinstance(order, Cart)
+      fail: "У заказа есть `add` и `clear`. Откуда они берутся, если в `Order` их никто не писал?"
+    - code: |
+        assert order.total() == Decimal("2998.00")
+      fail: "Товар, добавленный в корзину после оформления, попал в заказ. Это копия списка или тот же список?"
+    - code: |
+        c = Cart()
+        c.add("Клавиатура", Decimal("2990.00"))
+        o = Order(7, c)
+        c.clear()
+        assert o.id == 7 and o.status == "new" and o.items == [("Клавиатура", Decimal("2990.00"), 1)]
+        assert o.total() == Decimal("2990.00")
+      fail: "`Order(id, cart)` хранит `id`, статус `\"new\"` и свою копию позиций корзины."
+solution: |
+  from decimal import Decimal
+
+
+  class Cart:
+      def __init__(self):
+          self.items = []
+
+      def add(self, name, price, quantity=1):
+          self.items.append((name, price, quantity))
+
+      def clear(self):
+          self.items.clear()
+
+      def total(self):
+          return sum(price * quantity for _, price, quantity in self.items)
+
+
+  class Order:
+      def __init__(self, id, cart):
+          self.id = id
+          self.items = list(cart.items)
+          self.status = "new"
+
+      def total(self):
+          return sum(price * quantity for _, price, quantity in self.items)
+
+
+  cart = Cart()
+  cart.add("Мышь", Decimal("1499.00"), 2)
+  order = Order(1042, cart)
+  cart.add("Коврик", Decimal("490.00"))
+  print(order.total(), hasattr(order, "add"))
+hints:
+  - "Заказ является корзиной или содержит позиции из неё?"
+  - "Уберите наследование, скопируйте позиции `list(cart.items)` и напишите свой `total()`."
+explanation: |
+  Наследуя от `Cart`, заказ получает все её методы: `add` и `clear` у оплаченного заказа —
+  дыра в бизнес-логике. А `self.items = cart.items` связывает заказ с корзиной одним списком.
+  Композиция берёт только данные: заказ хранит свою копию позиций и открывает только свои методы.
+  `total()` теперь написан дважды — для двух строк это нормально. Если логика разрастётся,
+  её выносят в общую функцию, а не в общего родителя.
