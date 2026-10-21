@@ -1,0 +1,51 @@
+title: Сообщение для нуля не показывается
+type: exercise
+difficulty: 2
+pitfall: except проверяются сверху вниз — общий тип выше конкретного перехватывает всё.
+statement: |
+  `average_price(total, raw_qty)` возвращает среднюю цену позиции или текст ошибки:
+  `"количество — не число"` для нечислового ввода, `"количество не может быть нулём"` для нуля,
+  `"ошибка расчёта"` — для остальных ошибок. Сейчас для нуля показывается «ошибка расчёта».
+  Исправьте, не удаляя обработчики.
+starter_code: |
+  def average_price(total, raw_qty):
+      try:
+          return total / int(raw_qty)
+      except ValueError:
+          return "количество — не число"
+      except ArithmeticError:
+          return "ошибка расчёта"
+      except ZeroDivisionError:
+          return "количество не может быть нулём"
+check:
+  type: tests
+  tests:
+    - code: |
+        assert average_price(2998, "0") == "количество не может быть нулём"
+      fail: "`ZeroDivisionError` — потомок `ArithmeticError`. Какой из двух `except` проверяется первым?"
+    - code: |
+        assert average_price(2998, "два") == "количество — не число"
+      fail: Нечисловой ввод — «количество — не число».
+    - code: |
+        assert average_price(2998, "2") == 1499.0
+      fail: Обычный расчёт не должен ломаться.
+    - code: |
+        assert "ArithmeticError" in source
+      fail: Общий обработчик удалять не нужно — его нужно поставить на правильное место.
+solution: |
+  def average_price(total, raw_qty):
+      try:
+          return total / int(raw_qty)
+      except ValueError:
+          return "количество — не число"
+      except ZeroDivisionError:
+          return "количество не может быть нулём"
+      except ArithmeticError:
+          return "ошибка расчёта"
+hints:
+  - "`ZeroDivisionError` — частный случай `ArithmeticError`."
+  - Конкретные типы пишут выше общих.
+explanation: |
+  `except` проверяются сверху вниз, и срабатывает первый подходящий. `ZeroDivisionError` наследует
+  `ArithmeticError`, поэтому общий обработчик выше перехватывает его, и конкретный никогда не выполнится.
+  Конкретные исключения ставят выше общих.

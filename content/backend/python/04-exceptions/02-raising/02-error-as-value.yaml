@@ -1,0 +1,39 @@
+title: Строка вместо ошибки
+type: exercise
+difficulty: 2
+pitfall: Особое значение вместо исключения всплывает далеко от причины.
+statement: |
+  `get_price(catalog, product_id)` возвращает цену товара. Если товара нет, она возвращает
+  строку `"нет товара"` — и расчёт суммы корзины падает с непонятной ошибкой `TypeError`.
+  Исправьте `get_price`: для отсутствующего товара она должна выбрасывать `ValueError`
+  с сообщением `"товар <id> не найден"`.
+starter_code: |
+  def get_price(catalog, product_id):
+      if product_id not in catalog:
+          return "нет товара"
+      return catalog[product_id]
+check:
+  type: tests
+  tests:
+    - code: |
+        try:
+            get_price({42: 1499}, 7)
+        except ValueError as e:
+            assert str(e) == "товар 7 не найден"
+        else:
+            raise AssertionError
+      fail: "Для отсутствующего товара функция должна выбросить `ValueError(\"товар 7 не найден\")`, а не вернуть значение."
+    - code: |
+        assert get_price({42: 1499}, 42) == 1499
+      fail: Цена существующего товара.
+solution: |
+  def get_price(catalog, product_id):
+      if product_id not in catalog:
+          raise ValueError(f"товар {product_id} не найден")
+      return catalog[product_id]
+hints:
+  - "`raise ValueError(f\"товар {product_id} не найден\")`"
+explanation: |
+  Строка `"нет товара"` выглядит как обычный результат и уходит дальше — ошибка проявляется
+  при сложении, далеко от причины, и с непонятным текстом. Исключение останавливает работу
+  там, где проблема возникла, и прямо говорит, что случилось.

@@ -1,0 +1,47 @@
+title: Чек падает на форматировании
+type: exercise
+difficulty: 2
+pitfall: Программа падает не там, где ошибка — причина выше по цепочке.
+statement: |
+  `receipt(total)` выводит строку чека «Итого: … ₽». Для заказов дешевле 1000 ₽ она падает
+  с `TypeError` в строке с вычитанием. Найдите настоящую причину и исправьте её
+  (строку с вычитанием и f-строку менять не нужно).
+  Скидка: от 1000 ₽ — 5 %, дешевле — без скидки.
+starter_code: |
+  def calc_discount(total):
+      if total >= 1000:
+          return total * 5 // 100
+
+
+  def receipt(total):
+      discount = calc_discount(total)
+      return f"Итого: {total - discount} ₽"
+check:
+  type: tests
+  tests:
+    - code: |
+        assert receipt(500) == "Итого: 500 ₽"
+      fail: "Для 500 ₽ — `TypeError` в `receipt`. Что вернула `calc_discount` для суммы меньше 1000?"
+    - code: |
+        assert receipt(2000) == "Итого: 1900 ₽"
+      fail: От 1000 ₽ — скидка 5 %.
+    - code: |
+        assert "total - discount" in source
+      fail: Строку с вычитанием менять не нужно — причина в другой функции.
+solution: |
+  def calc_discount(total):
+      if total >= 1000:
+          return total * 5 // 100
+      return 0
+
+
+  def receipt(total):
+      discount = calc_discount(total)
+      return f"Итого: {total - discount} ₽"
+hints:
+  - "Выведите `calc_discount(500)`."
+  - Функция без `return` в одной из веток возвращает `None`.
+explanation: |
+  Traceback указывает на `total - discount`, но эта строка не виновата: `calc_discount` для сумм меньше
+  1000 доходит до конца без `return` и возвращает `None`. Исправлять нужно причину — вернуть `0`, —
+  а не обходить её в `receipt`.

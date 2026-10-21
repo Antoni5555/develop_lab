@@ -333,9 +333,61 @@ def decorator_wrap():
     f.save(out(PY3 / "08-decorators" / "img" / "decorator-wrap.svg"))
 
 
+PY4 = ROOT / "python" / "04-exceptions"
+
+
+# ---------- Python 4.01: пути выполнения try / except / else / finally ----------
+def try_flow():
+    f = Figure(860, 300, "Какие блоки выполняются: без ошибки, с пойманной и с непойманной ошибкой")
+    lanes = [("ошибки нет", [("try", "box2", "весь"), ("else", "ok", ""), ("finally", "box2", ""), ("дальше", "box", "")]),
+             ("ошибка поймана", [("try", "box2", "до ошибки"), ("except", "err", ""), ("finally", "box2", ""), ("дальше", "box", "")]),
+             ("ошибку не поймали", [("try", "box2", "до ошибки"), ("finally", "box2", ""), ("ошибка — выше", "err", "")])]
+    for i, (title, steps) in enumerate(lanes):
+        y = 40 + i * 86
+        f.text(20, y + 30, title, "t")
+        for k, (name, cls, sub) in enumerate(steps):
+            x = 190 + k * 165
+            f.box(x, y, 140, 46, "", cls)
+            f.text(x + 70, y + 22 if sub else y + 28, name, "c", "middle")
+            if sub:
+                f.text(x + 70, y + 38, sub, "s", "middle")
+            if k < len(steps) - 1:
+                f.arrow(f"M{x + 140} {y + 23}H{x + 161}")
+    f.text(20, 292, "finally выполняется всегда — даже если ошибка полетела дальше или в try сработал return.", "s")
+    f.save(out(PY4 / "01-exceptions" / "img" / "try-flow.svg"))
+
+
+# ---------- Python 4.03: traceback из нескольких вызовов ----------
+def traceback_stack():
+    f = Figure(900, 400, "Traceback цепочки вызовов: внизу — где упало, выше — кто вызвал")
+    f.raw('<rect x="20" y="20" width="600" height="336" rx="14" class="fig-term"/>')
+    rows = [("Traceback (most recent call last):", "tt"),
+            ('  File "main.py", line 12, in <module>', "tt"),
+            ('    print(checkout([1499, 490], "WINTER-15"))', "tt"),
+            ("          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", "tterr"),
+            ('  File "main.py", line 8, in checkout', "tt"),
+            ("    percent = parse_percent(code)", "tt"),
+            ("              ^^^^^^^^^^^^^^^^^^^", "tterr"),
+            ('  File "main.py", line 3, in parse_percent', "tt"),
+            ("    return int(code[5:])", "tt"),
+            ("           ^^^^^^^^^^^^^", "tterr"),
+            ("ValueError: invalid literal for int() with base 10: 'R-15'", "tterr")]
+    for i, (text, cls) in enumerate(rows):
+        f.text(36, 50 + i * 28, text, cls)
+    notes = [(330, "1", "что случилось"), (274, "2", "где упало: последний кадр"),
+             (190, "3", "кто вызвал parse_percent"), (106, "4", "откуда всё началось")]
+    for y, n, label in notes:
+        f.line(f"M624 {y - 5}H660", "lnd")
+        f.raw(f'<circle cx="674" cy="{y - 5}" r="11" class="fig-acc"/>')
+        f.text(674, y, n, "onacc", "middle")
+        f.text(692, y, label, "s")
+    f.text(20, 384, "Упало в parse_percent, а причина — в допущении «префикс промокода всегда из 4 букв».", "s")
+    f.save(out(PY4 / "03-debugging" / "img" / "traceback-stack.svg"))
+
 if __name__ == "__main__":
     for build in (traceback_anatomy, names_to_values, string_indices, delivery_elif, while_loop,
                   sets_venn, nested_order, copy_modes, comprehension_anatomy,
-                  mutable_default, legb_scopes, recursion_stack, decorator_wrap, dict_lookup, lost_key):
+                  mutable_default, legb_scopes, recursion_stack, decorator_wrap,
+                  try_flow, traceback_stack, dict_lookup, lost_key):
         build()
     print("ok")

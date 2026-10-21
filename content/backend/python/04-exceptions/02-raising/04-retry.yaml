@@ -1,0 +1,88 @@
+title: Повтор на всё подряд
+type: exercise
+difficulty: 3
+pitfall: Повторять стоит только временные сбои, а после последней попытки — выбросить ошибку.
+statement: |
+  Декоратор `retry(times)` повторяет вызов функции при сбое. С ним две проблемы:
+  он повторяет даже ошибки данных (`ValueError`), которые никогда не пройдут, а когда попытки
+  кончаются — молча возвращает `None`. Исправьте декоратор: повторяется только `ConnectionError`,
+  остальные ошибки сразу уходят наружу, а после последней неудачной попытки наружу уходит
+  последняя `ConnectionError`.
+starter_code: |
+  import functools
+
+
+  def retry(times):
+      def decorator(func):
+          @functools.wraps(func)
+          def wrapper(*args, **kwargs):
+              for attempt in range(times):
+                  try:
+                      return func(*args, **kwargs)
+                  except Exception:
+                      pass
+          return wrapper
+      return decorator
+check:
+  type: tests
+  tests:
+    - code: |
+        calls = []
+        @retry(times=3)
+        def bad_data():
+            calls.append(1)
+            raise ValueError("сумма отрицательная")
+        try:
+            bad_data()
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+        assert len(calls) == 1
+      fail: "Ошибку данных повторять бессмысленно: `ValueError` должна уйти наружу с первой попытки."
+    - code: |
+        calls = []
+        @retry(times=3)
+        def down():
+            calls.append(1)
+            raise ConnectionError("сервис недоступен")
+        try:
+            down()
+        except ConnectionError:
+            pass
+        else:
+            raise AssertionError
+        assert len(calls) == 3
+      fail: "После трёх неудачных попыток наружу должна уйти `ConnectionError`, а не тихий `None`."
+    - code: |
+        failures = [ConnectionError("сбой")]
+        @retry(times=3)
+        def flaky():
+            if failures:
+                raise failures.pop()
+            return "оплачено"
+        assert flaky() == "оплачено"
+      fail: Временный сбой должен повторяться до успеха.
+solution: |
+  import functools
+
+
+  def retry(times):
+      def decorator(func):
+          @functools.wraps(func)
+          def wrapper(*args, **kwargs):
+              for attempt in range(1, times + 1):
+                  try:
+                      return func(*args, **kwargs)
+                  except ConnectionError:
+                      if attempt == times:
+                          raise
+          return wrapper
+      return decorator
+hints:
+  - "Ловите только `ConnectionError` — остальное пролетит само."
+  - "На последней попытке перевыбросьте ошибку голым `raise`."
+explanation: |
+  `except Exception: pass` превращает любую ошибку в повтор, а после цикла функция доходит до конца
+  и возвращает `None` — сбой исчезает бесследно. Повторяют только временные сбои (`ConnectionError`),
+  а после последней попытки ошибку отдают наружу: пусть вызывающий код решит, что сказать пользователю.

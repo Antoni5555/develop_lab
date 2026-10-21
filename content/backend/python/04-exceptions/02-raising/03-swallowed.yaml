@@ -1,0 +1,67 @@
+title: Ошибка промокода исчезла
+type: exercise
+difficulty: 2
+pitfall: Пойманную, но не обработанную ошибку нужно пропустить дальше — иначе она теряется.
+statement: |
+  `apply_promo(total, code)` берёт скидку из промокода через `parse_percent` и пишет в лог,
+  если промокод неверный. Неверный промокод сейчас тихо даёт `None` вместо суммы — и заказ
+  оформляется на «пустую» сумму. Исправьте `apply_promo`: запись в лог должна остаться,
+  а `ValueError` — дойти до вызывающего кода. `parse_percent` не меняйте.
+starter_code: |
+  def parse_percent(code):
+      if not code.startswith("SALE"):
+          raise ValueError(f"неизвестный промокод: {code}")
+      return int(code[4:])
+
+
+  def apply_promo(total, code):
+      try:
+          percent = parse_percent(code)
+      except ValueError:
+          print("лог: неверный промокод", code)
+          return None
+      return total * (100 - percent) // 100
+check:
+  type: tests
+  tests:
+    - code: |
+        try:
+            apply_promo(2000, "WINTER5")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: "Неверный промокод не должен превращаться в `None`. Как пропустить пойманную ошибку дальше?"
+    - code: |
+        assert apply_promo(2000, "SALE10") == 1800
+      fail: Верный промокод — сумма со скидкой.
+    - code: |
+        import contextlib, io
+        log = io.StringIO()
+        with contextlib.redirect_stdout(log):
+            try:
+                apply_promo(2000, "WINTER5")
+            except ValueError:
+                pass
+        assert "неверный промокод" in log.getvalue()
+      fail: Запись в лог («лог - неверный промокод ...») должна остаться.
+solution: |
+  def parse_percent(code):
+      if not code.startswith("SALE"):
+          raise ValueError(f"неизвестный промокод: {code}")
+      return int(code[4:])
+
+
+  def apply_promo(total, code):
+      try:
+          percent = parse_percent(code)
+      except ValueError:
+          print("лог: неверный промокод", code)
+          raise
+      return total * (100 - percent) // 100
+hints:
+  - "Голый `raise` внутри `except` перевыбрасывает пойманное исключение."
+explanation: |
+  `return None` в `except` превращает ошибку в «нормальный» результат — дальше заказ считается
+  с суммой `None`. Если обработать ошибку здесь нельзя, её записывают в лог и перевыбрасывают
+  голым `raise`: решать, что показать пользователю, будет обработчик выше.

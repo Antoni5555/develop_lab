@@ -1,0 +1,40 @@
+title: Любое количество — «неверное»
+type: exercise
+difficulty: 2
+pitfall: Голый except прячет баги — опечатка выглядит как ошибка ввода.
+statement: |
+  `parse_quantity(raw)` превращает количество из формы в `int`; если ввод — не число,
+  возвращает `None`. Сейчас функция возвращает `None` для любого ввода, даже для `"3"`.
+  Найдите настоящую причину и исправьте функцию так, чтобы `except` ловил только ошибку ввода.
+starter_code: |
+  def parse_quantity(raw):
+      try:
+          return int(raw_qty)
+      except:
+          return None
+check:
+  type: tests
+  tests:
+    - code: |
+        assert parse_quantity("3") == 3
+      fail: "Для \"3\" вернулся `None`. Уберите `except` на минуту — какая ошибка на самом деле возникает?"
+    - code: |
+        assert parse_quantity("три") is None
+      fail: Для нечислового ввода — `None`.
+    - code: |
+        import re
+        assert re.search(r"except\s+ValueError", source)
+      fail: "Ловите конкретный тип ошибки ввода, а не всё подряд."
+solution: |
+  def parse_quantity(raw):
+      try:
+          return int(raw)
+      except ValueError:
+          return None
+hints:
+  - "В `try` используется имя `raw_qty`. Есть ли такое имя?"
+  - "`int(\"три\")` выбрасывает `ValueError` — его и ловим."
+explanation: |
+  Голый `except:` поймал `NameError` из-за опечатки `raw_qty` — и функция выдавала «неверный ввод»
+  на любое значение. Баг был спрятан обработчиком. С `except ValueError` опечатка сразу видна как
+  `NameError`, а обрабатывается только то, что мы ожидаем, — нечисловой ввод.

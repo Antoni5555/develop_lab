@@ -1,0 +1,43 @@
+title: Проверка количества через assert
+type: exercise
+difficulty: 2
+pitfall: assert отключается флагом -O — для проверки ввода он не годится.
+statement: |
+  `validate_quantity(qty)` проверяет количество из формы: оно должно быть от 1 до 100.
+  Сейчас проверка написана через `assert` — на сервере, запущенном с `python -O`, она исчезает
+  и в заказ попадает количество `-5`. Перепишите проверку: при неверном количестве функция
+  должна выбрасывать `ValueError`, при верном — возвращать `qty`. `assert` не используйте.
+starter_code: |
+  def validate_quantity(qty):
+      assert 1 <= qty <= 100, f"неверное количество: {qty}"
+      return qty
+check:
+  type: tests
+  tests:
+    - code: |
+        import re
+        assert not re.search(r"\bassert\b", source)
+      fail: "Проверка всё ещё на `assert` — с `python -O` она исчезнет."
+    - code: |
+        for bad in (0, -5, 101):
+            try:
+                validate_quantity(bad)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError(bad)
+      fail: "Для 0, -5 и 101 нужен `ValueError`."
+    - code: |
+        assert validate_quantity(1) == 1 and validate_quantity(100) == 100
+      fail: Границы 1 и 100 — допустимые значения.
+solution: |
+  def validate_quantity(qty):
+      if not 1 <= qty <= 100:
+          raise ValueError(f"неверное количество: {qty}")
+      return qty
+hints:
+  - "`if not условие: raise ValueError(...)`"
+explanation: |
+  `python -O` удаляет все `assert` из кода, и проверка ввода перестаёт существовать. Ввод проверяют
+  явным условием и `raise` — такая проверка работает всегда. `assert` оставляют для внутренних
+  допущений, нарушение которых означает баг в нашем коде, а не плохие данные.

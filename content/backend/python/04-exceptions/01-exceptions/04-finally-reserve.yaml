@@ -1,0 +1,65 @@
+title: Зависший резерв
+type: exercise
+difficulty: 3
+pitfall: Освобождение ресурса без finally пропускается, если по пути случилась ошибка.
+statement: |
+  `checkout(reserved, product_id, amount)` резервирует товар (добавляет `product_id` в список
+  `reserved`), вызывает оплату `pay(amount)` и снимает резерв. Если оплата падает, резерв
+  остаётся навсегда, и товар нельзя купить. Исправьте `checkout`: резерв снимается при любом
+  исходе, а ошибка оплаты по-прежнему доходит до вызывающего кода. `pay` не меняйте.
+starter_code: |
+  def pay(amount):
+      if amount <= 0:
+          raise ValueError("сумма оплаты должна быть положительной")
+      return "оплачено"
+
+
+  def checkout(reserved, product_id, amount):
+      reserved.append(product_id)
+      result = pay(amount)
+      reserved.remove(product_id)
+      return result
+check:
+  type: tests
+  tests:
+    - code: |
+        reserved = []
+        try:
+            checkout(reserved, 7, 0)
+        except ValueError:
+            pass
+        assert reserved == []
+      fail: "После неудачной оплаты товар остался в резерве. Какой блок выполняется всегда?"
+    - code: |
+        reserved = []
+        try:
+            checkout(reserved, 7, 0)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError
+      fail: Ошибка оплаты должна дойти до вызывающего кода — не глотайте её.
+    - code: |
+        reserved = []
+        assert checkout(reserved, 42, 1499) == "оплачено" and reserved == []
+      fail: Успешная оплата — «оплачено», резерв снят.
+solution: |
+  def pay(amount):
+      if amount <= 0:
+          raise ValueError("сумма оплаты должна быть положительной")
+      return "оплачено"
+
+
+  def checkout(reserved, product_id, amount):
+      reserved.append(product_id)
+      try:
+          return pay(amount)
+      finally:
+          reserved.remove(product_id)
+hints:
+  - "Когда `pay` выбрасывает ошибку, строка `reserved.remove(...)` не выполняется."
+  - "`try` / `finally` без `except`: ошибка летит дальше, а `finally` всё равно срабатывает."
+explanation: |
+  Исключение прерывает функцию на строке `pay(amount)`, и снятие резерва пропускается.
+  `finally` выполняется при любом исходе — после `return`, после ошибки. `except` здесь не нужен:
+  `checkout` не знает, что делать с ошибкой оплаты, поэтому пропускает её дальше, но резерв снимает.
