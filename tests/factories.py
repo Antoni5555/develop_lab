@@ -72,3 +72,17 @@ def topic_with_lesson(section, **kwargs):
     LessonFactory(topic=topic)
     ExerciseFactory.create_batch(2, topic=topic)
     return topic
+
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = 'accounts.User'
+        skip_postgeneration_save = True
+
+    email = factory.Sequence(lambda n: f'user{n}@example.com')
+    password = factory.PostGenerationMethodCall('set_password', 'secret-pass-123')
+
+    @factory.post_generation
+    def save_password(obj, create, extracted, **kwargs):
+        if create:
+            obj.save()

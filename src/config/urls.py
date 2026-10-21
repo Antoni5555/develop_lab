@@ -17,5 +17,6 @@ urlpatterns = [
     path('cheatsheets/', include('apps.cheatsheets.urls')),
     # тренажёр подключён к корню: в нём будут и /playground/, и адреса задач
     path('', include('apps.trainers.urls')),
-    path('accounts/', include('apps.accounts.urls')),
+    path('accounts/', include('apps.accounts.urls')),   # профиль
+    path('accounts/', include('allauth.urls')),         # вход, регистрация, пароль
 ]

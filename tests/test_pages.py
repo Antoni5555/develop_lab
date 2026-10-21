@@ -15,9 +15,8 @@ PAGES = [
     ('trainers:playground', 'trainers/playground.html', 'playground'),
 
 
-    ('accounts:login', 'accounts/login.html', None),
-    ('accounts:signup', 'accounts/signup.html', None),
-    ('accounts:profile', 'accounts/profile.html', None),
+    ('account_login', 'account/login.html', None),
+    ('account_signup', 'account/signup.html', None),
 ]
 
 

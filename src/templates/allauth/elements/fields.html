@@ -1,0 +1,24 @@
+{% load allauth forms %}
+{% comment %} Все поля формы allauth — в виде .field из макета (вместо стандартного form.as_p) {% endcomment %}
+{% with form=attrs.form %}
+{% if form.non_field_errors %}
+<div class="alert alert--error"><span class="alert__icon" aria-hidden="true">!</span><div>{% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</div></div>
+{% endif %}
+{% for field in form %}
+  {% if field.is_hidden %}
+    {{ field }}
+  {% elif field.widget_type == 'checkbox' %}
+    <label class="auth__check">{{ field }} <span>{{ field.label }}</span></label>
+  {% else %}
+    <label class="field">
+      <span class="field__label">{{ field.label }}</span>
+      {{ field|add_class:"field__input" }}
+      {% for error in field.errors %}<span class="field__error">{{ error }}</span>{% endfor %}
+      {% if field.name == 'password1' %}
+        {# вместо длинного списка правил Django — короткая подсказка, как в макете #}
+        <span class="field__hint">Минимум 8 символов, не только цифры</span>
+      {% elif field.help_text %}<span class="field__hint">{{ field.help_text|safe }}</span>{% endif %}
+    </label>
+  {% endif %}
+{% endfor %}
+{% endwith %}

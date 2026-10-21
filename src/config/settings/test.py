@@ -9,3 +9,6 @@ CACHES = {
 
 # Быстрый хешер паролей: тесты с пользователями идут в разы быстрее
 PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
+
+# Письма складываются в django.core.mail.outbox — тест может их проверить
+EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'

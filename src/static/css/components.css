@@ -1074,3 +1074,7 @@ main { padding: var(--space-6) 0 var(--space-8); }
 /* В макете кнопка темы была <label>; у <button> убираем фон браузера */
 
 button.icon-btn { color: inherit; background: transparent; }
+
+/* Сообщения Django над страницей (вход, выход, письмо отправлено) */
+.stack-messages { display: grid; gap: var(--space-2); margin-bottom: var(--space-5); }
+.auth__card .stack-messages { margin: 0; padding: 0; }

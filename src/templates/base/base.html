@@ -29,7 +29,8 @@
   {% include 'base/header.html' %}
 
   <main>
-    {% block content %}{% endblock %}
+    {# main оборачивает content: страницы allauth вставляют свой content внутрь карточки входа #}
+    {% block main %}{% include 'common/_messages.html' %}{% block content %}{% endblock %}{% endblock %}
   </main>
 
   {% include 'base/footer.html' %}

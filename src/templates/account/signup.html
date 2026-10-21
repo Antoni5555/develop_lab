@@ -1,0 +1,17 @@
+{% extends "account/base_entrance.html" %}
+{% load allauth %}
+{% comment %} Регистрация — по макету. Только email и пароль (ACCOUNT_SIGNUP_FIELDS) {% endcomment %}
+{% block head_title %}Регистрация{% endblock %}
+
+{% block content %}
+  <h1 class="auth__title">Регистрация</h1>
+  <p class="muted">Прогресс из этого браузера перенесётся в аккаунт.</p>
+  {% url 'account_signup' as signup_url %}
+  <form class="auth__form" method="post" action="{{ signup_url }}">
+    {% csrf_token %}
+    {% element fields form=form %}{% endelement %}
+    {{ redirect_field }}
+    <button type="submit" class="btn btn--accent btn--block">Создать аккаунт</button>
+  </form>
+  <p class="muted auth__foot">Уже есть аккаунт? <a href="{{ login_url }}">Войти</a></p>
+{% endblock %}

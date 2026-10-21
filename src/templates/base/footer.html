@@ -13,9 +13,13 @@
     </nav>
     <nav class="footer__col">
       <span class="footer__label">Аккаунт</span>
-      <a href="{% url 'accounts:login' %}">Вход</a>
-      <a href="{% url 'accounts:signup' %}">Регистрация</a>
-      <a href="{% url 'accounts:profile' %}">Профиль</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}">Профиль</a>
+        <a href="{% url 'account_logout' %}">Выйти</a>
+      {% else %}
+        <a href="{% url 'account_login' %}">Вход</a>
+        <a href="{% url 'account_signup' %}">Регистрация</a>
+      {% endif %}
     </nav>
   </div>
   <div class="container footer__bottom">

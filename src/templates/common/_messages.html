@@ -1,0 +1,11 @@
+{# Сообщения Django (вход, выход, письмо отправлено…) — плашки над содержимым страницы #}
+{% if messages %}
+<div class="container stack-messages">
+  {% for message in messages %}
+  <div class="alert alert--{% if message.level_tag == 'error' or message.level_tag == 'warning' %}error{% else %}success{% endif %}">
+    <span class="alert__icon" aria-hidden="true">{% if message.level_tag == 'error' or message.level_tag == 'warning' %}!{% else %}✓{% endif %}</span>
+    <div>{{ message }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

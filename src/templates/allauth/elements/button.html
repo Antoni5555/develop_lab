@@ -1,0 +1,3 @@
+{% load allauth %}
+{% comment %} Главная кнопка формы — лаймовая на всю ширину, остальные — контурные {% endcomment %}
+{% if attrs.href %}<a href="{{ attrs.href }}"{% else %}<button type="{{ attrs.type|default:'submit' }}"{% if attrs.form %} form="{{ attrs.form }}"{% endif %}{% if attrs.name %} name="{{ attrs.name }}"{% endif %}{% if attrs.value %} value="{{ attrs.value }}"{% endif %}{% endif %}{% if attrs.id %} id="{{ attrs.id }}"{% endif %} class="btn {% if 'prominent' in attrs.tags or 'primary' in attrs.tags %}btn--accent btn--block{% elif 'danger' in attrs.tags %}btn--ink{% else %}btn--ghost{% endif %}">{% slot %}{% endslot %}</{% if attrs.href %}a{% else %}button{% endif %}>

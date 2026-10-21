@@ -1,0 +1,24 @@
+{% load allauth %}
+{% comment %} Поле формы allauth в виде .field из макета: подпись, поле, ошибка, подсказка {% endcomment %}
+{% if attrs.type == "checkbox" or attrs.type == "radio" %}
+<label class="auth__check">
+  <input type="{{ attrs.type }}"{% if attrs.name %} name="{{ attrs.name }}"{% endif %}{% if attrs.id %} id="{{ attrs.id }}"{% endif %}{% if attrs.checked %} checked{% endif %}{% if attrs.value is not None %} value="{{ attrs.value }}"{% endif %}>
+  <span>{% slot label %}{% endslot %}</span>
+</label>
+{% else %}
+<label class="field">
+  <span class="field__label">{% slot label %}{% endslot %}</span>
+  <input class="field__input{% if attrs.errors %} field__input--error{% endif %}"
+         type="{{ attrs.type }}"
+         {% if attrs.name %}name="{{ attrs.name }}"{% endif %}
+         {% if attrs.id %}id="{{ attrs.id }}"{% endif %}
+         {% if attrs.required %}required{% endif %}
+         {% if attrs.disabled %}disabled{% endif %}
+         {% if attrs.readonly %}readonly{% endif %}
+         {% if attrs.placeholder %}placeholder="{{ attrs.placeholder }}"{% endif %}
+         {% if attrs.autocomplete %}autocomplete="{{ attrs.autocomplete }}"{% endif %}
+         {% if attrs.value is not None %}value="{{ attrs.value }}"{% endif %}>
+  {% for error in attrs.errors %}<span class="field__error">{{ error }}</span>{% endfor %}
+  {% if slots.help_text %}<span class="field__hint">{% slot help_text %}{% endslot %}</span>{% endif %}
+</label>
+{% endif %}

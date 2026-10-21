@@ -1,0 +1,14 @@
+<div class="profile-head">
+  <div class="avatar avatar--lg" aria-hidden="true">{{ user.initials }}</div>
+  <div>
+    <h1 class="page-title">{{ user.display_name }}</h1>
+    <p class="muted">С нами с {{ user.date_joined|date:"E Y" }} · {{ user.email }}</p>
+  </div>
+  <div class="profile-head__action tags">
+    <a href="{% url 'account_change_password' %}" class="btn btn--ghost">Сменить пароль</a>
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn--ghost">Выйти</button>
+    </form>
+  </div>
+</div>

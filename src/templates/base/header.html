@@ -15,7 +15,11 @@
           <circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>
         </svg>
       </button>
-      <a href="{% url 'accounts:login' %}" class="btn btn--ghost">Войти</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}" class="avatar" title="{{ user.display_name }} — профиль" aria-label="Профиль">{{ user.initials }}</a>
+      {% else %}
+        <a href="{% url 'account_login' %}" class="btn btn--ghost">Войти</a>
+      {% endif %}
 
       {% include 'base/components/_mobile_menu.html' %}
     </div>

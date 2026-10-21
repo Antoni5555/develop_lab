@@ -1,0 +1,18 @@
+{% extends "account/base_entrance.html" %}
+{% load allauth %}
+{% comment %} Вход — по макету (accounts/components/_auth_card). Поля рисует allauth/elements/fields.html {% endcomment %}
+{% block head_title %}Вход{% endblock %}
+
+{% block content %}
+  <h1 class="auth__title">Вход</h1>
+  <p class="muted">Прогресс и заметки сохранятся на всех устройствах.</p>
+  {% url 'account_login' as login_url %}
+  <form class="auth__form" method="post" action="{{ login_url }}">
+    {% csrf_token %}
+    {% element fields form=form %}{% endelement %}
+    {{ redirect_field }}
+    <button type="submit" class="btn btn--accent btn--block">Войти</button>
+  </form>
+  <p class="muted auth__foot"><a href="{% url 'account_reset_password' %}">Забыли пароль?</a></p>
+  <p class="muted auth__foot">Нет аккаунта? <a href="{{ signup_url }}">Зарегистрироваться</a></p>
+{% endblock %}

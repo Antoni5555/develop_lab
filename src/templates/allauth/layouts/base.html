@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% comment %} Все страницы django-allauth (вход, регистрация, сброс пароля, почта, выход)
+   встраиваются в наш base.html — в карточку входа из макета (accounts/components/_auth_card).
+   Поля, кнопки и заголовки рисуют шаблоны allauth/elements/* под классы дизайна.
+{% endcomment %}
+{% block title %}{% block head_title %}{% endblock %} — {{ SITE_NAME }}{% endblock %}
+{% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/accounts.css' %}">{% endblock %}
+
+{% block main %}
+<div class="container auth">
+  <div class="auth__card">
+    {% include 'common/_messages.html' %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

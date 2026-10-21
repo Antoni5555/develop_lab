@@ -32,3 +32,9 @@
 
 /* --- Профиль: вкладки внутри панели --- */
 .tabs--flush { margin: calc(var(--space-5) * -1) calc(var(--space-5) * -1) 0; padding: var(--space-3) var(--space-4); }
+
+
+/* --- Формы allauth (в макете были статичные поля) --- */
+.auth__form { display: grid; gap: var(--space-4); }
+.auth__check { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); }
+.auth__card .alert { margin: 0; }

@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container stack-lg">
-  {% include 'common/_page_head.html' with title='Профиль' lead='Пройденные курсы, активность по дням и последние заметки.' %}
-  {% include 'common/_coming_soon.html' with stage=3 %}
+  {% include 'accounts/components/_profile_head.html' %}
+  {% include 'common/_coming_soon.html' with text='Статистика, прогресс по курсам и активность появятся здесь на следующем шаге.' %}
 </div>
 {% endblock %}
