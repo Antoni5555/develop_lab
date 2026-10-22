@@ -22,3 +22,8 @@ media/
 # Редакторы
 .idea/
 .vscode/
+
+# Локальные рабочие заметки — не в репозитории
+docs/roles/
+docs/handoff/
+docs/START.md

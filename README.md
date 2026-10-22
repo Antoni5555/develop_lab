@@ -3,8 +3,8 @@
 Бесплатная платформа практики для разработчиков: короткая теория + интерактивные
 тренажёры (SQL, ORM, Python, Linux) прямо в браузере.
 
-Контекст проекта и принятые решения — в [docs/architecture.md](docs/architecture.md), план и архитектура —
-в [docs/START.md](docs/START.md).
+Архитектура, стек и этапы — в [docs/architecture.md](docs/architecture.md),
+деплой — в [docs/deploy.md](docs/deploy.md).
 
 ## Запуск в Docker (рекомендуется)
 
