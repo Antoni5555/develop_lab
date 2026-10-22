@@ -21,6 +21,9 @@
   .showcase__row--reverse .showcase__text { order: 0; }
   .journey { grid-template-columns: 1fr 1fr; row-gap: var(--space-6); }
   .journey::before { display: none; }
+  .about-art { max-width: 360px; justify-self: center; }
+  .about-hero { grid-template-columns: 1fr; grid-template-areas: "head" "text" "art"; }
+  .faq--cols { grid-template-columns: 1fr; }
   .course-hero { grid-template-columns: 1fr; }
   .footer__inner { grid-template-columns: 1fr 1fr; }
 }
@@ -48,6 +51,9 @@
   .stack-home { gap: var(--space-7); }
   .hero-numbers { gap: var(--space-3); }
   .hero-numbers div { padding-left: var(--space-3); }
+  .principles { grid-template-columns: 1fr; }
+  .author { grid-template-columns: 1fr; justify-items: start; gap: var(--space-5); }
+  .author__photo { width: 220px; }
   .hero,
   .cta { padding: var(--space-5); }
   .journey { grid-template-columns: 1fr; }
@@ -66,7 +72,6 @@
   .join-viz { grid-template-columns: 1fr; }
   .session { width: 100%; }
   .prev-next { grid-template-columns: 1fr; }
-  .author { flex-direction: column; align-items: flex-start; }
   .footer__inner { grid-template-columns: 1fr; }
 
   /* Рисунок урока не ужимаем до нечитаемого текста — он прокручивается вбок */

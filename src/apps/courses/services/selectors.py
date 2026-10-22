@@ -247,6 +247,17 @@ def playground(engine):
     }
 
 
+def first_open_card(cards):
+    """Первый курс направления, где уже есть темы, — кнопка «Начать с …»."""
+    return next((card for card in cards if not card.is_soon), None)
+
+
+def start_card():
+    """Карточка первого открытого курса (для CTA на страницах без каталога)."""
+    _, _, cards = catalog()
+    return first_open_card(cards)
+
+
 def home_summary():
     """Для главной: курсы направления (карта пути) и числа под кнопками первого экрана.
 
@@ -256,7 +267,7 @@ def home_summary():
     return {
         'track': track,
         'cards': cards,
-        'first_card': next((card for card in cards if not card.is_soon), None),
+        'first_card': first_open_card(cards),
         'numbers': {
             'courses': len(cards),
             'exercises': sum(card.course.exercise_count for card in cards),

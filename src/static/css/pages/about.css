@@ -1,52 +1,129 @@
-/* О проекте. Подключается только на своих страницах. */
+/* О проекте. Подключается только на своих страницах. Перенесено из design/style.css
+   (раздел «--- О проекте ---»). Анимация «Путь разработчика» (.dp-*): позиции станций
+   и тайминги — из design/_tools/path_anim.py, менять в скрипте и пересобирать. */
 
-/* --- Главная --- */
-/* Карточка-ссылка («Что здесь есть» на странице «О проекте») */
-.step--link { display: flex; flex-direction: column; text-decoration: none; transition: border-color var(--transition), transform var(--transition); }
-.step--link:hover { border-color: var(--text); transform: translateY(-2px); }
-.step__more { margin-top: auto; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
-
-/* --- О проекте --- */
-.about-hero { display: grid; gap: var(--space-4); }
-.about-hero__lead { max-width: 60ch; font-size: var(--fs-lg); color: var(--muted); }
-.roadmap { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
-
-.roadmap__item {
-  position: relative;
-  display: grid;
-  gap: 2px;
-  padding: 0 0 var(--space-5) var(--space-6);
-  border-left: 2px solid var(--border);
-  margin-left: 7px;
+/* --- Первый экран --- */
+/* Заголовок — отдельной строкой во всю ширину, ниже текст (слева) и картинка (справа) */
+.about-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  grid-template-areas: "head art" "text art";
+  row-gap: var(--space-5);
 }
 
-.roadmap__item:last-child { padding-bottom: 0; }
+.about-hero__head { grid-area: head; display: grid; gap: var(--space-4); }
+.about-hero .hero__text { grid-area: text; align-self: start; }
+.about-hero .about-art { grid-area: art; align-self: start; }   /* верх картинки — на уровне заголовка */
+.about-hero__title { max-width: none; }   /* две строки задаёт <br>; размер — как у заголовка главной */
+.about-hero .hero__lead + .hero__lead { margin-top: calc(var(--space-2) * -1); opacity: 0.5; }
 
-.roadmap__item::before {
-  content: '';
-  position: absolute;
-  left: -9px;
-  top: 2px;
-  width: 16px;
-  height: 16px;
-  background: var(--bg);
-  border: 2px solid var(--border);
+/* Картинка «Путь разработчика» (inline SVG, классы dp-*). Нужен @property --on (объявлен в base.css). */
+.about-art { width: 100%; max-width: 420px; justify-self: end; color: var(--on-ink); }
+.about-art__svg { display: block; width: 100%; height: auto; overflow: visible; }
+.dp-bg-line { fill: none; stroke: currentColor; stroke-width: 1; opacity: 0.1; }
+.dp-bg-line--dashed { stroke-dasharray: 1 7; stroke-linecap: round; opacity: 0.22; }
+.dp-shape { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.28; }
+.dp-shape--accent { stroke: var(--accent); opacity: 0.7; }
+.dp-dots circle { fill: currentColor; opacity: 0.3; }
+.dp-spark { fill: var(--accent); opacity: 0.85; }
+.dp-route { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-dasharray: 2 7; stroke-linecap: round; opacity: 0.3; }
+.dp-line { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+.dp-end { fill: var(--accent); }
+.dp-stack { transform-box: fill-box; transform-origin: center; }
+.dp-chip { fill: color-mix(in srgb, var(--accent) calc(var(--on) * 100%), var(--surface)); stroke: color-mix(in srgb, var(--accent) calc(var(--on) * 100%), var(--border)); stroke-width: 1; }
+.dp-dot { fill: color-mix(in srgb, var(--on-accent) calc(var(--on) * 100%), var(--border)); }
+.dp-label { font-family: var(--font-main); font-size: 13px; font-weight: 600; fill: color-mix(in srgb, var(--on-accent) calc(var(--on) * 100%), var(--text)); }
+
+/* Линия рисуется 0.4–7.2 с, держим до 9.0 с, затем гаснет; цикл 10.0 с */
+@keyframes dp-line { 0%, 4.00% { stroke-dashoffset: 1; opacity: 1; } 72.00%, 90.00% { stroke-dashoffset: 0; opacity: 1; } 97.00% { stroke-dashoffset: 0; opacity: 0; } 100% { stroke-dashoffset: 1; opacity: 0; } }
+.dp-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: dp-line 10.0s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+@keyframes dp-on-0 { 0%, 16.15% { --on: 0; } 16.25%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-0 { 0%, 16.15% { transform: scale(1); } 17.75% { transform: scale(1.12); } 20.25%, 100% { transform: scale(1); } }
+.dp-stack--0 { animation: dp-on-0 10.0s step-end infinite, dp-pop-0 10.0s ease-out infinite; }
+@keyframes dp-on-1 { 0%, 24.98% { --on: 0; } 25.08%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-1 { 0%, 24.98% { transform: scale(1); } 26.58% { transform: scale(1.12); } 29.08%, 100% { transform: scale(1); } }
+.dp-stack--1 { animation: dp-on-1 10.0s step-end infinite, dp-pop-1 10.0s ease-out infinite; }
+@keyframes dp-on-2 { 0%, 30.53% { --on: 0; } 30.63%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-2 { 0%, 30.53% { transform: scale(1); } 32.13% { transform: scale(1.12); } 34.63%, 100% { transform: scale(1); } }
+.dp-stack--2 { animation: dp-on-2 10.0s step-end infinite, dp-pop-2 10.0s ease-out infinite; }
+@keyframes dp-on-3 { 0%, 35.65% { --on: 0; } 35.75%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-3 { 0%, 35.65% { transform: scale(1); } 37.25% { transform: scale(1.12); } 39.75%, 100% { transform: scale(1); } }
+.dp-stack--3 { animation: dp-on-3 10.0s step-end infinite, dp-pop-3 10.0s ease-out infinite; }
+@keyframes dp-on-4 { 0%, 40.53% { --on: 0; } 40.63%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-4 { 0%, 40.53% { transform: scale(1); } 42.13% { transform: scale(1.12); } 44.63%, 100% { transform: scale(1); } }
+.dp-stack--4 { animation: dp-on-4 10.0s step-end infinite, dp-pop-4 10.0s ease-out infinite; }
+@keyframes dp-on-5 { 0%, 45.27% { --on: 0; } 45.37%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-5 { 0%, 45.27% { transform: scale(1); } 46.87% { transform: scale(1.12); } 49.37%, 100% { transform: scale(1); } }
+.dp-stack--5 { animation: dp-on-5 10.0s step-end infinite, dp-pop-5 10.0s ease-out infinite; }
+@keyframes dp-on-6 { 0%, 51.35% { --on: 0; } 51.45%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-6 { 0%, 51.35% { transform: scale(1); } 52.95% { transform: scale(1.12); } 55.45%, 100% { transform: scale(1); } }
+.dp-stack--6 { animation: dp-on-6 10.0s step-end infinite, dp-pop-6 10.0s ease-out infinite; }
+@keyframes dp-on-7 { 0%, 59.65% { --on: 0; } 59.75%, 93.00% { --on: 1; } 100% { --on: 0; } }
+@keyframes dp-pop-7 { 0%, 59.65% { transform: scale(1); } 61.25% { transform: scale(1.12); } 63.75%, 100% { transform: scale(1); } }
+.dp-stack--7 { animation: dp-on-7 10.0s step-end infinite, dp-pop-7 10.0s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-line, .dp-stack { animation: none; }
+  .dp-line { stroke-dashoffset: 0; }
+}
+
+/* Принципы: типографский список без карточек */
+.principles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--space-7);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.principles__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px var(--space-5);
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--border);
+}
+
+/* Номер — крупная полупрозрачная серая цифра */
+.principles__num {
+  grid-row: span 2;
+  min-width: 1.6ch;
+  font-family: var(--font-main);
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: var(--fw-bold);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  opacity: 0.12;
+}
+
+.principles__title { font-size: var(--fs-lg); font-weight: var(--fw-bold); }
+
+/* Стек сайта — строка «чипов» */
+.stack-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-1) 0 var(--space-2); padding: 0; list-style: none; }
+.stack-chips li { padding: 4px 12px; font-family: var(--font-code); font-size: var(--fs-xs); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-pill); }
+
+/* Автор: портрет на лаймовом круге + текст */
+.author {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-7);
+}
+
+/* Портрет вписан в лаймовый круг */
+.author__photo {
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--accent);
   border-radius: 50%;
 }
 
-.roadmap__item--done::before { background: var(--success); border-color: var(--success); }
-.roadmap__item--current::before { background: var(--accent); border-color: var(--text); }
-.roadmap__item .muted { font-size: var(--fs-sm); }
+.author__photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-.author {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  padding: var(--space-6);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-}
+.author__text { display: grid; justify-items: start; gap: var(--space-3); max-width: 60ch; }
+.author__text p { margin: 0; }
+.author__links { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
 
-.author .section-title { margin-bottom: var(--space-1); }
-.author__links { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+/* Вопросы в две колонки */
+.faq--cols { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }

@@ -1,5 +1,12 @@
-<div class="about-hero">
-  <span class="eyebrow">О проекте</span>
-  <h1 class="page-title page-title--xl">Теория, практика и свои шпаргалки — в одном месте</h1>
-  <p class="about-hero__lead">Проект вырос из личной боли: материалы для повторения разбросаны по десяткам сайтов, а потрогать SQL или ORM руками негде без установки. Здесь курс, тренажёр и заметки живут рядом. Сейчас открыто направление Backend на Python, дальше — Frontend и DevOps.</p>
+{# Первый экран: заголовок в две строки, текст и картинка «Путь разработчика» #}
+<div class="hero hero--home about-hero">
+  <div class="about-hero__head">
+    <span class="eyebrow">О проекте</span>
+    <h1 class="hero__title about-hero__title">Всё для практики&nbsp;—<br>в&nbsp;одном месте</h1>
+  </div>
+  <div class="hero__text">
+    <p class="hero__lead">Когда учишь backend самостоятельно, полдня уходит на поиски: статья здесь, видео там, конспект где-то в папке, а потрогать SQL или ORM руками негде без установки. Этот сайт собирает теорию, задачи, тренажёры и твои заметки в одну программу.</p>
+    <p class="hero__lead">Сейчас открыто направление Backend на Python, дальше — Frontend и DevOps.</p>
+  </div>
+  {% include 'about/components/_about_art.html' %}
 </div>

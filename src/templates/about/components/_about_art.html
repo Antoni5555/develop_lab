@@ -1,0 +1,33 @@
+{% comment %}
+  Картинка «Путь разработчика»: лаймовая линия рисуется по пунктирному маршруту,
+  станции-стеки загораются по очереди (цикл 10 с). Inline SVG, классы dp-*,
+  анимация — pages/about.css (нужен @property --on из base.css).
+  SVG и @keyframes собирает python3 design/_tools/path_anim.py svg|css — не править руками.
+{% endcomment %}
+<div class="about-art" aria-hidden="true">
+  <svg viewBox="0 0 440 440" class="about-art__svg">
+    {# Фон: две тонкие кривые повторяют маршрут со сдвигом + геометрия (всё приглушено) #}
+    <path d="M-2 86 C94 44, 124 154, 204 132 C304 104, 404 154, 346 230 C294 296, 124 224, 84 296 C46 364, 174 414, 264 390 C334 372, 354 334, 394 350" class="dp-bg-line"/>
+    <path d="M54 22 C150 -20, 180 90, 260 68 C360 40, 460 90, 402 166 C350 232, 180 160, 140 232 C102 300, 230 350, 320 326 C390 308, 410 270, 450 286" class="dp-bg-line dp-bg-line--dashed"/>
+    <path d="M372 44a30 30 0 0 1 60 0" class="dp-shape"/>
+    <g class="dp-dots"><circle cx="300" cy="18" r="1.8"/><circle cx="312" cy="18" r="1.8"/><circle cx="324" cy="18" r="1.8"/><circle cx="300" cy="30" r="1.8"/><circle cx="312" cy="30" r="1.8"/><circle cx="324" cy="30" r="1.8"/><circle cx="300" cy="42" r="1.8"/><circle cx="312" cy="42" r="1.8"/><circle cx="324" cy="42" r="1.8"/></g>
+    <rect x="28" y="370" width="24" height="24" rx="5" class="dp-shape dp-shape--accent" transform="rotate(20 40 382)"/>
+    <path d="M150 166l9 16h-18z" class="dp-shape"/>
+    <circle cx="268" cy="168" r="6" class="dp-shape"/>
+    <path d="M60 134v12m-6-6h12M420 236v12m-6-6h12M200 414v10m-5-5h10" class="dp-shape"/>
+    <circle cx="408" cy="272" r="3.5" class="dp-spark"/><circle cx="24" cy="196" r="3" class="dp-spark"/>
+    {# Маршрут пунктиром и сама линия, которая рисуется #}
+    <path d="M24 52 C120 10, 150 120, 230 98 C330 70, 430 120, 372 196 C320 262, 150 190, 110 262 C72 330, 200 380, 290 356 C360 338, 380 300, 420 316" class="dp-route"/>
+    <path d="M24 52 C120 10, 150 120, 230 98 C330 70, 430 120, 372 196 C320 262, 150 190, 110 262 C72 330, 200 380, 290 356 C360 338, 380 300, 420 316" pathLength="1" class="dp-line"/>
+    {# Стеки на маршруте: белые, загораются, когда до них доходит линия #}
+    <g class="dp-stack dp-stack--0"><rect x="47.1" y="30.8" width="86.0" height="30" rx="15" class="dp-chip"/><circle cx="61.1" cy="45.8" r="4" class="dp-dot"/><text x="71.1" y="50.3" class="dp-label">Python</text></g>
+    <g class="dp-stack dp-stack--1"><rect x="183.4" y="84.7" width="78.0" height="30" rx="15" class="dp-chip"/><circle cx="197.4" cy="99.7" r="4" class="dp-dot"/><text x="207.4" y="104.2" class="dp-label">Linux</text></g>
+    <g class="dp-stack dp-stack--2"><rect x="323.6" y="89.8" width="62.0" height="30" rx="15" class="dp-chip"/><circle cx="337.6" cy="104.8" r="4" class="dp-dot"/><text x="347.6" y="109.3" class="dp-label">Git</text></g>
+    <g class="dp-stack dp-stack--3"><rect x="307.1" y="202.1" width="70.0" height="30" rx="15" class="dp-chip"/><circle cx="321.1" cy="217.1" r="4" class="dp-dot"/><text x="331.1" y="221.6" class="dp-label">HTTP</text></g>
+    <g class="dp-stack dp-stack--4"><rect x="165.8" y="211.9" width="62.0" height="30" rx="15" class="dp-chip"/><circle cx="179.8" cy="226.9" r="4" class="dp-dot"/><text x="189.8" y="231.4" class="dp-label">SQL</text></g>
+    <g class="dp-stack dp-stack--5"><rect x="61.7" y="282.5" width="86.0" height="30" rx="15" class="dp-chip"/><circle cx="75.7" cy="297.5" r="4" class="dp-dot"/><text x="85.7" y="302.0" class="dp-label">Django</text></g>
+    <g class="dp-stack dp-stack--6"><rect x="185.0" y="346.7" width="86.0" height="30" rx="15" class="dp-chip"/><circle cx="199.0" cy="361.7" r="4" class="dp-dot"/><text x="209.0" y="366.2" class="dp-label">Docker</text></g>
+    <g class="dp-stack dp-stack--7"><rect x="317.6" y="313.4" width="78.0" height="30" rx="15" class="dp-chip"/><circle cx="331.6" cy="328.4" r="4" class="dp-dot"/><text x="341.6" y="332.9" class="dp-label">Nginx</text></g>
+    <circle cx="420" cy="316" r="7" class="dp-end"/>
+  </svg>
+</div>

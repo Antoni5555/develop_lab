@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.views.generic import TemplateView
 
-from apps.courses.services.selectors import home_summary
+from apps.courses.services.selectors import home_summary, start_card
 from apps.progress.services import progress
 
 
@@ -24,6 +24,11 @@ class AboutView(TemplateView):
 
     template_name = 'about/about.html'
     extra_context = {'active_nav': 'about'}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['first_card'] = start_card()   # кнопка «Начать с …» в CTA
+        return context
 
 
 class LegalView(TemplateView):

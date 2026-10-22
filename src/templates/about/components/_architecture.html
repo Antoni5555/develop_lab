@@ -1,0 +1,59 @@
+{% comment %}
+  «Как устроен сайт»: текст + схема браузер ↔ сервер на лаймовой подложке
+  (как ряд «Что внутри» на главной: .showcase__row, классы sc-* — components.css).
+{% endcomment %}
+<section>
+  <div class="section-head">
+    <div class="section-head__titles">
+      <span class="kicker">Технологии</span>
+      <h2 class="section-title">Как устроен сайт</h2>
+    </div>
+  </div>
+  <article class="showcase__row">
+    <div class="showcase__text">
+      <h3 class="showcase__title">Код выполняется у тебя, а не на сервере</h3>
+      <p class="muted">Python работает в браузере через Pyodide, SQL — через PGlite, Linux — в нашем симуляторе. Поэтому сервер простой и безопасный: он отдаёт страницы и хранит прогресс и заметки.</p>
+      <ul class="stack-chips">
+        <li>Django</li><li>PostgreSQL</li><li>Redis</li><li>DRF</li><li>Pyodide</li><li>PGlite</li><li>Docker</li><li>Nginx</li><li>GitHub Actions</li>
+      </ul>
+      <a href="https://github.com/Antoni5555/develop_lab" class="link-arrow">Исходный код на GitHub <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="showcase__art" aria-hidden="true">
+      <svg viewBox="0 0 400 280">
+        {# браузер: здесь выполняется весь код ученика #}
+        <g class="sc-card-shadow">
+          <rect x="8" y="16" width="152" height="248" rx="14" class="sc-card"/>
+          <text x="24" y="44" class="sc-t sc-t--title sc-t--sm-title">Браузер</text>
+          <text x="24" y="62" class="sc-t sc-t--muted sc-t--xs">твой компьютер</text>
+          <rect x="22" y="76" width="124" height="30" rx="8" class="sc-field"/><text x="34" y="95" class="sc-t sc-t--b sc-t--sm">Python</text><text x="134" y="95" class="sc-t sc-t--muted sc-t--xs sc-t--r">Pyodide</text>
+          <rect x="22" y="112" width="124" height="30" rx="8" class="sc-field"/><text x="34" y="131" class="sc-t sc-t--b sc-t--sm">SQL</text><text x="134" y="131" class="sc-t sc-t--muted sc-t--xs sc-t--r">PGlite</text>
+          <rect x="22" y="148" width="124" height="30" rx="8" class="sc-field"/><text x="34" y="167" class="sc-t sc-t--b sc-t--sm">Linux</text><text x="134" y="167" class="sc-t sc-t--muted sc-t--xs sc-t--r">симулятор</text>
+          <rect x="22" y="184" width="124" height="30" rx="8" class="sc-ink"/><text x="34" y="203" class="sc-t sc-t--b sc-t--sm sc-t--onink">Твой код</text>
+          <rect x="22" y="226" width="124" height="24" rx="12" class="sc-accent"/><text x="84" y="242" class="sc-t sc-t--b sc-t--xs sc-t--c">выполняется здесь</text>
+        </g>
+        {# сервер: только сайт и данные #}
+        <g class="sc-card-shadow">
+          <rect x="246" y="16" width="146" height="248" rx="14" class="sc-card"/>
+          <text x="262" y="44" class="sc-t sc-t--title sc-t--sm-title">Сервер</text>
+          <text x="262" y="62" class="sc-t sc-t--muted sc-t--xs">в контейнерах Docker</text>
+          <rect x="260" y="76" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="95" class="sc-t sc-t--b sc-t--sm">Nginx</text>
+          <rect x="260" y="112" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="131" class="sc-t sc-t--b sc-t--sm">Django</text>
+          <rect x="260" y="148" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="167" class="sc-t sc-t--b sc-t--sm">PostgreSQL</text>
+          <rect x="260" y="184" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="203" class="sc-t sc-t--b sc-t--sm">Redis</text>
+          <text x="319" y="242" class="sc-t sc-t--muted sc-t--xs sc-t--c">сайт, уроки, прогресс</text>
+        </g>
+        {# что ходит между ними #}
+        <path d="M166 104H238M230 97l8 7-8 7" class="sc-arrow"/>
+        <text x="202" y="78" class="sc-t sc-t--b sc-t--xs sc-t--c">прогресс,</text>
+        <text x="202" y="91" class="sc-t sc-t--b sc-t--xs sc-t--c">заметки</text>
+        <path d="M238 150H166M174 143l-8 7 8 7" class="sc-arrow"/>
+        <text x="202" y="172" class="sc-t sc-t--b sc-t--xs sc-t--c">страницы,</text>
+        <text x="202" y="185" class="sc-t sc-t--b sc-t--xs sc-t--c">уроки</text>
+        <g class="sc-card-shadow">
+          <rect x="168" y="210" width="68" height="24" rx="12" class="sc-ink"/>
+          <text x="202" y="226" class="sc-t sc-t--b sc-t--xs sc-t--c sc-t--onink">код ✕</text>
+        </g>
+      </svg>
+    </div>
+  </article>
+</section>

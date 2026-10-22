@@ -283,6 +283,10 @@ button:disabled { cursor: not-allowed; opacity: 0.5; }
   border-radius: var(--radius-pill);
 }
 
+/* Анимации картинок главной и «О проекте»: --on (0/1) — элемент «зажёгся».
+   Переключается в @keyframes; без @property браузер не анимирует переменную. */
+@property --on { syntax: '<number>'; inherits: true; initial-value: 0; }
+
 /* Появление блоков при прокрутке: класс .reveal ставит JS, .is-visible — когда блок на экране.
    Без JS классов нет — блоки просто видны. */
 .js-reveal .reveal {

@@ -1,12 +1,18 @@
-{# TODO: настоящие ссылки на GitHub и Telegram #}
-<div class="author">
-  <div class="avatar avatar--lg">AM</div>
-  <div>
-    <h2 class="section-title section-title--sm">Автор</h2>
-    <p class="muted">Backend-разработчик на Python. Делаю платформу, на которой хотел бы учиться сам.</p>
+{% load static %}
+<section class="author">
+  {# Портрет вписан в лаймовый круг: фон фото убран (прозрачный webp 480 px) #}
+  <div class="author__photo">
+    <img src="{% static 'img/author.webp' %}" alt="Antoni Mikeladze" width="480" height="480" loading="lazy">
+  </div>
+  <div class="author__text">
+    <span class="kicker">Автор</span>
+    <h2 class="section-title">Привет, я Антони</h2>
+    <p>Backend-разработчик на Python. Изучаю backend самостоятельно и постоянно трачу время на то, чтобы найти нормальный материал для повторения и место, где можно потрогать код руками.</p>
+    <p class="muted">Этот сайт — то, чего мне не хватало. Делаю его в открытую: код, контент и планы лежат на GitHub. Нашли ошибку или есть идея — пишите.</p>
     <div class="author__links">
-      <a href="{% url 'pages:about' %}" class="pill">GitHub</a>
-      <a href="{% url 'pages:about' %}" class="pill">Telegram</a>
+      <a href="https://github.com/Antoni5555" class="pill">GitHub</a>
+      <a href="https://t.me/antonimikeladze" class="pill">Telegram</a>
+      <a href="https://antonimikeladze.ru" class="pill">Портфолио</a>
     </div>
   </div>
-</div>
+</section>

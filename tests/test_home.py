@@ -1,4 +1,4 @@
-"""Главная: цифры первого экрана и карта пути (статусы курсов направления)."""
+"""Главная и «О проекте»: цифры первого экрана, карта пути, CTA."""
 import re
 
 import pytest
@@ -72,6 +72,21 @@ def test_user_path_shows_done_and_current(client, courses):
     assert 'вы здесь · 1 / 2' in second_html
 
 
-def test_reveal_script_only_on_home(client, courses):
-    assert 'js/reveal.js' in client.get(reverse('pages:home')).content.decode()
-    assert 'js/reveal.js' not in client.get(reverse('pages:about')).content.decode()
+def test_reveal_script_only_on_home_and_about(client, courses):
+    """Появление блоков при прокрутке — только на главной и «О проекте»."""
+    for name in ['pages:home', 'pages:about']:
+        assert 'js/reveal.js' in client.get(reverse(name)).content.decode(), name
+    assert 'js/reveal.js' not in client.get(reverse('courses:list')).content.decode()
+
+
+def test_about_page(client, courses):
+    """«О проекте»: CTA — на первый открытый курс, вопросы закрыты, ссылки автора."""
+    first, _, _ = courses
+
+    html = client.get(reverse('pages:about')).content.decode()
+
+    assert f'href="{first.get_absolute_url()}"' in html
+    assert 'Начать с Python' in html
+    assert '<details class="faq__item" open' not in html
+    assert 'href="https://github.com/Antoni5555"' in html
+    assert 'img/author' in html

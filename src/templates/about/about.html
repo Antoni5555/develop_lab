@@ -3,14 +3,15 @@
 
 {% block title %}О проекте — {{ SITE_NAME }}{% endblock %}
 {% block page_css %}<link rel="stylesheet" href="{% static 'css/pages/about.css' %}">{% endblock %}
+{% block scripts %}<script src="{% static 'js/reveal.js' %}" defer></script>{% endblock %}
 
 {% block content %}
-<div class="container stack-xl">
+<div class="container stack-home">
   {% include 'about/components/_about_hero.html' %}
-  {% include 'about/components/_platform.html' %}
   {% include 'about/components/_principles.html' %}
-  {% include 'about/components/_roadmap.html' %}
+  {% include 'about/components/_architecture.html' %}
   {% include 'about/components/_author.html' %}
   {% include 'about/components/_faq.html' %}
+  {% include 'common/_cta.html' %}
 </div>
 {% endblock %}
