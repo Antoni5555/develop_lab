@@ -16,6 +16,9 @@
   .side-card__body { max-height: none; }
   .hero--home { grid-template-columns: 1fr; }
   .hero-art { max-width: 320px; }
+  .about-art { max-width: 360px; justify-self: center; }
+  .about-hero { grid-template-columns: 1fr; grid-template-areas: "head" "text" "art"; }
+  .faq--cols { grid-template-columns: 1fr; }
   .showcase__row { grid-template-columns: 1fr; gap: var(--space-5); }
   .showcase__art { justify-self: start; }
   .showcase__row--reverse .showcase__text { order: 0; }
@@ -46,6 +49,9 @@
   .metro__stop--soon::before { background: repeating-linear-gradient(180deg, var(--border) 0 8px, transparent 8px 14px); }
   .stack-xl { gap: var(--space-7); }
   .stack-home { gap: var(--space-7); }
+  .principles { grid-template-columns: 1fr; }
+  .author { grid-template-columns: 1fr; justify-items: start; gap: var(--space-5); }
+  .author__photo { width: 220px; }
   .hero-numbers { gap: var(--space-3); }
   .hero-numbers div { padding-left: var(--space-3); }
   .hero,
@@ -66,6 +72,5 @@
   .join-viz { grid-template-columns: 1fr; }
   .session { width: 100%; }
   .prev-next { grid-template-columns: 1fr; }
-  .author { flex-direction: column; align-items: flex-start; }
   .footer__inner { grid-template-columns: 1fr; }
 }

@@ -2477,110 +2477,173 @@ paid = Order.objects.<span class="fn">filter</span>(status=<span class="str">"pa
          СТРАНИЦА: О ПРОЕКТЕ  [templates/about/about.html]
          ================================================================== -->
     <section id="about" class="screen">
-      <div class="container stack-xl">
-        <!-- [templates/about/components/_about_hero.html] -->
-        <div class="about-hero">
-          <span class="eyebrow">О проекте</span>
-          <h1 class="page-title page-title--xl">Теория, практика и свои шпаргалки — в одном месте</h1>
-          <p class="about-hero__lead">Проект вырос из личной боли: материалы для повторения разбросаны по десяткам сайтов, а потрогать SQL или ORM руками негде без установки. Здесь курс, тренажёр и заметки живут рядом. Сейчас открыто направление Backend на Python, дальше — Frontend и DevOps.</p>
+      <div class="container stack-home">
+        <!-- [templates/about/components/_about_hero.html] — история проекта + анимация «было → стало» -->
+        <div class="hero hero--home about-hero">
+          <!-- Заголовок — во всю ширину блока, ровно в две строки; ниже текст и картинка -->
+          <div class="about-hero__head">
+            <span class="eyebrow">О проекте</span>
+            <h1 class="hero__title about-hero__title">Всё для практики&nbsp;—<br>в&nbsp;одном месте</h1>
+          </div>
+          <div class="hero__text">
+            <p class="hero__lead">Когда учишь backend самостоятельно, полдня уходит на поиски: статья здесь, видео там, конспект где-то в папке, а потрогать SQL или ORM руками негде без установки. Этот сайт собирает теорию, задачи, тренажёры и твои заметки в одну программу.</p>
+            <p class="hero__lead">Сейчас открыто направление Backend на Python, дальше — Frontend и DevOps.</p>
+          </div>
+          <!-- [templates/about/components/_about_art.html] «Путь разработчика»: inline SVG, CSS-анимация dp-*; генератор — design/_tools/path_anim.py -->
+          <div class="about-art" aria-hidden="true">
+            <svg viewBox="0 0 440 440" class="about-art__svg">
+              <!-- Фон: две тонкие кривые повторяют маршрут со сдвигом + геометрия (всё приглушено) -->
+              <path d="M-2 86 C94 44, 124 154, 204 132 C304 104, 404 154, 346 230 C294 296, 124 224, 84 296 C46 364, 174 414, 264 390 C334 372, 354 334, 394 350" class="dp-bg-line"/>
+              <path d="M54 22 C150 -20, 180 90, 260 68 C360 40, 460 90, 402 166 C350 232, 180 160, 140 232 C102 300, 230 350, 320 326 C390 308, 410 270, 450 286" class="dp-bg-line dp-bg-line--dashed"/>
+              <path d="M372 44a30 30 0 0 1 60 0" class="dp-shape"/>
+              <g class="dp-dots"><circle cx="300" cy="18" r="1.8"/><circle cx="312" cy="18" r="1.8"/><circle cx="324" cy="18" r="1.8"/><circle cx="300" cy="30" r="1.8"/><circle cx="312" cy="30" r="1.8"/><circle cx="324" cy="30" r="1.8"/><circle cx="300" cy="42" r="1.8"/><circle cx="312" cy="42" r="1.8"/><circle cx="324" cy="42" r="1.8"/></g>
+              <rect x="28" y="370" width="24" height="24" rx="5" class="dp-shape dp-shape--accent" transform="rotate(20 40 382)"/>
+              <path d="M150 166l9 16h-18z" class="dp-shape"/>
+              <circle cx="268" cy="168" r="6" class="dp-shape"/>
+              <path d="M60 134v12m-6-6h12M420 236v12m-6-6h12M200 414v10m-5-5h10" class="dp-shape"/>
+              <circle cx="408" cy="272" r="3.5" class="dp-spark"/><circle cx="24" cy="196" r="3" class="dp-spark"/>
+              <!-- Маршрут пунктиром и сама линия, которая рисуется -->
+              <path d="M24 52 C120 10, 150 120, 230 98 C330 70, 430 120, 372 196 C320 262, 150 190, 110 262 C72 330, 200 380, 290 356 C360 338, 380 300, 420 316" class="dp-route"/>
+              <path d="M24 52 C120 10, 150 120, 230 98 C330 70, 430 120, 372 196 C320 262, 150 190, 110 262 C72 330, 200 380, 290 356 C360 338, 380 300, 420 316" pathLength="1" class="dp-line"/>
+              <!-- Стеки на маршруте: белые, загораются, когда до них доходит линия -->
+              <g class="dp-stack dp-stack--0"><rect x="47.1" y="30.8" width="86.0" height="30" rx="15" class="dp-chip"/><circle cx="61.1" cy="45.8" r="4" class="dp-dot"/><text x="71.1" y="50.3" class="dp-label">Python</text></g>
+              <g class="dp-stack dp-stack--1"><rect x="183.4" y="84.7" width="78.0" height="30" rx="15" class="dp-chip"/><circle cx="197.4" cy="99.7" r="4" class="dp-dot"/><text x="207.4" y="104.2" class="dp-label">Linux</text></g>
+              <g class="dp-stack dp-stack--2"><rect x="323.6" y="89.8" width="62.0" height="30" rx="15" class="dp-chip"/><circle cx="337.6" cy="104.8" r="4" class="dp-dot"/><text x="347.6" y="109.3" class="dp-label">Git</text></g>
+              <g class="dp-stack dp-stack--3"><rect x="307.1" y="202.1" width="70.0" height="30" rx="15" class="dp-chip"/><circle cx="321.1" cy="217.1" r="4" class="dp-dot"/><text x="331.1" y="221.6" class="dp-label">HTTP</text></g>
+              <g class="dp-stack dp-stack--4"><rect x="165.8" y="211.9" width="62.0" height="30" rx="15" class="dp-chip"/><circle cx="179.8" cy="226.9" r="4" class="dp-dot"/><text x="189.8" y="231.4" class="dp-label">SQL</text></g>
+              <g class="dp-stack dp-stack--5"><rect x="61.7" y="282.5" width="86.0" height="30" rx="15" class="dp-chip"/><circle cx="75.7" cy="297.5" r="4" class="dp-dot"/><text x="85.7" y="302.0" class="dp-label">Django</text></g>
+              <g class="dp-stack dp-stack--6"><rect x="185.0" y="346.7" width="86.0" height="30" rx="15" class="dp-chip"/><circle cx="199.0" cy="361.7" r="4" class="dp-dot"/><text x="209.0" y="366.2" class="dp-label">Docker</text></g>
+              <g class="dp-stack dp-stack--7"><rect x="317.6" y="313.4" width="78.0" height="30" rx="15" class="dp-chip"/><circle cx="331.6" cy="328.4" r="4" class="dp-dot"/><text x="341.6" y="332.9" class="dp-label">Nginx</text></g>
+              <circle cx="420" cy="316" r="7" class="dp-end"/>
+            </svg>
+          </div>
         </div>
 
-        <!-- [templates/about/components/_platform.html] — что есть на платформе, со ссылками на разделы -->
+        <!-- [templates/about/components/_principles.html] — типографский список без карточек -->
         <section>
-          <div class="section-head"><h2 class="section-title">Что здесь есть</h2></div>
-          <div class="steps">
-            <a href="#courses" class="step step--link">
-              <span class="step__num">Курсы</span>
-              <h3 class="step__title">Программа по шагам</h3>
-              <p class="muted">Курсы идут в порядке обучения, внутри — разделы и темы с короткой теорией и задачами.</p>
-              <span class="step__more">Открыть курсы →</span>
-            </a>
-            <a href="#playground" class="step step--link">
-              <span class="step__num">Тренажёр</span>
-              <h3 class="step__title">SQL, ORM, Python, Linux</h3>
-              <p class="muted">Песочница без задач. Журнал выполнения показывает таблицы, изменённые строки и SQL от ORM.</p>
-              <span class="step__more">Открыть тренажёр →</span>
-            </a>
-            <a href="#cheatsheets" class="step step--link">
-              <span class="step__num">Шпаргалки</span>
-              <h3 class="step__title">Из ваших заметок</h3>
-              <p class="muted">Заметка, написанная на уроке, сама попадает в шпаргалку курса — в нужную тему.</p>
-              <span class="step__more">Открыть шпаргалки →</span>
-            </a>
-            <a href="#profile" class="step step--link">
-              <span class="step__num">Профиль</span>
-              <h3 class="step__title">Прогресс</h3>
-              <p class="muted">Пройденные курсы, активность по дням и последние заметки.</p>
-              <span class="step__more">Открыть профиль →</span>
-            </a>
-          </div>
-        </section>
-
-        <!-- [templates/about/components/_principles.html] -->
-        <section>
-          <div class="section-head"><h2 class="section-title">Принципы</h2></div>
-          <div class="steps">
-            <div class="step">
-              <span class="step__num">01</span>
-              <h3 class="step__title">Бесплатно</h3>
-              <p class="muted">Без платных уровней и рекламы. Открытый код.</p>
-            </div>
-            <div class="step">
-              <span class="step__num">02</span>
-              <h3 class="step__title">Практика первична</h3>
-              <p class="muted">Теории ровно столько, чтобы решить задачу.</p>
-            </div>
-            <div class="step">
-              <span class="step__num">03</span>
-              <h3 class="step__title">Код не уходит на сервер</h3>
-              <p class="muted">PostgreSQL и Python работают прямо в вашем браузере.</p>
-            </div>
-            <div class="step step--accent">
-              <span class="step__num">04</span>
-              <h3 class="step__title">Быстро</h3>
-              <p>Тяжёлые движки грузятся только на странице тренажёра.</p>
+          <div class="section-head">
+            <div class="section-head__titles">
+              <span class="kicker">Подход</span>
+              <h2 class="section-title">Принципы</h2>
             </div>
           </div>
-        </section>
-
-        <!-- [templates/about/components/_roadmap.html] -->
-        <section>
-          <div class="section-head"><h2 class="section-title">Дорожная карта</h2></div>
-          <ol class="roadmap">
-            <li class="roadmap__item roadmap__item--done"><strong>Курсы и теория</strong><span class="muted">Направление → курс → раздел → тема, уроки из Markdown</span></li>
-            <li class="roadmap__item roadmap__item--current"><strong>SQL-тренажёр</strong><span class="muted">PostgreSQL в браузере, журнал выполнения, подсветка изменённых строк</span></li>
-            <li class="roadmap__item"><strong>Аккаунты, прогресс и шпаргалки</strong><span class="muted">Вход через GitHub, заметки с форматированием на всех устройствах</span></li>
-            <li class="roadmap__item"><strong>Python и SQLAlchemy</strong><span class="muted">Python в браузере, SQL, который генерирует ORM</span></li>
-            <li class="roadmap__item"><strong>Django ORM и Linux</strong><span class="muted">Подсветка N+1, симулятор терминала с деревом файлов</span></li>
-            <li class="roadmap__item"><strong>Docker, Nginx и визуализация JOIN</strong><span class="muted">Симуляторы и пошаговый разбор запроса</span></li>
-            <li class="roadmap__item"><strong>Новые направления</strong><span class="muted">Frontend, DevOps</span></li>
+          <ol class="principles">
+            <li class="principles__item">
+              <span class="principles__num" aria-hidden="true">01</span>
+              <h3 class="principles__title">Бесплатно</h3>
+              <p class="muted">Без платных уровней и рекламы. Код и контент открыты.</p>
+            </li>
+            <li class="principles__item">
+              <span class="principles__num" aria-hidden="true">02</span>
+              <h3 class="principles__title">Практика первична</h3>
+              <p class="muted">Теории ровно столько, чтобы решить задачу и не споткнуться на собеседовании.</p>
+            </li>
+            <li class="principles__item">
+              <span class="principles__num" aria-hidden="true">03</span>
+              <h3 class="principles__title">Код не уходит на сервер</h3>
+              <p class="muted">Python и SQL работают прямо в браузере. Сервер видит только прогресс и заметки.</p>
+            </li>
+            <li class="principles__item">
+              <span class="principles__num" aria-hidden="true">04</span>
+              <h3 class="principles__title">Быстро</h3>
+              <p class="muted">Тяжёлые движки грузятся только на странице тренажёра, остальное — лёгкие страницы.</p>
+            </li>
           </ol>
         </section>
 
-        <!-- [templates/about/components/_author.html] -->
-        <div class="author">
-          <div class="avatar avatar--lg">AM</div>
-          <div>
-            <h2 class="section-title section-title--sm">Автор</h2>
-            <p class="muted">Backend-разработчик на Python. Делаю платформу, на которой хотел бы учиться сам.</p>
-            <div class="author__links">
-              <a href="#about" class="pill">GitHub</a>
-              <a href="#about" class="pill">Telegram</a>
+        <!-- [templates/about/components/_architecture.html] — как устроен сайт: схема + стек -->
+        <section>
+          <div class="section-head">
+            <div class="section-head__titles">
+              <span class="kicker">Технологии</span>
+              <h2 class="section-title">Как устроен сайт</h2>
             </div>
           </div>
-        </div>
+          <article class="showcase__row">
+            <div class="showcase__text">
+              <h3 class="showcase__title">Код выполняется у тебя, а не на сервере</h3>
+              <p class="muted">Python работает в браузере через Pyodide, SQL — через PGlite, Linux — в нашем симуляторе. Поэтому сервер простой и безопасный: он отдаёт страницы и хранит прогресс и заметки.</p>
+              <!-- [templates/about/components/_stack_chips.html] -->
+              <ul class="stack-chips">
+                <li>Django</li><li>PostgreSQL</li><li>Redis</li><li>DRF</li><li>Pyodide</li><li>PGlite</li><li>Docker</li><li>Nginx</li><li>GitHub Actions</li>
+              </ul>
+              <a href="https://github.com/Antoni5555/develop_lab" class="link-arrow">Исходный код на GitHub <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="showcase__art" aria-hidden="true">
+              <svg viewBox="0 0 400 280">
+                <!-- браузер: здесь выполняется весь код ученика -->
+                <g class="sc-card-shadow">
+                  <rect x="8" y="16" width="152" height="248" rx="14" class="sc-card"/>
+                  <text x="24" y="44" class="sc-t sc-t--title sc-t--sm-title">Браузер</text>
+                  <text x="24" y="62" class="sc-t sc-t--muted sc-t--xs">твой компьютер</text>
+                  <rect x="22" y="76" width="124" height="30" rx="8" class="sc-field"/><text x="34" y="95" class="sc-t sc-t--b sc-t--sm">Python</text><text x="134" y="95" class="sc-t sc-t--muted sc-t--xs sc-t--r">Pyodide</text>
+                  <rect x="22" y="112" width="124" height="30" rx="8" class="sc-field"/><text x="34" y="131" class="sc-t sc-t--b sc-t--sm">SQL</text><text x="134" y="131" class="sc-t sc-t--muted sc-t--xs sc-t--r">PGlite</text>
+                  <rect x="22" y="148" width="124" height="30" rx="8" class="sc-field"/><text x="34" y="167" class="sc-t sc-t--b sc-t--sm">Linux</text><text x="134" y="167" class="sc-t sc-t--muted sc-t--xs sc-t--r">симулятор</text>
+                  <rect x="22" y="184" width="124" height="30" rx="8" class="sc-ink"/><text x="34" y="203" class="sc-t sc-t--b sc-t--sm sc-t--onink">Твой код</text>
+                  <rect x="22" y="226" width="124" height="24" rx="12" class="sc-accent"/><text x="84" y="242" class="sc-t sc-t--b sc-t--xs sc-t--c">выполняется здесь</text>
+                </g>
+                <!-- сервер: только сайт и данные -->
+                <g class="sc-card-shadow">
+                  <rect x="246" y="16" width="146" height="248" rx="14" class="sc-card"/>
+                  <text x="262" y="44" class="sc-t sc-t--title sc-t--sm-title">Сервер</text>
+                  <text x="262" y="62" class="sc-t sc-t--muted sc-t--xs">в контейнерах Docker</text>
+                  <rect x="260" y="76" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="95" class="sc-t sc-t--b sc-t--sm">Nginx</text>
+                  <rect x="260" y="112" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="131" class="sc-t sc-t--b sc-t--sm">Django</text>
+                  <rect x="260" y="148" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="167" class="sc-t sc-t--b sc-t--sm">PostgreSQL</text>
+                  <rect x="260" y="184" width="118" height="30" rx="8" class="sc-field"/><text x="272" y="203" class="sc-t sc-t--b sc-t--sm">Redis</text>
+                  <text x="319" y="242" class="sc-t sc-t--muted sc-t--xs sc-t--c">сайт, уроки, прогресс</text>
+                </g>
+                <!-- что ходит между ними -->
+                <path d="M166 104H238M230 97l8 7-8 7" class="sc-arrow"/>
+                <text x="202" y="78" class="sc-t sc-t--b sc-t--xs sc-t--c">прогресс,</text>
+                <text x="202" y="91" class="sc-t sc-t--b sc-t--xs sc-t--c">заметки</text>
+                <path d="M238 150H166M174 143l-8 7 8 7" class="sc-arrow"/>
+                <text x="202" y="172" class="sc-t sc-t--b sc-t--xs sc-t--c">страницы,</text>
+                <text x="202" y="185" class="sc-t sc-t--b sc-t--xs sc-t--c">уроки</text>
+                <g class="sc-card-shadow">
+                  <rect x="168" y="210" width="68" height="24" rx="12" class="sc-ink"/>
+                  <text x="202" y="226" class="sc-t sc-t--b sc-t--xs sc-t--c sc-t--onink">код ✕</text>
+                </g>
+              </svg>
+            </div>
+          </article>
+        </section>
 
-        <!-- [templates/about/components/_faq.html] -->
+        <!-- [templates/about/components/_author.html] -->
+        <section class="author">
+          <!-- Портрет вписан в лаймовый круг (фон фото убран, PNG с прозрачностью → webp 480 px) -->
+          <div class="author__photo">
+            <img src="img/author-ya.webp" alt="Antoni Mikeladze" width="480" height="480" loading="lazy">
+          </div>
+          <div class="author__text">
+            <span class="kicker">Автор</span>
+            <h2 class="section-title">Привет, я Антони</h2>
+            <p>Backend-разработчик на Python. Изучаю backend самостоятельно и постоянно трачу время на то, чтобы найти нормальный материал для повторения и место, где можно потрогать код руками.</p>
+            <p class="muted">Этот сайт — то, чего мне не хватало. Делаю его в открытую: код, контент и планы лежат на GitHub. Нашли ошибку или есть идея — пишите.</p>
+            <div class="author__links">
+              <a href="https://github.com/Antoni5555" class="pill">GitHub</a>
+              <a href="https://t.me/antonimikeladze" class="pill">Telegram</a>
+              <a href="https://antonimikeladze.ru" class="pill">Портфолио</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- [templates/about/components/_faq.html] — две колонки -->
         <section>
-          <div class="section-head"><h2 class="section-title">Вопросы</h2></div>
-          <div class="faq">
-            <details class="faq__item" open>
+          <div class="section-head">
+            <div class="section-head__titles">
+              <span class="kicker">FAQ</span>
+              <h2 class="section-title">Вопросы</h2>
+            </div>
+          </div>
+          <div class="faq faq--cols">
+            <details class="faq__item">
               <summary>Нужно ли что-то устанавливать?</summary>
-              <p>Нет. PostgreSQL и Python запускаются прямо в браузере. Первый запуск движка занимает несколько секунд, дальше — из кэша.</p>
+              <p>Нет. Python запускается прямо в браузере, скоро так же заработает SQL. Первый запуск занимает несколько секунд, дальше — из кэша.</p>
             </details>
             <details class="faq__item">
               <summary>Мой код отправляется на сервер?</summary>
-              <p>Нет. Запросы и программы выполняются у вас в браузере. На сервер уходят только прогресс и заметки, если вы вошли в аккаунт.</p>
+              <p>Нет. Программы выполняются у вас в браузере. На сервер уходят только прогресс и заметки, если вы вошли в аккаунт.</p>
             </details>
             <details class="faq__item">
               <summary>Что такое шпаргалки?</summary>
@@ -2592,7 +2655,7 @@ paid = Order.objects.<span class="fn">filter</span>(status=<span class="str">"pa
             </details>
             <details class="faq__item">
               <summary>Зачем регистрироваться?</summary>
-              <p>Чтобы прогресс и шпаргалки были на всех устройствах. Без аккаунта они хранятся в этом браузере.</p>
+              <p>Чтобы прогресс был на всех устройствах и чтобы писать заметки. Без аккаунта прогресс хранится в этом браузере.</p>
             </details>
             <details class="faq__item">
               <summary>Как предложить задачу или исправление?</summary>
@@ -2600,6 +2663,18 @@ paid = Order.objects.<span class="fn">filter</span>(status=<span class="str">"pa
             </details>
           </div>
         </section>
+
+        <!-- [templates/common/_cta.html] -->
+        <div class="cta">
+          <div>
+            <h2 class="cta__title">Начни с первого шага</h2>
+            <p class="cta__text">Регистрация не нужна. Аккаунт — когда захочешь сохранить прогресс и шпаргалки.</p>
+          </div>
+          <div class="cta__actions">
+            <a href="#course" class="btn btn--accent btn--lg">Начать с Python</a>
+            <a href="#register" class="btn btn--on-ink btn--lg">Создать аккаунт</a>
+          </div>
+        </div>
       </div>
     </section>
 
