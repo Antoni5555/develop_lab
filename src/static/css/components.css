@@ -928,13 +928,20 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 }
 
 /* --- Правая панель: две плашки-аккордеон (заметки + материалы) --- */
+/* Прокручивается вся панель (когда мышь над ней), страница при этом стоит */
 .side-panel {
   position: sticky;
   top: calc(var(--header-h) + var(--space-4));
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-3);
+  max-height: calc(100dvh - var(--header-h) - var(--space-6));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
+
+.side-panel > .side-card { flex-shrink: 0; }
 
 .side-card {
   overflow: hidden;
@@ -969,13 +976,10 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 .side-card[open] .side-card__head::after { content: '−'; }
 .side-card__title { font-size: var(--fs-lg); font-weight: var(--fw-bold); }
 .side-card__meta { grid-column: 1 / -1; font-size: var(--fs-xs); color: var(--muted); }
-/* Открытая плашка занимает остаток высоты экрана и прокручивается внутри */
 .side-card__body {
   display: grid;
   gap: var(--space-3);
-  max-height: calc(100vh - var(--header-h) - 220px);
   padding: 0 var(--space-5) var(--space-5);
-  overflow-y: auto;
 }
 
 .side-card__body > .progress { margin-bottom: var(--space-1); }

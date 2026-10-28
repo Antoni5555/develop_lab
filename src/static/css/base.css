@@ -221,12 +221,16 @@ pre { font-family: var(--font-code); }
 
 pre { margin: 0; }
 
+/* Код в строке: в тёмной теме — светлая плашка с тёмным текстом, чтобы читался */
 code {
   padding: 1px 6px;
   font-size: 0.9em;
-  background: var(--surface-2);
+  color: light-dark(currentColor, var(--gl-color-black));
+  background: light-dark(var(--surface-2), #e4e4df);
   border-radius: 6px;
 }
+
+pre code { padding: 0; font-size: inherit; color: inherit; background: none; border-radius: 0; }
 
 button,
 input { font: inherit; color: inherit; }

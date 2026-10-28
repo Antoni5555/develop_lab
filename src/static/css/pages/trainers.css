@@ -184,7 +184,7 @@
   border-radius: 50%;
 }
 
-.run-step__head code { background: transparent; padding: 0; }
+.run-step__head code { padding: 0; color: inherit; background: transparent; }
 .run-step__time { margin-left: auto; font-family: var(--font-code); font-size: var(--fs-xs); color: var(--muted); }
 .run-step__body { display: grid; gap: var(--space-3); padding: var(--space-4); overflow-x: auto; }
 .run-step__body .sql-output { border: 1px solid var(--border); border-radius: var(--radius-sm); }
