@@ -12,7 +12,8 @@
   .course-layout,
   .playground { grid-template-columns: 1fr; }
   .sidebar,
-  .side-panel { position: static; max-height: none; overflow: visible; }
+  .side-panel { position: static; max-height: none; }
+  .side-card__body { max-height: none; }
   .hero--home { grid-template-columns: 1fr; }
   .hero-art { max-width: 320px; }
   .showcase__row { grid-template-columns: 1fr; gap: var(--space-5); }
