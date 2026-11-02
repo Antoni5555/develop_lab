@@ -31,7 +31,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS')
 
-# Название сайта ещё не выбрано — берём из .env, в шаблонах это {{ SITE_NAME }}
+# Название сайта берём из .env, в шаблонах это {{ SITE_NAME }}
 SITE_NAME = os.getenv('SITE_NAME', 'SITE_NAME')
 
 

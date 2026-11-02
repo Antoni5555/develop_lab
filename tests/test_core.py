@@ -17,6 +17,17 @@ def test_site_name_in_html(client, settings):
     assert html.count('Тестовый сайт') >= 3
 
 
+@pytest.mark.django_db
+def test_logo_mark_and_icons_in_html(client):
+    """Знак логотипа — inline SVG в шапке и подвале, иконки вкладки — в <head>."""
+    html = client.get(reverse('pages:home')).content.decode()
+
+    assert html.count('<svg class="logo__mark"') == 2
+    assert 'img/favicon.svg' in html
+    assert 'img/favicon.ico' in html
+    assert 'img/apple-touch-icon.png' in html
+
+
 def test_404_uses_own_template(client):
     """Несуществующий адрес → 404 с нашим шаблоном."""
     response = client.get('/no-such-page/')

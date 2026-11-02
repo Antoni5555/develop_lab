@@ -1,7 +1,7 @@
 <header class="header">
   <div class="container header__inner">
     <a href="{% url 'pages:home' %}" class="logo">
-      <span class="logo__mark" aria-hidden="true"></span>
+      {% include 'base/components/_logo_mark.html' %}
       {{ SITE_NAME }}
     </a>
 

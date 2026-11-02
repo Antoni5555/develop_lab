@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
   <meta name="description" content="{% block description %}Бесплатная практика для разработчиков: короткая теория, задачи и тренажёры Python, SQL, Django и Linux прямо в браузере.{% endblock %}">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="32x32">
+  <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
 
   {# Тема до отрисовки страницы: иначе в тёмной теме страница на миг мелькнёт белой #}
   <script>

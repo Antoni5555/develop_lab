@@ -48,6 +48,13 @@ server {
     gzip_types text/css application/javascript text/javascript application/json
                image/svg+xml text/plain;
 
+    # Браузеры и поисковики запрашивают иконку от корня сайта, минуя <link> в шаблоне
+    location = /favicon.ico {
+        alias /usr/share/nginx/static/img/favicon.ico;
+        expires 1d;
+        access_log off;
+    }
+
     # Файлы с хешем в имени (base.3f9a1c2b7d4e.css) не меняются никогда —
     # браузер кэширует их на год и не перепроверяет
     location ~ "^/static/(.+\.[0-9a-f]{12}\..+)$" {

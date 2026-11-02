@@ -118,6 +118,7 @@
   --gl-color-gray-text: #6e6e6a;
   --gl-color-snow: #f1f1ee;
   --gl-color-accent: #dcf25c;          /* лайм */
+  --gl-color-accent-deep: #b9d13a;     /* лайм для светлого фона: верхний слой логотипа */
   --gl-color-green: #1f9d55;
   --gl-color-red: #d93025;
   --gl-color-orange: #b7791f;
@@ -137,6 +138,7 @@
   --on-accent:  var(--gl-color-black);
   --ink:        light-dark(var(--gl-color-black), var(--gl-color-snow));   /* «чёрные» блоки */
   --on-ink:     light-dark(var(--gl-color-white), var(--gl-color-black));
+  --logo-top:   light-dark(var(--gl-color-accent-deep), var(--gl-color-white));
 
   /* ----- СТАТУСЫ ----- */
   --success:    light-dark(var(--gl-color-green), #4ade80);
