@@ -53,3 +53,19 @@ def test_health(client):
 
     assert response.status_code == 200
     assert response.content == b'ok'
+
+
+def test_static_no_cache_middleware(settings):
+    """В разработке статика идёт с no-cache, остальные ответы не трогаем."""
+    from django.http import HttpResponse
+
+    from core.middleware import NoCacheStaticMiddleware
+
+    middleware = NoCacheStaticMiddleware(lambda request: HttpResponse())
+    rf = RequestFactory()
+
+    static = middleware(rf.get(settings.STATIC_URL + 'css/base.css'))
+    page = middleware(rf.get('/courses/'))
+
+    assert static['Cache-Control'] == 'no-cache'
+    assert 'Cache-Control' not in page

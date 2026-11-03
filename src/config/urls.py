@@ -1,5 +1,6 @@
 """Главный роутер: подключает URL всех приложений."""
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 
 from core.views import health
@@ -22,3 +23,6 @@ urlpatterns = [
     path('api/progress/', include('apps.progress.urls')),
     path('api/notes/', include('apps.cheatsheets.api_urls')),
 ]
+
+# Статика в разработке (runserver --nostatic); при DEBUG=False список пустой
+urlpatterns += staticfiles_urlpatterns()
