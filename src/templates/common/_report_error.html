@@ -1,0 +1,30 @@
+{% load static %}
+{% comment %} «Сообщить об ошибке» (js/report-error.js): выделили текст в [data-report-scope] →
+   рядом кнопка → окно с цитатой и комментарием. Сообщение уходит в админку (apps/feedback).
+   Параметр: source — ключ урока или задачи («курс/раздел/тема[/задача]»). Гостю окно предлагает войти.
+{% endcomment %}
+<button type="button" class="report-btn" data-report-btn hidden>Сообщить об ошибке</button>
+<dialog class="report-dialog" data-report-dialog aria-labelledby="report-title" tabindex="-1">
+  <form class="report-dialog__body" data-report-form data-api="{% url 'reports:list' %}" data-source="{{ source }}">
+    <div class="report-dialog__head">
+      <h2 class="report-dialog__title" id="report-title">Ошибка в тексте</h2>
+      <button type="button" class="round-btn round-btn--sm" data-report-close aria-label="Закрыть">×</button>
+    </div>
+    <blockquote class="callout report-dialog__quote" data-report-quote></blockquote>
+    {% if user.is_authenticated %}
+      <div data-report-fields>
+        <label class="field">
+          <span class="field__label">Что не так?</span>
+          <textarea class="field__input report-dialog__comment" name="comment" maxlength="1000" rows="3" placeholder="Необязательно, если это опечатка. Например: здесь должен быть список, а не кортеж"></textarea>
+        </label>
+        <div class="alert alert--error" data-report-error hidden></div>
+        <button type="submit" class="btn btn--accent btn--block" data-report-send>Отправить</button>
+      </div>
+      <div class="alert alert--success" data-report-done hidden><span class="alert__icon">✓</span><span>Спасибо! Посмотрим и поправим.</span></div>
+    {% else %}
+      <p class="muted small">Сообщить об ошибке могут зарегистрированные пользователи — так в сообщениях меньше спама.</p>
+      <a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn--accent btn--block">Войти, чтобы сообщить</a>
+    {% endif %}
+  </form>
+</dialog>
+<script type="module" src="{% static 'js/report-error.js' %}"></script>

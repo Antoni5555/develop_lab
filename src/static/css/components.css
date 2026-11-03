@@ -1212,3 +1212,58 @@ button.icon-btn { color: inherit; background: transparent; }
   background: var(--accent);
   border-radius: 50%;
 }
+
+/* --- «Сообщить об ошибке»: кнопка под выделенным текстом + окно (урок, задача) --- */
+.report-btn {
+  position: absolute;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 14px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  white-space: nowrap;
+  color: var(--on-ink);
+  background: var(--ink);
+  border: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 8px 24px var(--gl-shadow-default);
+  cursor: pointer;
+}
+
+.report-btn::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.report-dialog {
+  width: min(480px, calc(100vw - 32px));
+  padding: 0;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.report-dialog::backdrop { background: rgb(0 0 0 / 0.45); }
+.report-dialog:focus { outline: none; }
+.report-dialog [data-report-close] { color: inherit; background: transparent; border-color: var(--border); }
+
+.report-dialog__body,
+.report-dialog [data-report-fields] { display: grid; gap: var(--space-4); }
+.report-dialog__body { padding: var(--space-6); }
+.report-dialog__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.report-dialog__title { font-size: var(--fs-lg); }
+
+.report-dialog__quote {
+  max-height: 160px;
+  margin: 0;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.report-dialog__comment { min-height: 88px; resize: vertical; border-radius: var(--radius-md); }

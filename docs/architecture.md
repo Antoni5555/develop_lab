@@ -44,6 +44,7 @@ src/
     progress/                    прогресс по задачам и урокам
     cheatsheets/                 заметки → шпаргалки
     accounts/                    пользователь, регистрация, профиль
+    feedback/                    сообщения об ошибках в уроках и задачах
   templates/                     base/, common/_*.html, <страница>/components/_*.html
   static/
     css/                         base, components, pages/*, media
@@ -64,12 +65,16 @@ courses:     Track → Course(engine) → Section(level) → Topic → Lesson (1
 accounts:    User(email — логин, имя, фамилия, время согласия на обработку данных)
 progress:    ExerciseProgress(user, exercise, solved_at), LessonView(user, lesson, viewed_at)
 cheatsheets: Note(user, course, topic NULL = «Из тренажёра», exercise NULL, title, body_html)
+feedback:    ContentReport(user, topic, exercise NULL = урок, quote, context, comment, status)
 ```
 
 - Контент не редактируется в админке: он приходит из `content/` командой `load_content`
   (идемпотентно; удалённое из `content/` скрывается, а не удаляется — на него может ссылаться прогресс).
 - Шпаргалка курса — не отдельная модель, а заметки пользователя по курсу, сгруппированные по теме.
 - Прогресс гостя хранится в `localStorage` браузера и переносится на сервер после входа.
+- Об ошибке в уроке или задаче сообщают, выделив текст: сообщение попадает в админку
+  вместе с путём к файлу в `content/`. Правят файл, а не базу — `load_content` перезаписал бы
+  правку из админки. Только вошедшим, не больше 20 сообщений в час.
 
 ## Как макет превращается в шаблоны
 

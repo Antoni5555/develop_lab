@@ -22,6 +22,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),         # вход, регистрация, пароль
     path('api/progress/', include('apps.progress.urls')),
     path('api/notes/', include('apps.cheatsheets.api_urls')),
+    path('api/reports/', include('apps.feedback.api_urls')),
 ]
 
 # Статика в разработке (runserver --nostatic); при DEBUG=False список пустой

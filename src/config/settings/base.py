@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.trainers.apps.TrainersConfig',
     'apps.accounts.apps.AccountsConfig',
     'apps.progress.apps.ProgressConfig',
+    'apps.feedback.apps.FeedbackConfig',
 ]
 
 MIDDLEWARE = [
@@ -181,6 +182,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
+    # Лимит для API с ScopedRateThrottle; счётчики — в кэше (Redis)
+    'DEFAULT_THROTTLE_RATES': {'reports': '20/hour'},
 }
 
 # Уроки и задачи (папка content/ в корне репозитория). Загружаются командой

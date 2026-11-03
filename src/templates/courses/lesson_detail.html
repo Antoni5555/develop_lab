@@ -13,4 +13,5 @@
     {% include 'common/_side_panel.html' with current_topic=topic %}
   </div>
 </div>
+{% include 'common/_report_error.html' with source=course.slug|add:'/'|add:section.slug|add:'/'|add:topic.slug %}
 {% endblock %}

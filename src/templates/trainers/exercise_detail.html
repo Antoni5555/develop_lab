@@ -29,5 +29,6 @@
     {% include 'common/_side_panel.html' with current_topic=topic current_exercise=exercise %}
   </div>
 </div>
+{% include 'common/_report_error.html' with source=exercise_key %}
 {{ exercise_data|json_script:'exercise-data' }}
 {% endblock %}
