@@ -14,8 +14,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
           cache: pip
@@ -46,8 +46,8 @@ jobs:
       POSTGRES_PASSWORD: develop_lab
       DB_HOST: localhost
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
           cache: pip
@@ -66,7 +66,7 @@ jobs:
     env:
       PUSH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Имя образа в GHCR — только строчными: Antoni5555 → antoni5555
       - run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
       - name: Сборка
@@ -103,7 +103,7 @@ jobs:
       SSH_TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
       DEPLOY_DIR: develop_lab
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: SSH-ключ
         run: |
           mkdir -p ~/.ssh
