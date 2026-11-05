@@ -77,10 +77,18 @@ Nginx не стартует без сертификата, поэтому пер
 
 ```bash
 docker compose run --rm -p 80:80 --entrypoint certbot certbot \
-  certonly --standalone -d <домен> -m <email> --agree-tos --no-eff-email
+  certonly --standalone -d <домен> -d www.<домен> -m <email> --agree-tos --no-eff-email
 ```
 
-Дальше сертификат продлевает контейнер `certbot`, а Nginx раз в 12 часов его перечитывает.
+Один сертификат на оба имени: `www.<домен>` Nginx перенаправляет на `<домен>` (DNS-запись A для `www` — на тот же IP). Дальше сертификат продлевает контейнер `certbot`, а Nginx раз в 12 часов его перечитывает.
+
+Добавить имя в уже выпущенный сертификат (сайт работает, проверка — через Nginx):
+
+```bash
+docker compose run --rm --entrypoint certbot certbot certonly --webroot -w /var/www/certbot \
+  --cert-name <домен> --expand -d <домен> -d www.<домен>
+docker compose exec nginx nginx -s reload
+```
 
 ### 5. Первый запуск
 

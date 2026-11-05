@@ -13,10 +13,11 @@ server {
     return 444;
 }
 
-# HTTP: только проверка Let's Encrypt и редирект на HTTPS
+# HTTP: только проверка Let's Encrypt и редирект на HTTPS основного домена
+# (www.домен → сразу на https://домен, без промежуточного шага)
 server {
     listen 80;
-    server_name ${DOMAIN};
+    server_name ${DOMAIN} www.${DOMAIN};
 
     # certbot кладёт сюда файл-проверку, Let's Encrypt забирает его по HTTP
     location /.well-known/acme-challenge/ {
@@ -24,8 +25,21 @@ server {
     }
 
     location / {
-        return 301 https://$host$request_uri;
+        return 301 https://${DOMAIN}$request_uri;
     }
+}
+
+# HTTPS www.домен → https://домен. Сертификат общий: в нём оба имени
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name www.${DOMAIN};
+
+    ssl_certificate     /etc/letsencrypt/live/${DOMAIN}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${DOMAIN}/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    return 301 https://${DOMAIN}$request_uri;
 }
 
 server {
