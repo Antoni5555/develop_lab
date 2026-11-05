@@ -52,3 +52,13 @@ def test_page_css_only_on_own_page(client):
 
     assert 'css/pages/home.css' in html
     assert 'css/pages/about.css' not in html
+
+
+def test_link_preview_tags(client):
+    """Превью ссылки: адреса картинки и страницы — полные, с доменом."""
+    html = client.get(reverse('pages:about')).content.decode()
+
+    image = 'http://testserver/static/img/og.png'
+    assert f'<meta property="og:image" content="{image}">' in html
+    assert '<meta property="og:url" content="http://testserver/about/">' in html
+    assert '<meta name="twitter:card" content="summary_large_image">' in html

@@ -9,6 +9,20 @@
   <link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="32x32">
   <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
 
+  {# Превью ссылки в мессенджерах и соцсетях (Open Graph). Адреса — только полные, с доменом #}
+  {# Картинка 1200×630 собирается design/_tools/og_gen.py #}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ SITE_NAME }}">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="{{ SITE_NAME }} — практика для разработчиков">
+  <meta property="og:description" content="Короткая теория, задачи и тренажёры Python, SQL, Django и Linux прямо в браузере. Бесплатно.">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/og.png' %}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ SITE_NAME }} — практика для разработчиков">
+  <meta name="twitter:card" content="summary_large_image">
+
   {# Тема до отрисовки страницы: иначе в тёмной теме страница на миг мелькнёт белой #}
   <script>
     try {
