@@ -33,10 +33,11 @@ def stops(html):
     )
 
 
-def test_numbers_count_all_courses_and_published_exercises(client, courses):
+def test_numbers_count_courses_lessons_and_exercises(client, courses):
     html = client.get(reverse('pages:home')).content.decode()
 
     assert '<dt>3</dt><dd>курса в программе</dd>' in html   # «скоро» — тоже в программе
+    assert '<dt>2</dt><dd>урока</dd>' in html
     assert '<dt>4</dt><dd>задачи</dd>' in html
 
 

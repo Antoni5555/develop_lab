@@ -261,7 +261,8 @@ def start_card():
 def home_summary():
     """Для главной: курсы направления (карта пути) и числа под кнопками первого экрана.
 
-    Курсов — все, включая «скоро»: это программа направления. Задач — опубликованные.
+    Курсов — все, включая «скоро»: это программа направления. Уроков (= тем) и задач —
+    опубликованные.
     """
     _, track, cards = catalog()
     return {
@@ -270,6 +271,7 @@ def home_summary():
         'first_card': first_open_card(cards),
         'numbers': {
             'courses': len(cards),
+            'lessons': sum(card.course.topic_count for card in cards),
             'exercises': sum(card.course.exercise_count for card in cards),
         },
     }

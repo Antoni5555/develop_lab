@@ -1,7 +1,7 @@
 {% load plural %}
-{# Цифры под кнопками — из БД (home_summary): курсы направления, включая «скоро», и опубликованные задачи #}
+{# Цифры под кнопками — из БД (home_summary): курсы направления, включая «скоро», опубликованные уроки и задачи #}
 <dl class="hero-numbers">
   <div><dt>{{ numbers.courses }}</dt><dd>{{ numbers.courses|plural_word:"курс,курса,курсов" }} в программе</dd></div>
+  <div><dt>{{ numbers.lessons }}</dt><dd>{{ numbers.lessons|plural_word:"урок,урока,уроков" }}</dd></div>
   <div><dt>{{ numbers.exercises }}</dt><dd>{{ numbers.exercises|plural_word:"задача,задачи,задач" }}</dd></div>
-  <div><dt>0 ₽</dt><dd>навсегда</dd></div>
 </dl>
