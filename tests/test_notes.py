@@ -41,6 +41,17 @@ def test_clean_html_keeps_only_formatting():
                      '<code>print()</code><h4>Итог</h4><ul><li>пункт</li></ul>')
 
 
+def test_clean_html_keeps_tables_without_attributes():
+    html = ('<table style="width:900px" border="1"><thead><tr><th>Тип</th>'
+            '<th>Пример</th></tr></thead><tbody><tr><td colspan="2"><code>int</code>'
+            '</td></tr></tbody></table>')
+
+    assert notes.clean_html(html) == (
+        '<table><thead><tr><th>Тип</th><th>Пример</th></tr></thead>'
+        '<tbody><tr><td><code>int</code></td></tr></tbody></table>'
+    )
+
+
 def test_clean_html_drops_empty_paragraphs():
     html = '<b>Срез</b><p><ul><li>s[::-1]</li></ul></p><p><br></p>'
 

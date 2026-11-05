@@ -1047,6 +1047,7 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
   min-height: 160px;
   padding: var(--space-3) var(--space-4);
   font-size: var(--fs-sm);
+  overflow-wrap: anywhere;
   outline: none;
 }
 
@@ -1055,6 +1056,10 @@ a.course-card:hover { transform: translateY(-3px); border-color: var(--text); }
 
 .note-editor__area ul,
 .note-editor__area ol { margin: 0 0 var(--space-2); padding-left: var(--space-5); }
+.note-editor__area pre { overflow-x: auto; overflow-wrap: normal; }
+.note-editor__area table { display: block; max-width: 100%; margin: 0 0 var(--space-2); overflow-x: auto; border-collapse: collapse; font-size: var(--fs-xs); }
+.note-editor__area th,
+.note-editor__area td { padding: 4px 8px; text-align: left; vertical-align: top; border: 1px solid var(--border); overflow-wrap: normal; }
 
 .note-editor__foot {
   display: flex;

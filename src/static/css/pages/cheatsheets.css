@@ -25,7 +25,7 @@
 
 .sheet-sections {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
   align-items: start;   /* раскрытая заметка удлиняет только свою карточку, не весь ряд */
   gap: var(--space-4);
 }
@@ -34,6 +34,7 @@
   display: grid;
   gap: var(--space-3);
   align-content: start;
+  min-width: 0;         /* иначе широкая заметка растягивает карточку за край */
   padding: var(--space-5);
   background: var(--surface);
   border: 1px solid var(--border);
@@ -97,6 +98,7 @@
 .sheet-section__title a:hover { text-decoration: underline; }
 /* Заметка в шпаргалке: виден заголовок, по клику разворачивается (details) */
 .sheet-note {
+  min-width: 0;
   border: 1px solid var(--border);
   border-left: 3px solid var(--accent);
   border-radius: var(--radius-sm);
@@ -122,7 +124,7 @@
 
 .sheet-note[open] > .sheet-note__head::before { content: '▾'; }
 .sheet-note__head:hover { background: var(--surface-2); }
-.sheet-note__title { flex: 1; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
+.sheet-note__title { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
 .sheet-note__date { flex-shrink: 0; font-size: var(--fs-xs); color: var(--muted); }
 
 .sheet-note__body {
@@ -131,7 +133,10 @@
   padding: 0 var(--space-4) var(--space-3) calc(var(--space-3) + 18px);
   font-size: var(--fs-sm);
   line-height: 1.6;
+  overflow-wrap: anywhere;   /* длинное слово без пробелов переносится, а не вылезает */
 }
+
+.sheet-note__body > * { min-width: 0; }
 
 .sheet-note__body h4 { margin: var(--space-2) 0 0; font-size: var(--fs-sm); font-weight: var(--fw-bold); }
 .sheet-note__body h4:first-child { margin-top: 0; }
@@ -142,7 +147,12 @@
 
 .sheet-note__body ul,
 .sheet-note__body ol { display: grid; gap: 4px; padding-left: var(--space-5); }
-.sheet-note__body pre { padding: 8px 12px; overflow-x: auto; font-size: var(--fs-xs); background: var(--code-bg); border-radius: var(--radius-sm); }
+/* Таблица шире заметки — прокручивается внутри неё */
+.sheet-note__body table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; font-size: var(--fs-xs); }
+.sheet-note__body th,
+.sheet-note__body td { padding: 6px 10px; text-align: left; vertical-align: top; border: 1px solid var(--border); overflow-wrap: normal; }
+.sheet-note__body th { font-weight: var(--fw-bold); background: var(--surface-2); }
+.sheet-note__body pre { padding: 8px 12px; overflow-x: auto; overflow-wrap: normal; font-size: var(--fs-xs); background: var(--code-bg); border-radius: var(--radius-sm); }
 
 .sheet-note__foot {
   display: flex;
