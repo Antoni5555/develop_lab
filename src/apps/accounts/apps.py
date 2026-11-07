@@ -5,3 +5,4 @@ class AccountsConfig(AppConfig):
     """Вход, регистрация, профиль."""
 
     name = 'apps.accounts'
+    verbose_name = 'пользователи'

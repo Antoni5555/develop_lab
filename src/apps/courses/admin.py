@@ -1,11 +1,12 @@
 """Админка контента — только для просмотра: контент меняется через content/
 и команду load_content, иначе правка в админке пропала бы при следующей загрузке."""
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 
 from .models import Course, Exercise, Lesson, Section, Topic, Track
 
 
-class ReadOnlyAdmin(admin.ModelAdmin):
+class ReadOnlyAdmin(ModelAdmin):
     """Разрешает только смотреть."""
 
     def has_add_permission(self, request):

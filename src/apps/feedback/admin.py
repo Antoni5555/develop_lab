@@ -1,13 +1,14 @@
 """Админка сообщений об ошибках: что не так, где, и какой файл content/ править."""
 from django.contrib import admin
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin
 
 from .models import ContentReport
 from .services.reports import content_path
 
 
 @admin.register(ContentReport)
-class ContentReportAdmin(admin.ModelAdmin):
+class ContentReportAdmin(ModelAdmin):
     list_display = [
         'short_quote', 'short_comment', 'place', 'user', 'status', 'created_at',
     ]

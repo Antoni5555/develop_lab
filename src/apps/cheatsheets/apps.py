@@ -5,3 +5,4 @@ class CheatsheetsConfig(AppConfig):
     """Шпаргалки — заметки пользователя по курсам и темам."""
 
     name = 'apps.cheatsheets'
+    verbose_name = 'шпаргалки'

@@ -5,3 +5,4 @@ class CoursesConfig(AppConfig):
     """Направления, курсы, разделы, темы, уроки и задачи."""
 
     name = 'apps.courses'
+    verbose_name = 'контент'

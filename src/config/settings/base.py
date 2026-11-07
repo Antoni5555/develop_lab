@@ -6,6 +6,8 @@ development.py, production.py и test.py импортируют всё отсю�
 import os
 from pathlib import Path
 
+from django.templatetags.static import static
+from django.urls import reverse_lazy
 from dotenv import load_dotenv
 
 
@@ -36,6 +38,8 @@ SITE_NAME = os.getenv('SITE_NAME', 'SITE_NAME')
 
 
 INSTALLED_APPS = [
+    # Оформление админки — до django.contrib.admin, чтобы его шаблоны были главнее
+    'unfold',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -195,3 +199,114 @@ CONTENT_DIR = Path(os.getenv('CONTENT_DIR', BASE_DIR.parent / 'content'))
 PYODIDE_URL = os.getenv(
     'PYODIDE_URL', 'https://cdn.jsdelivr.net/pyodide/v0.27.8/full/',
 )
+
+# --- Админка (Unfold): своё меню по смыслу, а не по приложениям Django ---
+# Иконки — Material Symbols (https://fonts.google.com/icons), подключает сам Unfold.
+UNFOLD = {
+    'SITE_TITLE': f'{SITE_NAME} — админка',
+    'SITE_HEADER': SITE_NAME,
+    'SITE_SUBHEADER': 'админка',
+    'SITE_URL': '/',
+    'SITE_ICON': lambda request: static('img/favicon.svg'),
+    'SITE_FAVICONS': [
+        {'rel': 'icon', 'type': 'image/svg+xml',
+         'href': lambda request: static('img/favicon.svg')},
+    ],
+    'SHOW_HISTORY': True,
+    'SHOW_VIEW_ON_SITE': True,
+    'BORDER_RADIUS': '10px',
+    'DASHBOARD_CALLBACK': 'core.admin_dashboard.dashboard_callback',
+    # Палитра сайта: серые без оттенка + лайм. Кнопки — тёмный лайм (600):
+    # на ярком лайме белый текст не читается
+    'COLORS': {
+        'base': {
+            '50': 'oklch(98.5% 0 0)', '100': 'oklch(97% 0 0)',
+            '200': 'oklch(92.2% 0 0)', '300': 'oklch(87% 0 0)',
+            '400': 'oklch(70.8% 0 0)', '500': 'oklch(55.6% 0 0)',
+            '600': 'oklch(43.9% 0 0)', '700': 'oklch(37.1% 0 0)',
+            '800': 'oklch(26.9% 0 0)', '900': 'oklch(20.5% 0 0)',
+            '950': 'oklch(14.5% 0 0)',
+        },
+        'primary': {
+            '50': 'oklch(98.6% .03 120)', '100': 'oklch(96.5% .07 120)',
+            '200': 'oklch(94% .12 120)', '300': 'oklch(91.5% .17 120)',
+            '400': 'oklch(85% .18 122)', '500': 'oklch(72% .17 125)',
+            '600': 'oklch(56% .15 128)', '700': 'oklch(48% .12 130)',
+            '800': 'oklch(40% .1 130)', '900': 'oklch(34% .08 130)',
+            '950': 'oklch(24% .06 130)',
+        },
+    },
+    'SIDEBAR': {
+        'show_search': True,
+        'show_all_applications': False,
+        'navigation': [
+            {
+                'title': 'Обратная связь',
+                'items': [
+                    {
+                        'title': 'Сообщения об ошибках',
+                        'icon': 'report',
+                        'link': reverse_lazy('admin:feedback_contentreport_changelist'),
+                        'badge': 'core.admin_dashboard.new_reports_badge',
+                    },
+                ],
+            },
+            {
+                'title': 'Пользователи',
+                'separator': True,
+                'items': [
+                    {
+                        'title': 'Пользователи',
+                        'icon': 'group',
+                        'link': reverse_lazy('admin:accounts_user_changelist'),
+                    },
+                ],
+            },
+            {
+                'title': 'Активность учеников',
+                'separator': True,
+                'items': [
+                    {
+                        'title': 'Заметки',
+                        'icon': 'sticky_note_2',
+                        'link': reverse_lazy('admin:cheatsheets_note_changelist'),
+                    },
+                    {
+                        'title': 'Прочитанные уроки',
+                        'icon': 'menu_book',
+                        'link': reverse_lazy('admin:progress_lessonview_changelist'),
+                    },
+                    {
+                        'title': 'Решённые задачи',
+                        'icon': 'task_alt',
+                        'link': reverse_lazy(
+                            'admin:progress_exerciseprogress_changelist'),
+                    },
+                ],
+            },
+            {
+                # Только просмотр: контент правится в файлах content/
+                'title': 'Контент',
+                'separator': True,
+                'collapsible': True,
+                'items': [
+                    {
+                        'title': 'Курсы',
+                        'icon': 'school',
+                        'link': reverse_lazy('admin:courses_course_changelist'),
+                    },
+                    {
+                        'title': 'Темы',
+                        'icon': 'topic',
+                        'link': reverse_lazy('admin:courses_topic_changelist'),
+                    },
+                    {
+                        'title': 'Задачи',
+                        'icon': 'code',
+                        'link': reverse_lazy('admin:courses_exercise_changelist'),
+                    },
+                ],
+            },
+        ],
+    },
+}

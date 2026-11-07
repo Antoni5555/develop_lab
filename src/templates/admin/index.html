@@ -1,0 +1,34 @@
+{% extends 'admin/base.html' %}
+{% load unfold %}
+{% comment %} Главная админки: счётчики и новые сообщения об ошибках.
+   Данные — core/admin_dashboard.py. Классы — только те, что есть в CSS Unfold. {% endcomment %}
+
+{% block title %}{{ title }} | {{ site_title }}{% endblock %}
+
+{% block branding %}
+  {% include 'unfold/helpers/site_branding.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    {% for stat in stats %}
+      {% component 'unfold/components/card.html' with href=stat.href %}
+        {% component 'unfold/components/text.html' %}{{ stat.title }}{% endcomponent %}
+        {% component 'unfold/components/title.html' with class='text-3xl mt-2' %}{{ stat.value }}{% endcomponent %}
+        {% if stat.note %}
+          {% component 'unfold/components/text.html' with class='mt-1' %}{{ stat.note }}{% endcomponent %}
+        {% endif %}
+      {% endcomponent %}
+    {% endfor %}
+  </div>
+
+  {% if recent_reports.rows %}
+    {% component 'unfold/components/table.html' with title='Новые сообщения об ошибках' table=recent_reports striped=1 %}{% endcomponent %}
+  {% else %}
+    {% component 'unfold/components/card.html' %}
+      {% component 'unfold/components/text.html' %}Новых сообщений об ошибках нет.{% endcomponent %}
+    {% endcomponent %}
+  {% endif %}
+</div>
+{% endblock %}
